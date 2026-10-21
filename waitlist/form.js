@@ -4,14 +4,14 @@ if (form) {
   const status = document.querySelector('#waitlist-status');
   const button = form.querySelector('button');
   let available = false;
-  fetch('/waitlist/index.php', {cache:'no-store', headers:{Accept:'application/json'}})
+  fetch('https://forms.mettelo.com/index.php', {cache:'no-store', headers:{Accept:'application/json'}})
     .then(response => { if(!response.ok) throw new Error(); return response.json(); })
     .then(data => {
-      if(data.available !== true) return;
+      if(data.available !== true) throw new Error('Unavailable');
       available = true;
       fields.disabled = false;
       status.textContent = 'Sign up for platform launch updates.';
-    }).catch(() => { /* Keep the clear unavailable state on static previews and network faults. */ });
+    }).catch(() => { status.textContent = 'The waitlist is temporarily unavailable. Please try again later or contact hello@mettelo.com.'; });
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if(!available || !form.reportValidity()) return;
@@ -20,7 +20,7 @@ if (form) {
     button.textContent = 'Sending…';
     status.textContent = 'Sending your request…';
     try {
-      const response = await fetch('/waitlist/index.php', {method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({name:data.get('name'),email:data.get('email'),consent:data.get('consent')==='yes',website:data.get('website')})});
+      const response = await fetch('https://forms.mettelo.com/index.php', {method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({name:data.get('name'),email:data.get('email'),consent:data.get('consent')==='yes',website:data.get('website')})});
       const result = await response.json();
       if(!response.ok) throw new Error(result.message || 'We could not send your request. Please try again later.');
       form.reset();
