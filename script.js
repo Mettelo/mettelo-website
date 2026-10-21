@@ -23,7 +23,7 @@ if (toggle && nav) {
     if (!link) return;
     closeMenu();
     // Keep keyboard focus with the destination when the mobile menu closes.
-    if (link.hash && link.origin === location.origin) {
+    if (link.hash && link.origin === location.origin && link.pathname === location.pathname) {
       const target = document.getElementById(link.hash.slice(1));
       if (target) {
         target.setAttribute('tabindex', '-1');

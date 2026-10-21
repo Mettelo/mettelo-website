@@ -23,3 +23,8 @@ Run `node --check script.js` and `node scripts/check.mjs`. Manual review should 
 ## Review workflow
 
 Use a branch and pull request. Homepage changes await explicit user approval before merge or development of the next page. Do not modify the live domain, DNS, existing hosting or external services as part of preview work.
+
+## Start Here
+The onboarding route uses start/index.html so ordinary static hosts can resolve /start to /start/. start/start.css and start/checklist.js add only page-specific styles and local checklist behaviour. Run node scripts/check-start.mjs for navigation and persistence checks. The local-storage key is mettelo:onboarding:v1; only completed step IDs are stored. A failed storage operation degrades to an in-memory checklist. No network requests are made by checklist code.
+
+The Start Here PR is stacked on homepage-final-review until that foundation is merged. Do not merge the homepage implicitly as part of onboarding review.

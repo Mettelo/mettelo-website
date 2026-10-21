@@ -30,3 +30,14 @@ Production domain/hosting verification and deployment remain separate from this 
 - Tablet navigation and hero now switch to the stacked layout at 900px.
 - No horizontal overflow at reviewed tablet/phone widths. Local asset budget: approximately 47KB before compression.
 - No formal Lighthouse score or full assistive-technology certification claimed. Third-party form submissions were not performed.
+
+## Phase 2 — Start Here / New Member Onboarding
+Explicitly requested by the user after homepage review. Implemented on a separate branch based on homepage-final-review; PR #1 remains unmerged and its approval is not assumed.
+
+/start resolves to the static start/index.html route. Reuses official assets, tokens, shared navigation/footer and progressive navigation. Adds seven-step browser-local checklist, eight exploration cards, the eight-stage pathway, eight essential services, expectations, FAQs and social channels. Membership and project participation remain separate. The Community Guidelines checklist item links to an interim summary while the dedicated page is pending.
+
+Static and state tests cover persistence/reload, unchecking, completion/reset, malformed data and blocked storage. External HEAD checks returned 200 for Tally, Project Library, YouTube, Discord, GitHub and social destinations. Both supplied OneDrive links redirected but returned 403 to automated requests; preserve them and verify access in a normal signed-in browser before release. No forms were submitted.
+
+Status: onboarding ready for review after browser QA; do not begin Community Guidelines until the user approves the next step. No live domain or hosting changes.
+
+Browser QA completed: desktop full-page inspection, 768px tablet and 390px phone; no horizontal overflow at the tested widths. Verified checkbox keyboard operation, persistence across reload, reset, FAQ expansion and mobile menu Escape behaviour; no console errors observed. Start Here is awaiting approval; Community Guidelines has not been developed.
