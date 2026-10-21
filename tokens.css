@@ -1,0 +1,24 @@
+/* Shared Mettelo V1 foundations. Use these tokens on subsequent pages. */
+:root {
+  --navy: #141824;
+  --sand: #f7efdd;
+  --gold: #c6892a;
+  --white: #ffffff;
+  --ink: #252936;
+  --muted: #60616a;
+  --line: #ded9cd;
+  --surface: #fcfaf5;
+  --surface-soft: #f1ecdf;
+  --surface-dark: #202431;
+  --gold-text: #82571d;
+  --text-on-dark: #c0bfc3;
+  --font-body: 'Segoe UI', Arial, sans-serif;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --radius-control: 4px;
+  --radius-card: 6px;
+  --max: 1200px;
+}
