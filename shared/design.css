@@ -19,3 +19,6 @@ html{scroll-padding-top:110px}body{background:#fcfaf5;font-size:17px;line-height
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--navy);outline-offset:4px}.finder-choice:focus-within{outline-color:var(--navy)}.footer a:focus-visible,.pathway-section a:focus-visible,.waitlist-section a:focus-visible{outline-color:var(--sand)}.pathway-section .btn.primary{background:var(--gold);color:var(--navy)}
 @media(max-width:600px){.resource-search input{font-size:16px}}
 @media print{.nav,.footer,.contents-toggle,.support-quick,.copy-email,.copy-status{display:none!important}.guide-sidebar{display:none}.guide-layout{display:block}.guide-hero{border-bottom:1px solid #999}.guide-section{scroll-margin:0}}
+
+.story-cover.story-community{max-width:560px;width:100%}.story-community picture{display:block}.story-community img{aspect-ratio:3/2;object-fit:cover}
+@media(max-width:600px){.story-cover.story-community{width:calc(100% - 18px);max-width:none}}

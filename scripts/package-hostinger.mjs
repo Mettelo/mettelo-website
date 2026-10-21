@@ -14,3 +14,5 @@ cpSync(resolve(root,'shared/design.css'),resolve(target,'shared/design.css'));
 cpSync(resolve(root,'shared/interactions.js'),resolve(target,'shared/interactions.js'));
 cpSync(resolve(root,'shared/home.css'),resolve(target,'shared/home.css'));
 console.log('Hostinger public files prepared. Waitlist remains disabled pending release checks.');
+
+cpSync(resolve(root,'shared/home.js'),resolve(target,'shared/home.js'));
