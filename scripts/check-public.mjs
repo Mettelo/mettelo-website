@@ -8,6 +8,7 @@ for(const page of ['index.html','start/index.html','community-guidelines/index.h
  assert(!html.includes('href="/start/'),'Onboarding must be unlisted: '+page);
  for(const part of ['header','footer']){
   let expected=readFileSync(resolve(root,`shared/${part}.html`),'utf8').trim().replaceAll('{{ASSETS}}',page==='index.html'?'':'../');
+  if(part==='header'&&page==='index.html')expected=expected.replace('assets/logo-navy.svg','assets/logo-sand.svg');
   if(part==='header'&&page==='our-story/index.html')expected=expected.replace('href="/our-story/"','href="/our-story/" aria-current="page"');
   assert(html.includes(expected),'Shared '+part+' drift: '+page);
  }

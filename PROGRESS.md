@@ -80,3 +80,7 @@ Completed Terms, Privacy, Community Support and Guidelines wording using owner-c
 ## Product design refinement — 21 October 2026
 Updated the Discord invite to the owner-confirmed yy9qJZ7W link. Refined all seven pages with a lighter editorial system, page-specific layouts, native-radio support finder, local resource search, onboarding resume shortcut, mobile contents/section state and contact copy affordance. Existing legal content, integrations and waitlist gate preserved. Nine Node suites and PHP handler tests pass; all pages reviewed at 320/390/820/1280px with no horizontal overflow. Targeted contrast issues found during review were fixed. No tracking, production deployment or domain changes. See docs/DESIGN-REFINEMENT.md.
 
+
+## Homepage correction — 21 October 2026
+Restored the earlier dark homepage, compact three-row desktop ecosystem and two-column resource directory following owner feedback. Added Apply for membership, Explore member support and Join the waitlist hero buttons. Corrected Discord and waitlist form preserved. Shared generation now keeps homepage styling separate from supporting-page refinements. No deployment or collection activation. See docs/HOMEPAGE-CORRECTION.md.
+

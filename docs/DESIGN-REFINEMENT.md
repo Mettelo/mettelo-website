@@ -1,5 +1,7 @@
 # Mettelo product-design review
 
+Current homepage revision: the owner rejected the light homepage and stretched section layout. The homepage now retains the earlier dark/compact design plus a third hero CTA to the waitlist. The remaining pages keep their supporting-page refinements. See HOMEPAGE-CORRECTION.md; homepage-finder/search descriptions below record the superseded design pass and do not describe the current homepage.
+
 ## Evidence and direction
 
 This pass responds to owner feedback that the public site felt basic and repetitive. It is a design/engineering review, not a claim that formal interviews, usability research or conversion experiments have been run.

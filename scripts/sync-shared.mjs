@@ -7,13 +7,18 @@ for(const page of pages){
  let html=readFileSync(resolve(root,page),'utf8');
  const css=page==='index.html'?'shared/public.css':'../shared/public.css';
  if(!html.includes(`href="${css}"`))html=html.replace('</head>',`<link rel="stylesheet" href="${css}">\n</head>`);
- const design=page==='index.html'?'shared/design.css':'../shared/design.css';
- if(!html.includes(`href="${design}"`))html=html.replace('</head>',`<link rel="stylesheet" href="${design}">\n</head>`);
- const interaction=page==='index.html'?'shared/interactions.js':'../shared/interactions.js';
- if(!html.includes(`src="${interaction}"`))html=html.replace('</body>',`<script src="${interaction}" defer></script>\n</body>`);
+ if(page==='index.html'){
+  html=html.replace(/<link rel="stylesheet" href="shared\/design.css">\s*/,'').replace(/<script src="shared\/interactions.js" defer><\/script>\s*/,'');
+  if(!html.includes('href="shared/home.css"'))html=html.replace('</head>','<link rel="stylesheet" href="shared/home.css">\n</head>');
+ }else{
+  const design='../shared/design.css',interaction='../shared/interactions.js';
+  if(!html.includes(`href="${design}"`))html=html.replace('</head>',`<link rel="stylesheet" href="${design}">\n</head>`);
+  if(!html.includes(`src="${interaction}"`))html=html.replace('</body>',`<script src="${interaction}" defer></script>\n</body>`);
+ }
  if(page==='contact/index.html'&&!html.includes('data-copy-email'))html=html.replace('</section><div class="wrap guide-layout">','<div class="wrap"><div class="support-quick"><a href="#general">General enquiry</a><a href="#community">Report a concern</a><a href="#privacy">Privacy request</a><button type="button" class="copy-email" data-copy-email hidden>Copy email address</button></div><p class="copy-status" data-copy-status role="status" aria-live="polite"></p></div></section><div class="wrap guide-layout">');
  for(const part of ['header','footer']){
   let shared=readFileSync(resolve(root,`shared/${part}.html`),'utf8').trim().replaceAll('{{ASSETS}}',page==='index.html'?'':'../');
+  if(part==='header'&&page==='index.html')shared=shared.replace('assets/logo-navy.svg','assets/logo-sand.svg');
   if(part==='header'&&page==='our-story/index.html')shared=shared.replace('href="/our-story/"','href="/our-story/" aria-current="page"');
   html=html.replace(new RegExp(`<${part} class="${part==='header'?'nav':'footer'}">[\\s\\S]*?</${part}>`),shared);
  }
