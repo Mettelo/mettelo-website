@@ -1,4 +1,4 @@
-// Shared progressive navigation enhancement for V1 pages.
+// Shared progressive navigation enhancement for public pages.
 const toggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#main-nav');
 

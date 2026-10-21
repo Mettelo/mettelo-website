@@ -1,10 +1,10 @@
-# Mettelo V1 website
+# Mettelo public website
 
-Static HTML, CSS and progressive JavaScript. No backend, build step, package dependencies, accounts or payments. Keep the existing external services as the destination for applications, resources and collaboration.
+Static HTML, CSS and progressive JavaScript, with a small PHP waitlist handler. No database, package dependencies, accounts or payments. Existing external services remain the destination for membership/project applications, resources and collaboration. Waitlist collection is disabled until hosting delivery and operating controls are verified.
 
 ## Run locally
 
-Serve this directory with any static HTTP server. For example, with Python installed: `python -m http.server 4174 --bind 127.0.0.1`. Open `http://127.0.0.1:4174/`.
+With PHP 8.1+ installed, run `php -S 127.0.0.1:4174 -t .` and open `http://127.0.0.1:4174/`. Do not use a static server that exposes PHP source. Local preview must not send real mail; keep the handler disabled. See docs/HOSTINGER-LAUNCH-GUIDE.md for upload and real-host checks.
 
 ## Reusable foundations
 

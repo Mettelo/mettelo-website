@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const pages=['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html'];
+const pages=['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html','privacy/index.html','contact/index.html'];
 for(const page of pages){
  const html=readFileSync(resolve(root,page),'utf8');
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
@@ -17,10 +17,11 @@ for(const page of pages){
  for(const tag of html.match(/<a\b[^>]*target="_blank"[^>]*>/g)||[])assert(tag.includes('noopener')&&tag.includes('noreferrer'));
 }
 const terms=readFileSync(resolve(root,'terms/index.html'),'utf8');
-assert(terms.includes('noindex,follow'));
-assert(terms.includes('Not yet effective'));
+assert(terms.includes('Mettelo Technologies Limited'));
+assert(terms.includes('aged 18 or over'));
 assert(terms.includes('does not guarantee employment, sponsorship, project placement or professional outcomes'));
-assert(!terms.includes('<form')&&!terms.includes('mailto:'));
-assert(!existsSync(resolve(root,'privacy/index.html'))&&!existsSync(resolve(root,'contact/index.html')));
+assert(!terms.includes('<form'));
+assert(terms.includes('mailto:hello@mettelo.com'));
+assert(existsSync(resolve(root,'privacy/index.html'))&&existsSync(resolve(root,'contact/index.html')));
 assert(terms.includes('https://tally.so/r/J9b5zd')&&terms.includes('https://tally.so/r/eq4Wjo'));
-console.log('Terms scope, draft status, all-page trust links, anchors and external-link safety passed.');
+console.log('Terms scope, operator, adult eligibility, seven-page trust links, anchors and external-link safety passed.');

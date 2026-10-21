@@ -37,7 +37,7 @@ function waitlist_send(array $config, array $entry, string $address, callable $s
         rewind($lock);
         if (!ftruncate($lock, 0) || fwrite($lock, $encoded) !== strlen($encoded) || !fflush($lock)) return 'unavailable';
         @chmod($directory . '/state.json', 0600);
-        $message = "Mettelo platform launch waitlist request\n\nName: " . $entry['name'] . "\nEmail: " . $entry['email'] . "\nConsent: Requested Mettelo platform launch updates.\nReceived (UTC): " . gmdate('c') . "\n\nThis is not a community membership application.\n";
+        $message = "Mettelo platform launch waitlist request\n\nName: " . $entry['name'] . "\nEmail: " . $entry['email'] . "\nConsent: Confirmed age 18+ and requested Mettelo platform launch updates.\nPrivacy notice revision: 21 October 2026\nReceived (UTC): " . gmdate('c') . "\n\nThis is not a community membership application.\n";
         $headers = ['From' => 'Mettelo <' . $config['sender'] . '>', 'Content-Type' => 'text/plain; charset=UTF-8'];
         return $send($config['recipient'], 'Mettelo platform waitlist request', $message, $headers) ? 'queued' : 'unavailable';
     } finally { flock($lock, LOCK_UN); fclose($lock); }

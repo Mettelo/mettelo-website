@@ -38,7 +38,7 @@
       }
     }
     status.textContent = canSave
-      ? 'Saved in this browser only. Nothing is submitted to Mettelo.'
+      ? 'Progress stays in this browser only. Nothing is submitted to Mettelo.'
       : 'Browser storage is unavailable. You can still tick steps, but progress may not survive a reload.';
   }
 
@@ -46,9 +46,10 @@
   boxes.forEach(box => box.addEventListener('change', () => render({ save: true })));
   reset.addEventListener('click', () => {
     boxes.forEach(box => { box.checked = false; });
-    render({ save: true });
+    try { localStorage.removeItem(key); canSave = true; } catch { canSave = false; }
+    render();
     boxes[0].focus();
   });
-  // A write also detects browsers that allow reads but block persistence.
-  render({ save: true });
+  // Do not create a storage record until the visitor uses the checklist.
+  render();
 })();

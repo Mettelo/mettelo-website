@@ -1,5 +1,7 @@
 # Public website quality checkpoint
 
+Historical quality checkpoint: the subsequent trust-page phase completes the public policy copy and adds Privacy/Contact routes. See TERMS-REVIEW.md and PRIVACY-AND-SUPPORT-OPERATIONS.md for current status and actual launch tasks; earlier pending-page notes below describe this earlier checkpoint.
+
 ## Information architecture
 
 Public navigation: Our Story, Member support, Ecosystem, Resources and Join the community. Homepage anchors remain the home for support/resources/FAQs. Project Studio remains the existing external library. Community applications and project applications remain distinct.
