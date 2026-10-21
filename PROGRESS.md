@@ -68,3 +68,7 @@ The user supplied the founder portrait. Replaced the pending placeholder and rem
 ## Terms review checkpoint — 21 October 2026
 Adapted platform public content to a draft V1 Terms page. Added shared trust links and source/data-flow gap analysis. Privacy, Cookies and Contact remain audit-only pending approval. Five local check suites pass; no production deployment or domain changes. See TERMS-REVIEW.md and docs/V1-TRUST-GAP-ANALYSIS.md.
 
+## Public-site quality and waitlist review — 21 October 2026
+
+Owner requested a cross-page public navigation/footer/content review and a future-platform waitlist. Start Here is now unlisted/noindex while remaining accessible by direct URL. Shared static header/footer templates keep all five pages consistent. Removed repetitive Our Story cards; approved founder content and integrations preserved. Implemented PHP/HTML Hostinger waitlist to owner-confirmed hello@mettelo.com with validation, consent, private abuse counters and failure handling. Collection disabled until approved notice/privacy arrangements and actual Hostinger delivery verification. Seven Node suites, PHP syntax/handler tests and disabled-endpoint HTTP checks pass. Desktop/tablet/mobile reviews complete. No deployment or domain changes. See docs/PUBLIC-SITE-QUALITY.md and docs/HOSTINGER-WAITLIST.md.
+
