@@ -24,3 +24,10 @@ are completed on Hostinger. Git deployment alone does not activate or verify ema
 Verify /, /start/, /our-story/, /terms/, /privacy/, /community-guidelines/ and /contact/;
 check images, mobile menu, resource links and waitlist availability notice. Never
 publish private backups or credentials inside public_html.
+
+## App importer alternative (static only)
+Select main, build command npm run build, output directory dist, Node 24.
+The repository now includes package.json without any package dependencies.
+This build validates the website and excludes all PHP files from public output.
+The waitlist stays disabled and reads a local unavailable-status JSON file.
+Use PHP/HTML Git deployment with hostinger-release if the PHP waitlist is needed.

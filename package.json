@@ -1,0 +1,13 @@
+{
+  "name": "mettelo-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mettelo public website",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-static.mjs",
+    "test": "node scripts/check-all.mjs"
+  }
+}
