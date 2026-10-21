@@ -76,3 +76,11 @@ Owner requested a cross-page public navigation/footer/content review and a futur
 ## Trust pages and launch handover — 21 October 2026
 Completed Terms, Privacy, Community Support and Guidelines wording using owner-confirmed Mettelo Technologies Limited and 18+ eligibility. Removed public version/draft/pending labels. Added retention/basis/transfer/operations record and Hostinger step-by-step guide; website metadata/sitemap excludes onboarding. Checklist no longer creates initial storage and reset removes it. Existing Tally flows remain; no new membership/access system. Provider/retention/form-notice checks and real Hostinger delivery remain launch tasks, with waitlist disabled. No production/domain changes.
 
+
+## Product design refinement — 21 October 2026
+Updated the Discord invite to the owner-confirmed yy9qJZ7W link. Refined all seven pages with a lighter editorial system, page-specific layouts, native-radio support finder, local resource search, onboarding resume shortcut, mobile contents/section state and contact copy affordance. Existing legal content, integrations and waitlist gate preserved. Nine Node suites and PHP handler tests pass; all pages reviewed at 320/390/820/1280px with no horizontal overflow. Targeted contrast issues found during review were fixed. No tracking, production deployment or domain changes. See docs/DESIGN-REFINEMENT.md.
+
+
+## Homepage correction — 21 October 2026
+Restored the earlier dark homepage, compact three-row desktop ecosystem and two-column resource directory following owner feedback. Added Apply for membership, Explore member support and Join the waitlist hero buttons. Corrected Discord and waitlist form preserved. Shared generation now keeps homepage styling separate from supporting-page refinements. No deployment or collection activation. See docs/HOMEPAGE-CORRECTION.md.
+
