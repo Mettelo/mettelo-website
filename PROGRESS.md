@@ -64,3 +64,7 @@ Status: Our Story ready for review with portrait pending. All review PRs remain 
 
 ### Founder portrait follow-up
 The user supplied the founder portrait. Replaced the pending placeholder and removed the missing-photo notice. Added 480px/960px WebP variants (about 16KB/60KB) and a 960px JPEG fallback (about 77KB), alt text, dimensions, lazy loading and async decoding. Portrait pixels were only resized/compressed. The outstanding portrait requirement is resolved; the page and PR still await approval.
+
+## Terms review checkpoint — 21 October 2026
+Adapted platform public content to a draft V1 Terms page. Added shared trust links and source/data-flow gap analysis. Privacy, Cookies and Contact remain audit-only pending approval. Five local check suites pass; no production deployment or domain changes. See TERMS-REVIEW.md and docs/V1-TRUST-GAP-ANALYSIS.md.
+
