@@ -4,7 +4,7 @@ const nav = document.querySelector('#main-nav');
 
 if (toggle && nav) {
   document.documentElement.classList.add('js');
-  const desktop = window.matchMedia('(min-width: 901px)');
+  const desktop = window.matchMedia('(min-width: 1101px)');
 
   function closeMenu({ restoreFocus = false } = {}) {
     toggle.setAttribute('aria-expanded', 'false');

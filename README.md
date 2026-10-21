@@ -31,3 +31,6 @@ The Start Here PR is stacked on homepage-final-review until that foundation is m
 
 ## Community Guidelines
 /community-guidelines resolves to community-guidelines/index.html on directory-based static hosting. Page-specific styles are in community-guidelines/guidelines.css. Run node scripts/check-guidelines.mjs to check all three pages and cross-page navigation. Membership agreements are displayed only; acceptance stays in Tally. POLICY-REVIEW.md identifies unapproved policy/operations items. The visible draft, privacy and reporting notices must remain until those decisions are resolved. This PR is stacked on start-onboarding.
+
+## Our Story
+/our-story resolves to our-story/index.html on directory-based static hosting. story.css is page-specific. Founder text and message are user supplied; the portrait is pending (see FOUNDER-CONTENT.md). AboutPage structured data contains only supplied founder details and no founding date or image. Run node scripts/check-story.mjs for all four pages and source checks. The Our Story branch is stacked on community-guidelines.
