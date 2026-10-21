@@ -41,3 +41,12 @@ Static and state tests cover persistence/reload, unchecking, completion/reset, m
 Status: onboarding ready for review after browser QA; do not begin Community Guidelines until the user approves the next step. No live domain or hosting changes.
 
 Browser QA completed: desktop full-page inspection, 768px tablet and 390px phone; no horizontal overflow at the tested widths. Verified checkbox keyboard operation, persistence across reload, reset, FAQ expansion and mobile menu Escape behaviour; no console errors observed. Start Here is awaiting approval; Community Guidelines has not been developed.
+
+## Phase 3 — Community Guidelines & Membership Guide
+Explicitly requested by the user via pasted brief. New static /community-guidelines/ page builds on start-onboarding; earlier PRs remain unmerged. Implemented introduction, membership/access roles, ten standards, learning/mentoring guidance, project/GitHub expectations, evidence/career boundaries, responsible data sharing, reporting placeholder, proposed moderation disclosure, the four membership statements and existing community links.
+
+Navigation/footer and onboarding checklist now link to the full guide. No membership acceptance controls, new storage or backend. POLICY-REVIEW.md records the decisions needed before adoption/public launch: standards approval, reporting route/responsible admins, report handling/moderation decisions, Privacy Notice and confirmation of live Tally agreement text.
+
+QA: homepage, onboarding and cross-page checks passed; routes, anchors and assets resolve. Browser review covered desktop, 768px tablet and 390px phone, contents links, native moderation disclosure, menu/Escape, onboarding-to-guide navigation and membership statements. No horizontal overflow or console errors observed. Existing external links were retained; the previous OneDrive automated-access limitation remains. No forms submitted; no domain or hosting changes.
+
+Status: Page 3 ready for review, policy content not approved. STOP before Page 4 (Learning & Resources) until explicit user approval.
