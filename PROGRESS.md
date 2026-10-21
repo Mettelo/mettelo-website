@@ -68,3 +68,19 @@ The user supplied the founder portrait. Replaced the pending placeholder and rem
 ## Terms review checkpoint — 21 October 2026
 Adapted platform public content to a draft V1 Terms page. Added shared trust links and source/data-flow gap analysis. Privacy, Cookies and Contact remain audit-only pending approval. Five local check suites pass; no production deployment or domain changes. See TERMS-REVIEW.md and docs/V1-TRUST-GAP-ANALYSIS.md.
 
+## Public-site quality and waitlist review — 21 October 2026
+
+Owner requested a cross-page public navigation/footer/content review and a future-platform waitlist. Start Here is now unlisted/noindex while remaining accessible by direct URL. Shared static header/footer templates keep all five pages consistent. Removed repetitive Our Story cards; approved founder content and integrations preserved. Implemented PHP/HTML Hostinger waitlist to owner-confirmed hello@mettelo.com with validation, consent, private abuse counters and failure handling. Collection disabled until approved notice/privacy arrangements and actual Hostinger delivery verification. Seven Node suites, PHP syntax/handler tests and disabled-endpoint HTTP checks pass. Desktop/tablet/mobile reviews complete. No deployment or domain changes. See docs/PUBLIC-SITE-QUALITY.md and docs/HOSTINGER-WAITLIST.md.
+
+
+## Trust pages and launch handover — 21 October 2026
+Completed Terms, Privacy, Community Support and Guidelines wording using owner-confirmed Mettelo Technologies Limited and 18+ eligibility. Removed public version/draft/pending labels. Added retention/basis/transfer/operations record and Hostinger step-by-step guide; website metadata/sitemap excludes onboarding. Checklist no longer creates initial storage and reset removes it. Existing Tally flows remain; no new membership/access system. Provider/retention/form-notice checks and real Hostinger delivery remain launch tasks, with waitlist disabled. No production/domain changes.
+
+
+## Product design refinement — 21 October 2026
+Updated the Discord invite to the owner-confirmed yy9qJZ7W link. Refined all seven pages with a lighter editorial system, page-specific layouts, native-radio support finder, local resource search, onboarding resume shortcut, mobile contents/section state and contact copy affordance. Existing legal content, integrations and waitlist gate preserved. Nine Node suites and PHP handler tests pass; all pages reviewed at 320/390/820/1280px with no horizontal overflow. Targeted contrast issues found during review were fixed. No tracking, production deployment or domain changes. See docs/DESIGN-REFINEMENT.md.
+
+
+## Homepage correction — 21 October 2026
+Restored the earlier dark homepage, compact three-row desktop ecosystem and two-column resource directory following owner feedback. Added Apply for membership, Explore member support and Join the waitlist hero buttons. Corrected Discord and waitlist form preserved. Shared generation now keeps homepage styling separate from supporting-page refinements. No deployment or collection activation. See docs/HOMEPAGE-CORRECTION.md.
+

@@ -1,0 +1,13 @@
+.waitlist-section{background:var(--navy);color:var(--sand)}
+.waitlist-layout{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}
+.waitlist-section h2{font-size:clamp(2rem,3.5vw,3rem);max-width:520px;margin:22px 0}
+.waitlist-section .kicker{color:#dfaf65}.waitlist-copy p{color:var(--text-on-dark);max-width:500px;line-height:1.8}.waitlist-copy a{color:var(--sand);text-underline-offset:5px;display:inline-flex;min-height:44px;align-items:center}
+.waitlist-form{background:var(--sand);color:var(--navy);padding:32px;border-radius:6px}
+.waitlist-form fieldset{border:0;padding:0;margin:0;min-width:0}.waitlist-form legend{font-size:1.2rem;font-weight:650;margin-bottom:20px}
+.waitlist-field{display:grid;gap:8px;margin-bottom:20px}.waitlist-field label{font-size:.85rem;font-weight:600}
+.waitlist-field input{font:inherit;border:1px solid #8a8275;background:#fffdf9;color:var(--navy);padding:13px 14px;border-radius:3px;width:100%;min-height:48px}
+.waitlist-consent{display:flex;align-items:flex-start;gap:12px;font-size:.8rem;line-height:1.7;margin:4px 0 20px}.waitlist-consent input{width:20px;height:20px;flex-shrink:0;margin-top:4px;accent-color:var(--navy)}
+.waitlist-form button{width:100%;justify-content:center;min-height:48px;font:inherit;font-weight:650}.waitlist-form button:disabled{cursor:not-allowed;opacity:.7}
+.waitlist-form fieldset:disabled input{background:#f0ece4}.waitlist-notice,.waitlist-status{font-size:.78rem;line-height:1.75}.waitlist-notice{margin-top:20px}.waitlist-notice a{color:inherit;text-underline-offset:3px}.waitlist-status{border-top:1px solid var(--line);padding-top:18px;margin-bottom:0;font-weight:600}
+.waitlist-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+@media(max-width:900px){.waitlist-layout{grid-template-columns:1fr;gap:32px}.waitlist-copy p{max-width:650px}}@media(max-width:600px){.waitlist-form{padding:24px}}
