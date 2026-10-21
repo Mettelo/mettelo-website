@@ -1,4 +1,5 @@
-import {cpSync,mkdirSync} from 'node:fs';
+import {cpSync,mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {resolve,dirname,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -17,3 +18,12 @@ console.log('Hostinger public files prepared. Waitlist remains disabled pending 
 
 cpSync(resolve(root,'shared/home.js'),resolve(target,'shared/home.js'));
 cpSync(resolve(root,'.htaccess'),resolve(target,'.htaccess'));
+
+// A content-based filename prevents stale browser/CDN copies disabling the form.
+const formSource=readFileSync(resolve(target,'waitlist/form.js'));
+const formHash=createHash('sha256').update(formSource).digest('hex').slice(0,12);
+const formName='form.'+formHash+'.js';
+writeFileSync(resolve(target,'waitlist',formName),formSource);
+const homepage=resolve(target,'index.html');
+writeFileSync(homepage,readFileSync(homepage,'utf8').replace('src="waitlist/form.js"','src="waitlist/'+formName+'"'));
+
