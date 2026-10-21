@@ -1,0 +1,5 @@
+DirectoryIndex index.php
+Options -Indexes
+<FilesMatch "^(config|handler|transport)\.php$">
+Require all denied
+</FilesMatch>

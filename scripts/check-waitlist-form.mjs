@@ -11,7 +11,7 @@ async function run({available=true,ok=true,network=false,valid=true}={}){
  const form={querySelector:s=>s==='fieldset'?fields:button,reportValidity:()=>valid,addEventListener:(event,fn)=>submit=fn,reset:()=>reset++};
  const context={document:{querySelector:s=>s==='#waitlist-form'?form:status},FormData:class{get(key){return {name:'Test Member',email:'test@example.test',consent:'yes',website:''}[key]}},fetch:async(url,options)=>{
   if(options.method!=='POST')return {ok:true,json:async()=>({available})};
-  posts++;assert.equal(url,'/waitlist/index.php');assert.equal(JSON.parse(options.body).consent,true);
+  posts++;assert.equal(url,'https://forms.mettelo.com/index.php');assert.equal(JSON.parse(options.body).consent,true);
   if(network)throw new TypeError('offline');
   return {ok,json:async()=>({message:ok?'Request sent':'Service unavailable'})};
  },Error,TypeError};
