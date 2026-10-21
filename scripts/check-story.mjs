@@ -28,9 +28,12 @@ assert.equal(schema['@type'],'AboutPage');assert.equal(schema.about.name,'Mettel
 assert.equal(schema.about.founder.name,'O. Johnson Taiwo');
 assert.equal(schema.about.founder.url,'https://johnsontaiwo.com/');
 assert(!schema.datePublished&&!schema.image&&!schema.about.foundingDate&&!schema.about.founder.image);
-assert(story.includes('Founder photograph pending'));
+assert(!story.includes('Founder photograph pending'));
+assert(story.includes('alt="O. Johnson Taiwo, founder of Mettelo"'));
+assert(story.includes('loading="lazy"'));
+for(const file of ['founder-480.webp','founder-960.webp','founder-960.jpg']) assert(existsSync(resolve(root,'assets',file)));
 assert(story.includes('over seven years of experience'));
 assert(story.includes('I believe professional growth should go beyond qualifications and certifications.'));
 assert(story.includes('class="founder-message"'));
 assert(story.includes('https://tally.so/r/J9b5zd'));
-console.log('Passed: all four pages/routes/assets/anchors, story navigation, single H1, safe tabs, user-approved founder metadata/message and clearly pending portrait.');
+console.log('Passed: all four pages/routes/assets/anchors, story navigation, safe tabs, supplied founder content, responsive portrait assets, alt text and lazy loading.');

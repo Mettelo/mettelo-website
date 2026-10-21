@@ -61,3 +61,6 @@ Our Story links were added to all page headers/footers. Expanded navigation now 
 QA: all four pages/routes/assets/anchors pass static checks; onboarding persistence tests remain passing; JavaScript syntax/whitespace checks pass. Browser QA: desktop, 768px tablet, 390px phone, founder anchor and menu/Escape; no horizontal overflow or console errors observed. Personal website HEAD returned 200; LinkedIn HEAD returned 405 (automated verification limited). Existing service links preserved. No forms submitted.
 
 Status: Our Story ready for review with portrait pending. All review PRs remain unmerged. STOP here and wait for explicit approval before developing another page.
+
+### Founder portrait follow-up
+The user supplied the founder portrait. Replaced the pending placeholder and removed the missing-photo notice. Added 480px/960px WebP variants (about 16KB/60KB) and a 960px JPEG fallback (about 77KB), alt text, dimensions, lazy loading and async decoding. Portrait pixels were only resized/compressed. The outstanding portrait requirement is resolved; the page and PR still await approval.
