@@ -16,3 +16,4 @@ cpSync(resolve(root,'shared/home.css'),resolve(target,'shared/home.css'));
 console.log('Hostinger public files prepared. Waitlist remains disabled pending release checks.');
 
 cpSync(resolve(root,'shared/home.js'),resolve(target,'shared/home.js'));
+cpSync(resolve(root,'.htaccess'),resolve(target,'.htaccess'));
