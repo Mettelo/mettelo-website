@@ -1,0 +1,45 @@
+/* Start Here: benefit-led orientation and explicit, consistent actions. */
+.start-page .start-hero-refined{padding:26px 0 58px;background:#f7efdd}
+.start-page .start-hero-refined .breadcrumb{margin-bottom:36px}
+.start-page .start-hero-refined .start-hero-grid{grid-template-columns:1.03fr 1fr;gap:64px;align-items:center}
+.start-page .starter-intro h1{font-size:clamp(2.8rem,4.5vw,4.15rem);line-height:1.08;margin:22px 0 25px;letter-spacing:-.045em}
+.start-page .starter-intro .starter-lead{font-size:1.08rem;line-height:1.7;color:#202838;max-width:490px;margin-bottom:15px}
+.start-page .starter-intro .starter-description{font-size:.96rem;line-height:1.8;max-width:490px;color:#575c66}
+.start-page .starter-intro .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.start-page .starter-intro .btn{min-height:50px;padding:13px 20px;font-size:.85rem;font-weight:650;display:inline-flex;align-items:center;justify-content:center;text-align:center}
+.start-page .starter-intro .starter-reassurance{font-size:.76rem;line-height:1.8;max-width:430px;color:#575c66;margin:20px 0 0}
+.start-page .starter-intro .start-tagline{color:#805414;border-top:1px solid #c9bea8;padding-top:20px;margin-top:25px;font-size:.78rem;max-width:430px}
+.start-page .starter-benefits{background:#141824;color:#f7efdd;border-top:3px solid #c6892a;padding:27px 28px 20px}
+.starter-panel-label{font-size:.61rem;letter-spacing:.15em;color:#efbd72;font-weight:650}
+.starter-benefits-heading h2{font-family:var(--font-body);font-size:1.65rem;line-height:1.25;margin:10px 0 22px;letter-spacing:-.035em}
+.start-page .starter-benefit{display:grid;grid-template-columns:30px 1fr;gap:0 13px;text-decoration:none;border-top:1px solid #ffffff28;padding:16px 0;color:#f7efdd;align-items:start}
+.starter-icon{grid-row:1/3;color:#efbd72;padding-top:2px}
+.starter-icon svg{display:block;width:24px;height:24px}
+.starter-benefit-copy{display:grid;gap:4px}
+.starter-benefit-copy strong{font-size:.85rem;font-weight:650;line-height:1.5}
+.starter-benefit-copy>span{font-size:.73rem;line-height:1.65;color:#c9cbd2}
+.starter-action{grid-column:2;justify-self:start;border:1px solid #9097a7;border-radius:3px;padding:7px 12px;margin-top:10px;min-height:36px;display:flex;align-items:center;font-size:.69rem;line-height:1.4;font-weight:650;color:#f7efdd;background:#ffffff08}
+.start-page .starter-benefit:hover{text-decoration:none;background:#ffffff08}
+.starter-benefit:hover .starter-action{background:#f7efdd;color:#141824;border-color:#f7efdd}
+.start-page .starter-benefits .starter-access-note{font-size:.65rem;line-height:1.7;color:#c9cbd2;margin:15px 0 0;border-top:1px solid #ffffff28;padding-top:13px}
+.start-page .starter-benefit:focus-visible{outline:3px solid #efbd72;outline-offset:5px}
+.start-page .start-jump>.wrap{gap:6px 12px}
+.start-page .start-jump a{border-radius:3px;padding:6px 12px;min-height:40px;border:1px solid transparent;color:#141824}
+.start-page .start-jump a:hover,.start-page .start-jump a[aria-current=location]{background:#eee5d3;border-color:#c9bea8;text-decoration:none}
+.start-page .start-action-link{display:inline-flex;align-items:center;justify-content:center;justify-self:start;min-height:44px;border:1px solid #a69c89;background:#fcfaf5;border-radius:3px;padding:9px 15px;font-size:.77rem;line-height:1.5;font-weight:650;text-decoration:none;text-align:center}
+.start-page .start-action-link:hover{background:#141824;color:#f7efdd;border-color:#141824;text-decoration:none}
+.start-page .essential-grid{gap:16px;align-items:stretch}
+.start-page .essential-grid .resource{display:flex;flex-direction:column;align-items:flex-start;gap:18px;justify-content:space-between;border:1px solid #c9bea8!important;background:#fffdf8;padding:24px;border-radius:4px;color:#141824;min-height:204px;text-decoration:none;transition:none}
+.start-page .essential-grid .resource strong{font-size:1.05rem;line-height:1.4;display:block}
+.start-page .essential-grid .resource small{font-size:.82rem;line-height:1.75;display:block;margin-top:8px;color:#575c66;max-width:360px}
+.start-page .resource-action{display:inline-flex;align-items:center;justify-content:center;background:#141824;color:#f7efdd;border:1px solid #141824;border-radius:3px;min-height:44px;padding:9px 15px;font-size:.76rem;line-height:1.5;font-weight:650}
+.start-page .essential-grid .resource:hover{background:#f7efdd;border-color:#805414!important;text-decoration:none;padding:24px}
+.start-page .essential-grid .resource:hover .resource-action{background:#303749}
+.start-page .essential-grid .resource:focus-visible{outline:3px solid #805414;outline-offset:4px}
+.start-page .follow-links a{padding:10px 16px;border:1px solid #a69c89;border-radius:3px;text-decoration:none;background:#fcfaf5;font-size:.82rem}
+.start-page .follow-links a:hover{background:#141824;color:#f7efdd}
+@media(min-width:1200px){.start-page .starter-benefit{grid-template-columns:28px 1fr auto;gap:0 12px;align-items:center}.starter-icon{grid-row:auto}.starter-action{grid-column:3;margin-top:0;min-height:44px}.starter-benefit-copy>span{max-width:235px}}
+@media(max-width:1000px){.start-page .start-hero-refined .start-hero-grid{gap:35px}.start-page .starter-intro h1{font-size:3.1rem}.start-page .starter-benefits{padding:24px}.starter-benefits-heading h2{font-size:1.45rem}}
+@media(max-width:900px){.start-page .start-hero-refined .start-hero-grid{grid-template-columns:1fr;gap:32px}.start-page .starter-intro{max-width:580px}.start-page .starter-benefits{max-width:650px}.start-page .start-hero-refined .breadcrumb{margin-bottom:26px}.start-page .starter-intro h1{font-size:clamp(2.5rem,8vw,3.6rem)}.start-page .starter-benefit{grid-template-columns:30px 1fr auto;gap:0 13px;align-items:center}.starter-icon{grid-row:auto}.starter-action{grid-column:3;margin:0;min-height:44px}.starter-benefit-copy>span{max-width:280px}.start-page .start-jump span{width:100%;margin-bottom:4px}}
+@media(max-width:480px){.start-page .starter-intro h1{font-size:2.75rem}.start-page .starter-intro .actions{flex-direction:column}.start-page .starter-benefits{padding:23px 20px}.start-page .starter-benefit{grid-template-columns:26px 1fr;gap:0 10px}.starter-icon{grid-row:1/3}.starter-action{grid-column:2;margin-top:10px;min-height:44px}.start-page .start-jump a{padding:6px 9px;font-size:.74rem}.start-page .essential-grid .resource{padding:22px;min-height:190px}.start-page .essential-grid .resource:hover{padding:22px}.start-page .resource-action{width:100%}.start-page .start-hero-refined{padding-bottom:35px}}
+
