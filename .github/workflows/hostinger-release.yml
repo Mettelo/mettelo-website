@@ -1,0 +1,41 @@
+name: Prepare Hostinger release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: hostinger-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check website
+        run: |
+          for check in scripts/check*.mjs; do node "$check"; done
+      - name: Prepare public files
+        run: node scripts/package-hostinger.mjs "$RUNNER_TEMP/mettelo-public"
+      - name: Publish deployment branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd "$RUNNER_TEMP/mettelo-public"
+          git init -b hostinger-release
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          if git ls-remote --exit-code --heads origin hostinger-release >/dev/null; then
+            git fetch --depth=1 origin hostinger-release
+            git reset --soft FETCH_HEAD
+          fi
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Release website from ${GITHUB_SHA}"
+          git push origin HEAD:hostinger-release
