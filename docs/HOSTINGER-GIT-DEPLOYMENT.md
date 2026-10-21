@@ -1,6 +1,6 @@
 # Hostinger Git deployment
 
-Source branch: product-design-refinement. Deployment branch: hostinger-release.
+Source branch: main. Deployment branch: hostinger-release.
 The deployment branch contains only public website files, with index.html at its root.
 No package.json, dependencies or build command is needed on Hostinger.
 

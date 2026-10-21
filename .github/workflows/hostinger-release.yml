@@ -1,7 +1,7 @@
 name: Prepare Hostinger release
 on:
   push:
-    branches: [product-design-refinement]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
