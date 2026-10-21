@@ -3,7 +3,7 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-for(const page of ['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html']){
+for(const page of ['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html','privacy/index.html','contact/index.html']){
  const html=readFileSync(resolve(root,page),'utf8');
  assert(!html.includes('href="/start/'),'Onboarding must be unlisted: '+page);
  for(const part of ['header','footer']){

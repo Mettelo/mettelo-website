@@ -23,11 +23,12 @@ function boot(saved = null, blocked = false) {
   const progress = {}, text = {}, status = {};
   const reset = {callbacks:{},addEventListener(e,fn){this.callbacks[e]=fn;}};
   const document = {querySelectorAll:()=>boxes,querySelector:()=>reset,getElementById:id=>({'onboarding-progress':progress,'progress-text':text,'storage-status':status}[id])};
-  vm.runInNewContext(source,{document,localStorage:{getItem(){if(blocked)throw Error('blocked');return stored;},setItem(k,v){if(blocked)throw Error('blocked');stored=v;}}});
+  vm.runInNewContext(source,{document,localStorage:{getItem(){if(blocked)throw Error('blocked');return stored;},setItem(k,v){if(blocked)throw Error('blocked');stored=v;},removeItem(){if(blocked)throw Error('blocked');stored=null;}}});
   return {boxes,progress,text,status,reset,stored:()=>stored};
 }
 const app = boot();
 assert.equal(app.progress.value, 0);
+assert.equal(app.stored(),null,'No storage created before checklist interaction');
 app.boxes[0].checked=true;app.boxes[0].callbacks.change();
 assert.equal(app.progress.value, 1);
 assert.deepEqual(JSON.parse(app.stored()), [steps[0]]);
@@ -36,6 +37,7 @@ app.boxes[0].checked=false;app.boxes[0].callbacks.change();assert.equal(app.prog
 for(const box of app.boxes){box.checked=true;box.callbacks.change();}
 assert.equal(app.progress.value,7);assert(app.text.textContent.includes('7 of 7'));
 app.reset.callbacks.click();assert.equal(app.progress.value,0);assert(app.boxes[0].focused);
+assert.equal(app.stored(),null,'Reset removes saved progress');
 for(const invalid of ['{broken', '{}', '[null,42,"unknown"]']) assert.equal(boot(invalid).progress.value,0);
 const unavailable=boot(null,true);unavailable.boxes[1].checked=true;unavailable.boxes[1].callbacks.change();assert.equal(unavailable.progress.value,1);assert(unavailable.status.textContent.includes('unavailable'));
 console.log('Passed: onboarding anchors/assets, seven labelled steps, eight cards, eight essential destinations, safe tabs; persistence, unchecking, completion, reset, malformed and blocked storage.');

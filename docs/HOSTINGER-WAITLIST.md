@@ -10,7 +10,7 @@ Abuse controls allow three attempts per network per fifteen minutes and ninety t
 
 ## Before enabling
 
-1. Approve operator identity, waitlist purpose, collection notice, retention/deletion, withdrawal process and complete privacy information. The draft collection notice is not a finished Privacy Policy. Replace its draft wording with the approved version.
+1. Review the completed collection notice and /privacy/ against actual operations. Operator is the owner-confirmed Mettelo Technologies Limited. Put retention/deletion, withdrawal handling, provider safeguards and the monitored inbox into practice before enabling collection. See PRIVACY-AND-SUPPORT-OPERATIONS.md.
 2. Confirm PHP 8.1+ and PHP mail() availability in the chosen Hostinger hosting account. Configure the confirmed hello@mettelo.com sender/mailbox according to Hostinger's instructions. Do not put mailbox passwords in the website.
 3. Upload public website pages/assets plus waitlist PHP files into public_html. Never upload work/, .git/, outputs/, scripts/, shared/header.html, shared/footer.html, tests, docs or internal review files. shared/public.css IS a public asset and must be included. No new build system is required.
 4. Verify the config.php origins match the actual HTTPS domain. For a temporary Hostinger preview, add only that exact trusted HTTPS origin. Set storage to a private writable absolute directory outside the document root if the default parent location does not suit the account. Never place rate state in a publicly served folder.

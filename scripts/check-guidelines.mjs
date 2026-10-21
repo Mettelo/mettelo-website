@@ -25,6 +25,6 @@ for (const path of pages) {
 const guide=readFileSync(resolve(root,'community-guidelines/index.html'),'utf8');
 assert.equal((guide.match(/class="standard-number"/g)||[]).length,10);
 assert(!/<(?:input|form)\b/.test(guide),'Guidelines must not accept membership agreements');
-assert(!/mailto:/.test(guide),'No invented reporting address');
-for(const text of ['Draft for community review','awaiting administrator configuration','Privacy Notice required before public launch','approval required','Participation does not automatically constitute paid employment.','I agree to follow the Community Guidelines.','https://tally.so/r/J9b5zd','https://tally.so/r/eq4Wjo']) assert(guide.includes(text),`Missing: ${text}`);
-console.log('Passed: all three pages, local routes/assets/anchors, safe external tabs, ten standards, draft/reporting/privacy flags and no acceptance form.');
+assert(guide.includes('mailto:hello@mettelo.com'),'Business reporting route');
+for(const text of ['Mettelo Technologies Limited','adults aged 18 or over','How concerns are considered','/privacy/','/contact/#community','Participation does not automatically constitute paid employment.','I agree to follow the Community Guidelines.','https://tally.so/r/J9b5zd','https://tally.so/r/eq4Wjo']) assert(guide.includes(text),`Missing: ${text}`);
+console.log('Passed: local routes/assets/anchors, safe tabs, ten standards, adult eligibility, reporting/privacy links and no acceptance form.');

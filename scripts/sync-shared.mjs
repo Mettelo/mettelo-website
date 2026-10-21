@@ -2,7 +2,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const pages=['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html'];
+const pages=['index.html','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html','privacy/index.html','contact/index.html'];
 for(const page of pages){
  let html=readFileSync(resolve(root,page),'utf8');
  const css=page==='index.html'?'shared/public.css':'../shared/public.css';
@@ -14,4 +14,4 @@ for(const page of pages){
  }
  writeFileSync(resolve(root,page),html);
 }
-console.log('Shared navigation and footer synchronised across five static pages.');
+console.log('Shared navigation and footer synchronised across seven static pages.');

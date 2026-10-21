@@ -1,9 +1,9 @@
-# Terms review checkpoint
+# Terms and trust review checkpoint
 
-Status: draft, not effective; awaiting owner and legal approval. Do not merge or publish as effective legal terms without resolving the release decisions in docs/V1-TRUST-GAP-ANALYSIS.md.
+Public policy text completed 21 October 2026 for owner review. Terms, Privacy, Contact and Community Guidelines now use the confirmed operator name Mettelo Technologies Limited and adult eligibility. Public draft/pending/version labels removed. No personal address, registration number or registration-history claim added.
 
-Implemented: /terms/ with nine navigable sections, responsive shared branding/navigation/footer, visible draft status and noindex,follow. Current external services preserved. No blanket publication licence, invented legal operator, jurisdiction, effective date or verified email. No employment, sponsorship, placement or professional outcome guarantees.
+Policies address current external applications, resources, community spaces, contribution rights, support, optional launch updates and browser storage. Mandatory rights are preserved; employment, sponsorship and project placement are not guaranteed. Retention periods are Mettelo policy choices, not uniform statutory requirements.
 
-Owner decisions: operator identity/location; eligibility/minimum age; support/privacy/moderation contacts and review process; project contribution permissions; governing law; appropriate limitations and final legal wording. Approve effective date and change communication only after legal review.
+See docs/PRIVACY-AND-SUPPORT-OPERATIONS.md for research, rationale and launch tasks. Provider contracts/transfers, export inventory, mailbox responsibilities, form notices and retention practice must be verified. This is not certification of legal compliance or provider settings; a jurisdiction-specific legal/operations check remains appropriate before publication.
 
-Privacy, Cookies and Contact remain audit-only until this deliverable is reviewed. Existing homepage, onboarding, guidelines and Our Story remain in the stacked review workflow; this branch targets our-story and is not a production deployment.
+Waitlist remains disabled until collection controls and Hostinger delivery are verified. No production, domain or external-form changes. Membership integration/resource access remains a later planning phase.
