@@ -1,5 +1,9 @@
 # Mettelo public website
 
+V2 development starts with [the isolated development foundation](docs/V2-DEVELOPMENT.md).
+The existing public website remains the production baseline; member functionality
+will be transferred incrementally from the platform on a separate branch/app.
+
 Static HTML, CSS and progressive JavaScript, with a small PHP waitlist handler. No database, package dependencies, accounts or payments. Existing external services remain the destination for membership/project applications, resources and collaboration. The live waitlist connects to the separate forms.mettelo.com PHP endpoint and sends notifications through Hostinger Mail to hello@mettelo.com. Local PHP collection stays disabled. See services/waitlist/README.md for the independently deployed service; credentials are stored only on Hostinger outside public_html.
 
 ## Run locally

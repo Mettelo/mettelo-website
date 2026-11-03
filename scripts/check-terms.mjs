@@ -23,5 +23,5 @@ assert(terms.includes('does not guarantee employment, sponsorship, project place
 assert(!terms.includes('<form'));
 assert(terms.includes('mailto:hello@mettelo.com'));
 assert(existsSync(resolve(root,'privacy/index.html'))&&existsSync(resolve(root,'contact/index.html')));
-assert(terms.includes('https://tally.so/r/J9b5zd')&&terms.includes('https://tally.so/r/eq4Wjo'));
+assert(terms.includes('/#member-access')&&terms.includes('/projects/'));
 console.log('Terms scope, operator, adult eligibility, seven-page trust links, anchors and external-link safety passed.');

@@ -1,2 +1,15 @@
 /dist/
 /node_modules/
+**/node_modules/
+**/.next/
+**/.next-check/
+**/.next-preview/
+**/.env
+**/.env.*
+!**/.env.example
+**/*.tsbuildinfo
+/playwright-report/
+/test-results/
+/private-data/
+**/.next-build-backup/
+/supabase/.temp/

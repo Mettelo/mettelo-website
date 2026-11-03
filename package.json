@@ -8,6 +8,8 @@
   },
   "scripts": {
     "build": "node scripts/build-static.mjs",
-    "test": "node scripts/check-all.mjs"
+    "test": "node scripts/check-all.mjs",
+    "test:packaging": "node --test tests/static-package-boundary.test.mjs",
+    "check:static-output": "node scripts/audit-static-output.mjs"
   }
 }

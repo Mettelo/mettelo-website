@@ -35,5 +35,5 @@ for(const file of ['founder-480.webp','founder-960.webp','founder-960.jpg']) ass
 assert(story.includes('over seven years of experience'));
 assert(story.includes('I believe professional growth should go beyond qualifications and certifications.'));
 assert(story.includes('class="founder-message"'));
-assert(story.includes('https://tally.so/r/J9b5zd'));
+assert(story.includes('/#member-access'));
 console.log('Passed: all four pages/routes/assets/anchors, story navigation, safe tabs, supplied founder content, responsive portrait assets, alt text and lazy loading.');

@@ -1,5 +1,15 @@
 # Hostinger Git deployment
 
+## Verified live configuration — 1 November 2026
+
+mettelo.com currently uses the Hostinger Web App importer connected to main,
+root ./, framework Other, Node 22, build npm run build, output dist (static
+publish mode). Auto-deployment is on. The live PHP waitlist remains separate
+at forms.mettelo.com. Do not switch the live source or settings based on the
+historical alternatives below. See V2-DEVELOPMENT.md for development isolation.
+
+## Alternative: PHP/HTML deployment branch
+
 Source branch: main. Deployment branch: hostinger-release.
 The deployment branch contains only public website files, with index.html at its root.
 No package.json, dependencies or build command is needed on Hostinger.
@@ -16,8 +26,8 @@ GitHub Actions must have permission to run and write repository contents; any br
 protection must allow the release workflow. Review the Actions run before expecting
 Hostinger to deploy. Do not edit files directly on the generated release branch.
 
-The static/Node importer shown in the screenshot is not the selected deployment route:
-static-only hosting cannot execute the PHP waitlist handler. PHP 8.1+ is required.
+Static-only hosting cannot execute the PHP waitlist handler locally. PHP 8.1+
+is required only for the independent PHP service or this PHP/HTML alternative.
 The live waitlist uses the separate PHP service at https://forms.mettelo.com/index.php.
 Authenticated notification delivery to hello@mettelo.com was verified on 21 October
 2026. Mail credentials and abuse counters remain outside public_html. The source
