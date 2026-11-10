@@ -1,0 +1,374 @@
+{
+  "reviewDate": "2026-11-04",
+  "scope": "Historical platform reference only; superseded by the owner scope reset in docs/V2-SIMPLIFICATION-AND-GAP-PLAN-2026-11-04.md. Missing old routes are not automatic release blockers.",
+  "entries": [
+    {
+      "sourceRoute": "/",
+      "status": "implemented",
+      "destination": "/",
+      "evidenceFile": "index.html",
+      "acceptance": "pending",
+      "note": "Refreshed website homepage; owner content acceptance remains open."
+    },
+    {
+      "sourceRoute": "/about",
+      "status": "mapped",
+      "destination": "/our-story/",
+      "evidenceFile": "our-story/index.html",
+      "acceptance": "pending",
+      "note": "Website story exists; source content equivalence and legacy URL redirect are unaccepted."
+    },
+    {
+      "sourceRoute": "/activity",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/blog",
+      "status": "mapped",
+      "destination": "/industry-news?format=blog",
+      "evidenceFile": "apps/member/app/industry-news/page.tsx",
+      "acceptance": "pending",
+      "note": "New editorial blog filter exists; legacy /blog redirect and content migration are unaccepted."
+    },
+    {
+      "sourceRoute": "/blog/[slug]",
+      "status": "mapped",
+      "destination": "/industry-news/[slug]",
+      "evidenceFile": "apps/member/app/industry-news/[slug]/page.tsx",
+      "acceptance": "pending",
+      "note": "New article route exists; legacy slug mapping/content migration is unverified."
+    },
+    {
+      "sourceRoute": "/careers",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/careers/[slug]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/careers/applications",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/collaborate/[id]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/community",
+      "status": "mapped",
+      "destination": "/start/",
+      "evidenceFile": "start/index.html",
+      "acceptance": "pending",
+      "note": "Unlisted onboarding and external community channels; no equivalent community application."
+    },
+    {
+      "sourceRoute": "/community-guidelines",
+      "status": "implemented",
+      "destination": "/community-guidelines/",
+      "evidenceFile": "community-guidelines/index.html",
+      "acceptance": "pending",
+      "note": "Website guidance exists; policy/content acceptance remains open."
+    },
+    {
+      "sourceRoute": "/contact",
+      "status": "implemented",
+      "destination": "/contact/",
+      "evidenceFile": "contact/index.html",
+      "acceptance": "pending",
+      "note": "Public contact form and restricted admin inbox; current rollback acceptance recorded."
+    },
+    {
+      "sourceRoute": "/contribute",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/credentials/[credentialId]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/events",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/events/[slug]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/faq",
+      "status": "mapped",
+      "destination": "/#faq-title",
+      "evidenceFile": "index.html",
+      "acceptance": "pending",
+      "note": "Homepage FAQ section; dedicated legacy route is absent."
+    },
+    {
+      "sourceRoute": "/feedback",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/join",
+      "status": "mapped",
+      "destination": "/signup",
+      "evidenceFile": "apps/member/app/signup/page.tsx",
+      "acceptance": "pending",
+      "note": "Website signup entry; legacy route and hosted email acceptance remain open."
+    },
+    {
+      "sourceRoute": "/media",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/membership",
+      "status": "mapped",
+      "destination": "/signup",
+      "evidenceFile": "apps/member/app/signup/page.tsx",
+      "acceptance": "pending",
+      "note": "Account creation does not replace every source membership-page behaviour."
+    },
+    {
+      "sourceRoute": "/mentors",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/newsletter",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/newsletter/preferences",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/opportunities",
+      "status": "implemented",
+      "destination": "/opportunities",
+      "evidenceFile": "apps/member/app/opportunities/page.tsx",
+      "acceptance": "pending",
+      "note": "Runtime listing/filter/search/pagination/save; freshness and hosted acceptance remain open."
+    },
+    {
+      "sourceRoute": "/opportunities/[id]",
+      "status": "implemented",
+      "destination": "/opportunities/[id]",
+      "evidenceFile": "apps/member/app/opportunities/[id]/page.tsx",
+      "acceptance": "pending",
+      "note": "Retained detail route; listing cards now use safe direct external application links."
+    },
+    {
+      "sourceRoute": "/organisation",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/organisations",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/partnership",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/people",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/people/[id]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/privacy",
+      "status": "implemented",
+      "destination": "/privacy/",
+      "evidenceFile": "privacy/index.html",
+      "acceptance": "pending",
+      "note": "V2 public policy exists; production policy release is separate."
+    },
+    {
+      "sourceRoute": "/project-architect",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/projects",
+      "status": "implemented",
+      "destination": "/projects/",
+      "evidenceFile": "projects/index.html",
+      "acceptance": "pending",
+      "note": "50 project briefs with search/facets; sourced metadata and packaging checks pass."
+    },
+    {
+      "sourceRoute": "/projects/[id]",
+      "status": "mapped",
+      "destination": "/projects/[projectRef]/",
+      "evidenceFile": "projects/index.html",
+      "acceptance": "pending",
+      "note": "Static reference-based details exist; source UUID/bookmark mapping remains unverified."
+    },
+    {
+      "sourceRoute": "/projects/master/[id]",
+      "status": "mapped",
+      "destination": "/projects/[projectRef]/",
+      "evidenceFile": "projects/index.html",
+      "acceptance": "pending",
+      "note": "Briefs link to master GitHub repositories; no equivalent legacy master route."
+    },
+    {
+      "sourceRoute": "/projects/paths",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/projects/paths/[slug]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/proof/[id]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/search",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/showcase",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/signin",
+      "status": "implemented",
+      "destination": "/signin",
+      "evidenceFile": "apps/member/app/signin/page.tsx",
+      "acceptance": "pending",
+      "note": "Website sign-in and safe return destination; hosted auth acceptance remains open."
+    },
+    {
+      "sourceRoute": "/spotlight",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/spotlight/[id]",
+      "status": "missing",
+      "destination": null,
+      "evidenceFile": null,
+      "acceptance": "pending",
+      "note": "No equivalent website page/data/form journey has been transferred. Required inventory item; no deferral inferred."
+    },
+    {
+      "sourceRoute": "/submitted",
+      "status": "mapped",
+      "destination": "/member/projects/[id]/interest",
+      "evidenceFile": "apps/member/app/member/projects/[id]/interest/page.tsx",
+      "acceptance": "pending",
+      "note": "Specific project-interest receipt exists; generic source form confirmations are not transferred."
+    },
+    {
+      "sourceRoute": "/terms",
+      "status": "implemented",
+      "destination": "/terms/",
+      "evidenceFile": "terms/index.html",
+      "acceptance": "pending",
+      "note": "V2 public terms exist; production policy release is separate."
+    }
+  ]
+}

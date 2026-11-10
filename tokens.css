@@ -18,7 +18,14 @@
   --space-3: 24px;
   --space-4: 32px;
   --space-6: 48px;
-  --radius-control: 4px;
-  --radius-card: 6px;
+  --radius-control: 8px;
+  --radius-card: 16px;
   --max: 1200px;
+  --control-border: #85838a;
+  --focus: #9b651c;
+  --danger: #a12c35;
+  --success: #236747;
+  --shadow-menu: 0 12px 32px #14182418;
+  --space-8: 64px;
+  --space-10: 80px;
 }

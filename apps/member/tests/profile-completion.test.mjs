@@ -1,0 +1,6 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {profileCompletion} from '../lib/profile-completion.mjs';
+const seven={full_name:'Test Member',headline:'Data analyst',location:'London',bio:'Developing practical analytics experience.',professional_area:'Data Analysis / BI',experience_level:'entry',primary_goal:'Build practical experience'};
+test('interest threshold is 80%, with no compulsory photo, employer or social link',()=>{assert.equal(profileCompletion(seven).percent,70);assert.equal(profileCompletion(seven).eligible,false);const eight={...seven,current_job_title:'Student / career changer'};assert.equal(profileCompletion(eight).percent,80);assert.equal(profileCompletion(eight).eligible,true);assert.equal(profileCompletion({...eight,primary_goal:'  '}).eligible,false);});
+test('invalid taxonomy, credential URLs and duplicate links cannot inflate the score',()=>{assert.equal(profileCompletion({professional_area:'invalid',experience_level:'invalid',linkedin_url:'https://user:pass@example.com'}).percent,0);assert.equal(profileCompletion({linkedin_url:'https://example.com',github_url:'https://example.com',portfolio_url:'https://example.com'}).percent,10);assert.equal(profileCompletion({organisation:'Employer',username:'handle',profile_completed_at:'2026-11-02'}).percent,0);assert.equal(profileCompletion().percent,0);});

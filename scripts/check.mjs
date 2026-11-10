@@ -16,12 +16,16 @@ for (const [, path] of html.matchAll(/(?:src|href)="([^"#:]+\.(?:svg|css|js))"/g
 for (const tag of html.match(/<a\b[^>]*target="_blank"[^>]*>/g) || []) {
   assert(tag.includes('noopener') && tag.includes('noreferrer'), 'Unsafe external tab');
 }
-const required = ['https://tally.so/r/J9b5zd', 'https://tally.so/r/eq4Wjo', 'https://mettelo.github.io/project-library/', 'https://github.com/Mettelo', 'https://www.youtube.com/@Officialmettelo', 'https://discord.gg/yy9qJZ7W', 'https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0', 'https://x.com/officialmettelo', 'https://linkedin.com/company/officialmettelohq', 'https://facebook.com/officialmettelo', 'https://instagram.com/officialmettelo'];
+const required = [ '/projects/', 'https://github.com/Mettelo', 'https://www.youtube.com/@Officialmettelo', 'https://discord.gg/yy9qJZ7W', 'https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0', 'https://x.com/officialmettelo', 'https://linkedin.com/company/officialmettelohq', 'https://facebook.com/officialmettelo', 'https://instagram.com/officialmettelo'];
 for (const url of required) assert(html.includes(`href="${url}"`), `Missing integration: ${url}`);
 assert(!html.includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Public homepage must route career resources through community membership');
 assert(readFileSync(resolve(root, 'start/index.html'), 'utf8').includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Preserve onboarding resource access');
+assert.equal((html.match(/data-member-route="\/member\/resources"/g)||[]).length,1,'Keep one consolidated career resource route; no duplicate application/interview links');
 assert(!readFileSync(resolve(root, 'assets/logo-sand.svg'), 'utf8').includes('M704.36 702'), 'Embedded tagline returned');
-const files = ['index.html', 'tokens.css', 'styles.css', 'career.css', 'shared/public.css', 'shared/home.css', 'shared/home.js', 'waitlist/waitlist.css', 'waitlist/form.js', 'script.js', 'assets/logo-sand.svg', 'assets/favicon.svg'];
+const files = ['index.html', 'tokens.css', 'styles.css', 'shared/public.css', 'shared/home.css', 'shared/home-experience.css', 'shared/home-experience.js', 'script.js', 'projects/catalogue.js', 'assets/logo-sand.svg', 'assets/logo-navy.svg', 'assets/favicon.svg'];
 const bytes = files.reduce((total, file) => total + statSync(resolve(root, file)).size, 0);
 assert(bytes < 100_000, 'Homepage asset budget exceeds 100KB');
 console.log(`Passed: unique IDs, section destinations, assets, H1, tagline, safe external tabs, all public integrations. Initial local assets: ${bytes} bytes.`);
+
+assert(html.includes('data-member-route="/signup"'), 'Membership must route to website signup');
+assert(!html.includes('https://tally.so/r/J9b5zd'), 'Retired membership form returned');

@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';
+import {labSession} from '@/lib/lab';
+import {profileRequestOriginAllowed} from '@/lib/request-origin.mjs';
+export async function POST(request:Request){if(!profileRequestOriginAllowed(request.headers.get('origin')))return NextResponse.json({error:'Invalid origin'},{status:403});const raw=await request.text();if(raw.length>24000)return NextResponse.json({error:'Too large'},{status:413});let payload;try{payload=JSON.parse(raw);if(!['update','note'].includes(payload.action)||!/^[0-9a-f-]{36}$/i.test(payload.id))throw Error();}catch{return NextResponse.json({error:'Invalid request'},{status:400});}const {db,user}=await labSession();if(!user)return NextResponse.json({error:'Sign in required'},{status:401});const {error}=await db.rpc('website_contact_admin',{p_action:payload.action,p_payload:payload});return error?NextResponse.json({error:'Unable to save'},{status:error.code==='42501'?403:400}):NextResponse.json({ok:true});}

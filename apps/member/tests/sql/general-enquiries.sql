@@ -1,0 +1,76 @@
+-- Synthetic identities, records and notifications are all rolled back. No email APIs.
+begin;
+create temp table general_enquiry_results(check_name text,passed boolean);
+do $test$
+declare a uuid:=gen_random_uuid();b uuid:=gen_random_uuid();unverified uuid:=gen_random_uuid();staff uuid;tid uuid;iid uuid;cid uuid;project_case uuid;nonce uuid:=gen_random_uuid();payload jsonb;doc jsonb;denied boolean;k integer;notices bigint;
+begin
+ select user_id into staff from private_website_lab.member_roles where role='full_admin' and private_website_lab.permitted(user_id,'operations') limit 1;
+ if staff is null then raise exception 'Staging support administrator required';end if;
+ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(a,'enquiry-'||a||'@example.invalid',now(),'{}'),(b,'enquiry-'||b||'@example.invalid',now(),'{}'),(unverified,'enquiry-'||unverified||'@example.invalid',null,'{}');
+ payload:=jsonb_build_object('category','account','subject','Synthetic account question','description','Synthetic private enquiry to check support before joining a project.','client_nonce',nonce,'reporter_id',b);
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ execute 'set local role authenticated';
+ cid:=(public.website_lab('support_create',payload)->>'case_id')::uuid;
+ if (public.website_lab('support_create',payload)->>'case_id')::uuid<>cid then raise exception 'Submission retry duplicated enquiry';end if;
+ execute 'reset role';
+ if not exists(select 1 from private_website_lab.support_cases where id=cid and team_id is null and reporter_id=a) then raise exception 'General enquiry needs a team or trusts reporter input';end if;
+ doc:=public.website_lab('support_list','{"personal":"true"}');
+ if not exists(select 1 from jsonb_array_elements(doc->'cases') x where x->>'id'=cid::text and x->>'project_ref'='General enquiry') then raise exception 'General enquiry missing from member list';end if;
+ denied:=false;begin perform public.website_lab('support_create',payload||'{"subject":"Changed retry title"}');exception when raise_exception then denied:=true;end;if not denied then raise exception 'Nonce reused for changed content';end if;
+ insert into general_enquiry_results values('member without placement creates, lists and retries one private enquiry',true);
+ perform set_config('request.jwt.claim.sub',b::text,true);
+ if exists(select 1 from jsonb_array_elements(public.website_lab('support_list','{"personal":"true"}')->'cases') x where x->>'id'=cid::text) then raise exception 'Another member lists private enquiry';end if;
+ foreach doc in array array[jsonb_build_object('case_id',cid),jsonb_build_object('case_id',cid,'body','Unauthorised reply')] loop
+  denied:=false;begin perform public.website_lab(case when doc ? 'body' then 'support_reply' else 'support_case' end,doc);exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Another member accessed enquiry';end if;
+ end loop;
+ insert into general_enquiry_results values('another member cannot list, read or reply to the enquiry',true);
+ for k in 1..2 loop
+  insert into private_website_lab.member_roles(user_id,role) values(b,case when k=1 then 'writer' else 'editor' end) on conflict(user_id) do update set role=excluded.role;
+  denied:=false;begin perform public.website_lab('support_case',jsonb_build_object('case_id',cid));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Editorial role read a private member enquiry';end if;
+  if (public.website_lab('support_list')->>'admin')::boolean then raise exception 'Editorial role became support administrator';end if;
+ end loop;
+ insert into general_enquiry_results values('writer and editor roles gain no support-staff access',true);
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ if not exists(select 1 from jsonb_array_elements(public.website_lab('support_list')->'cases') x where x->>'id'=cid::text) then raise exception 'General enquiry missing from staff inbox';end if;
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic private staff note','internal','true'));
+ select count(*) into notices from private_website_lab.notifications where recipient_id=a;
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic support reply visible to the reporter','internal','false'));
+ if (select count(*) from private_website_lab.notifications where recipient_id=a)<>notices+1 then raise exception 'Support reply notification missing';end if;
+ perform public.website_lab('support_update',jsonb_build_object('case_id',cid,'status','waiting_for_member'));
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ doc:=public.website_lab('support_case',jsonb_build_object('case_id',cid));
+ if jsonb_array_length(doc->'replies')<>1 or exists(select 1 from jsonb_array_elements(doc->'replies') x where (x->>'internal')::boolean) then raise exception 'Internal staff note exposed';end if;
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic member follow-up'));
+ if (select status from private_website_lab.support_cases where id=cid)<>'in_review' then raise exception 'Member follow-up did not return to staff attention';end if;
+ denied:=false;begin perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Forged internal note','internal','true'));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Member wrote internal note';end if;
+ insert into general_enquiry_results values('staff replies notify reporter; internal notes stay private; follow-up restores review status',true);
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ perform public.website_lab('support_update',jsonb_build_object('case_id',cid,'status','closed'));
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ denied:=false;begin perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','A reply after closure'));exception when raise_exception then denied:=true;end;if not denied then raise exception 'Closed enquiry accepted a reply';end if;
+ insert into general_enquiry_results values('closed general enquiries remain readable and reject further replies',true);
+ -- Existing project support remains available only for current placements.
+ insert into public.website_project_teams(project_ref,label) values('MTL-DE-007','[ROLLBACK] Enquiry test '||a) returning id into tid;
+ denied:=false;begin perform public.website_lab('support_create',payload||jsonb_build_object('team_id',tid,'category','scope','client_nonce',gen_random_uuid()));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Non-member opened project enquiry';end if;
+ insert into public.website_project_interests(user_id,project_ref,participation,primary_role,motivation,contribution,answers,terms_version) values(a,'MTL-DE-007','team','Data Engineer',repeat('fixture ',5),repeat('fixture ',8),'{}','2026-09-03-v1') returning id into iid;
+ insert into public.website_project_team_members(team_id,interest_id,user_id,project_ref,role,status) values(tid,iid,a,'MTL-DE-007','Data Engineer','offered');
+ project_case:=(public.website_lab('support_create',payload||jsonb_build_object('team_id',tid,'category','scope','client_nonce',gen_random_uuid()))->>'case_id')::uuid;
+ if (select team_id from private_website_lab.support_cases where id=project_case)<>tid then raise exception 'Project context lost';end if;
+ denied:=false;begin perform public.website_lab('support_create',payload||jsonb_build_object('category','scope','client_nonce',gen_random_uuid()));exception when raise_exception then denied:=true;end;if not denied then raise exception 'Project-only topic accepted without a team';end if;
+ insert into general_enquiry_results values('project placement and topic boundaries preserved',true);
+ perform set_config('request.jwt.claim.sub',unverified::text,true);
+ denied:=false;begin perform public.website_lab('support_create',payload);exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Unverified identity opened enquiry';end if;
+ insert into private_website_lab.member_access(user_id,suspended,reason,changed_by) values(b,true,'Synthetic access restriction',staff);
+ perform set_config('request.jwt.claim.sub',b::text,true);
+ denied:=false;begin perform public.website_lab('support_create',payload);exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Suspended identity opened enquiry';end if;
+ insert into general_enquiry_results values('unverified and suspended identities denied',true);
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ for k in 1..3 loop perform public.website_lab('support_create',payload||jsonb_build_object('client_nonce',gen_random_uuid()));end loop;
+ denied:=false;begin perform public.website_lab('support_create',payload||jsonb_build_object('client_nonce',gen_random_uuid()));exception when raise_exception then denied:=true;end;if not denied then raise exception 'Submission rate limit bypassed';end if;
+ if has_table_privilege('authenticated','private_website_lab.support_cases','SELECT') or has_table_privilege('anon','private_website_lab.support_cases','SELECT') then raise exception 'Direct private table access granted';end if;
+ perform set_config('request.jwt.claim.sub','',true);
+ denied:=false;begin perform public.website_lab('support_list');exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Anonymous enquiry listing allowed';end if;
+ insert into general_enquiry_results values('rate limit, anonymous rejection and private table grants verified',true);
+end $test$;
+select * from general_enquiry_results;
+rollback;

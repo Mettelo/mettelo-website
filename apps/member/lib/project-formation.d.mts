@@ -1,0 +1,10 @@
+import type {LabInterest,LabTeam} from './lab';
+export function currentMembership(m:{status:string}):boolean;
+export function allocated(i:LabInterest,t:LabTeam[]):boolean;
+export function arrangementAllowed(i:LabInterest,a:string):boolean;
+export function coordination(i:LabInterest):string;
+export function formationCandidates(i:LabInterest[],t:LabTeam[],p:string,a:string):LabInterest[];
+export function proposedGroups(i:LabInterest[],t:LabTeam[],p:string):{arrangement:string;members:LabInterest[]}[];
+export function assignedResponsibilities(value:string|string[]|undefined):string[];
+export function proposalResponsibilities(arrangement:string,value:string|string[]|undefined,requiredRoles?:string[]):string[];
+export function validateProposal(p:{members:LabInterest[];arrangement:string;roles:Record<string,string|string[]>;requiredRoles?:string[];projectRoles?:string[];nominee:string;capacity?:number;twoPersonReason?:string}):string;

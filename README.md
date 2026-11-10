@@ -1,4 +1,12 @@
-# Mettelo public website
+# Mettelo website · V1 live, V2 staging preparation
+
+The V2 application now includes accounts, member home, project applications, Mettelo Lab, admin operations, news and job discovery. It is being prepared for a separate protected `staging.mettelo.com` deployment on the existing Business Node.js hosting. See [the current architecture audit and staging runbook](docs/V2-HOSTED-STAGING-ARCHITECTURE-2026-11-05.md). The static `npm run build` remains the V1 public package; use the separate `staging:build` flow for full V2. No staging app or DNS has been deployed by this preparation.
+
+The sections below describe the original live static website.
+
+V2 development starts with [the isolated development foundation](docs/V2-DEVELOPMENT.md).
+The existing public website remains the production baseline; member functionality
+will be transferred incrementally from the platform on a separate branch/app.
 
 Static HTML, CSS and progressive JavaScript, with a small PHP waitlist handler. No database, package dependencies, accounts or payments. Existing external services remain the destination for membership/project applications, resources and collaboration. The live waitlist connects to the separate forms.mettelo.com PHP endpoint and sends notifications through Hostinger Mail to hello@mettelo.com. Local PHP collection stays disabled. See services/waitlist/README.md for the independently deployed service; credentials are stored only on Hostinger outside public_html.
 

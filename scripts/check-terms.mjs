@@ -9,7 +9,7 @@ for(const page of pages){
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(ids.length,new Set(ids).size);
  assert.equal((html.match(/<h1\b/g)||[]).length,1);
- assert(html.includes('aria-label="Legal and trust"'));
+ assert(html.includes('aria-label="Help and trust"'));
  for(const [,href] of html.matchAll(/href="([^"]+)"/g)){
   if(href.startsWith('#'))assert(ids.includes(href.slice(1)),`${page}: ${href}`);
   if(href.startsWith('/')){const u=new URL(href,'https://example.test');const file=resolve(root,u.pathname==='/'?'index.html':u.pathname.replace(/^\/|\/$/g,'')+'/index.html');assert(existsSync(file),href);if(u.hash)assert(readFileSync(file,'utf8').includes(`id="${u.hash.slice(1)}"`),href);}
@@ -23,5 +23,5 @@ assert(terms.includes('does not guarantee employment, sponsorship, project place
 assert(!terms.includes('<form'));
 assert(terms.includes('mailto:hello@mettelo.com'));
 assert(existsSync(resolve(root,'privacy/index.html'))&&existsSync(resolve(root,'contact/index.html')));
-assert(terms.includes('https://tally.so/r/J9b5zd')&&terms.includes('https://tally.so/r/eq4Wjo'));
+assert(terms.includes('/#member-access')&&terms.includes('/projects/'));
 console.log('Terms scope, operator, adult eligibility, seven-page trust links, anchors and external-link safety passed.');

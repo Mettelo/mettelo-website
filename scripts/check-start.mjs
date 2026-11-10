@@ -14,7 +14,7 @@ assert.equal((html.match(/<h1\b/g) || []).length, 1);
 const steps = [...html.matchAll(/data-step="([^"]+)"/g)].map(x => x[1]);
 assert.equal(steps.length, 7);
 assert.equal((html.match(/class="explore-card"/g) || []).length, 8);
-for (const url of ['https://tally.so/r/J9b5zd','https://tally.so/r/eq4Wjo','https://mettelo.github.io/project-library/','https://github.com/Mettelo','https://www.youtube.com/@Officialmettelo','https://discord.gg/yy9qJZ7W','https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE','https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0']) assert(html.includes(`href="${url}"`));
+for (const url of ['/#member-access','/projects/','https://github.com/Mettelo','https://www.youtube.com/@Officialmettelo','https://discord.gg/yy9qJZ7W','https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE','https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0']) assert(html.includes(`href="${url}"`));
 for (const tag of html.match(/<a\b[^>]*target="_blank"[^>]*>/g) || []) assert(tag.includes('noopener') && tag.includes('noreferrer'));
 
 function boot(saved = null, blocked = false) {

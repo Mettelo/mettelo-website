@@ -1,0 +1,4 @@
+export default function ParticipationPreviewNotice({page,preview}:{page:'applications'|'lab';preview:boolean}){
+ if(process.env.NODE_ENV!=='development')return null;
+ return <aside className={preview?'pcPreview':'pcPreviewLink'} aria-label="Card design preview">{preview?<><div><strong>Example project journeys</strong><span>Design preview · nothing is saved</span></div><nav aria-label="Preview pages"><a href={`/member/${page}`}>My real {page==='lab'?'Lab':'applications'}</a></nav><details><summary>About these examples</summary><p>These are example applications and placements, not your records. Offer and workspace actions are disabled. Project briefs can still be opened.</p></details></>:<a href={`/member/${page}?preview=cards`}>Preview example {page==='lab'?'Lab':'application'} cards →</a>}</aside>;
+}

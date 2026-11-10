@@ -1,2 +1,26 @@
 /dist/
 /node_modules/
+**/node_modules/
+**/.next/
+**/.next-check/
+**/.next-preview/
+**/.env
+**/.env.*
+!**/.env.example
+**/*.tsbuildinfo
+/playwright-report/
+/test-results/
+/private-data/
+**/.next-build-backup/
+/supabase/.temp/
+
+# Private weekly pulse previews
+apps/member/.weekly-pulse-preview/
+
+# Private project email previews
+apps/member/.project-email-previews/
+
+# Generated hosted-staging bundle
+apps/member/public/_site/
+apps/member/hosted-static-routes.json
+**/.next-staging-check/

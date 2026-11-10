@@ -1,0 +1,10 @@
+'use client';
+import Link from 'next/link';
+import type {CommunityPost} from '@/lib/market-community';
+import type {MarketDetailSelection} from './MarketDetailDrawer';
+import FeedIcon from './FeedIcon';
+import RecruitmentShare from '@/components/RecruitmentShare';
+export default function MarketOpportunityPost({post,onInspect}:{post:CommunityPost;onInspect:(selection:MarketDetailSelection)=>void}){
+ const recruiting=post.entry_type==='project',selection:MarketDetailSelection={kind:recruiting?'project':'proposal',id:post.source_id!};
+ return <article className="feedPost feedOpportunity" aria-label={(recruiting?'Recruiting Lab: ':'Approved member project: ')+post.title}><header className="feedPostHeader"><span className="feedAvatar" aria-hidden="true"><FeedIcon name={recruiting?'people':'showcase'}/></span><div className="feedIdentity">{post.author_id?<Link href={'/member/market/people/'+post.author_id}>{post.author}</Link>:<strong>{post.author}</strong>}<span>{recruiting?'Lab leader · Recruiting collaborators':'Member project · Approved for applications'}</span><time dateTime={post.created_at}>{new Date(post.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'Europe/London'})}</time></div></header><div className="feedPostBody"><span className="feedPostKind">{recruiting?'Project opportunity':'Approved project idea'}</span><h2><button type="button" onClick={()=>onInspect(selection)}>{post.title}</button></h2><p>{post.body}</p><div className="marketTags">{post.topics.map(topic=><span key={topic}>{topic}</span>)}</div>{post.roles?.length? <p className="feedOpportunityMeta">Roles: {post.roles.join(' · ')}</p>:null}{post.commitment&&<p className="feedOpportunityMeta">Commitment: {post.commitment}</p>}<p className="feedOpportunityMeta">{recruiting?post.available+' collaborator seats available':'Official applications open. Approval does not create an active Lab.'}</p><button className="pcButton" onClick={()=>onInspect(selection)}>{recruiting?'Explore collaboration':'View project & application'} <FeedIcon name="arrow"/></button>{recruiting&&<RecruitmentShare teamId={post.source_id!}/>}</div></article>;
+}

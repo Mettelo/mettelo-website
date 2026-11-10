@@ -1,0 +1,12 @@
+import styles from './team-roster.module.css';
+import LabMemberAvatar from './LabMemberAvatar';
+type Member={id:string;name:string;role:string;headline?:string|null;username?:string|null;avatarUrl?:string|null};
+type Work={owner_id:string|null;kind:string;status:string};
+// Adapted from the platform MetteloLabPanel's team roster and RosterMember.
+export default function LabTeamRoster({members,currentUserId,coordinatorId,label,status,items}:{members:Member[];currentUserId:string;coordinatorId:string|null;label:string;status:string;items:Work[]}){
+ const lead=members.find(m=>m.id===coordinatorId);
+ return <section className={`${styles.metteloLab} ${styles.teamRoster}`} id="team"><div className={styles.teamHero}><div><span className={styles.cardNumber}>Your team · Mettelo Lab</span><h2>{label}</h2><p className={styles.teamIntro}>The people working with you, their roles and the work they own.</p></div><div className={styles.teamSnapshot}><span>{status}</span><strong>{members.length}</strong><small>confirmed members</small></div></div>
+ <div className={styles.teamMeta}><span><strong>Coordinator</strong><b>{lead?.name||'Not assigned yet'}</b></span><span><strong>Working space</strong><b>Private to this team</b></span></div>
+ {members.length?<div className={styles.teamGrid}>{members.map(m=>{const tasks=items.filter(i=>i.kind==='task'&&i.owner_id===m.id);const milestones=items.filter(i=>i.kind==='milestone'&&i.owner_id===m.id);return <article key={m.id} className={styles.teamMember} data-current-user={m.id===currentUserId?'true':undefined}><LabMemberAvatar className={styles.personAvatar} name={m.name} photo={m.avatarUrl}/><div className={styles.memberContent}><div className={styles.memberHeading}><div><strong>{m.name}</strong>{m.username&&<small>@{m.username}</small>}{m.id===currentUserId&&<span className={styles.youLabel}>You</span>}</div><span className={styles.rolePill}>{m.id===coordinatorId?'Coordinator':m.role}</span></div>{m.headline&&<p className={styles.memberHeadline}>{m.headline}</p>}<div className={styles.memberMeta}><span>{m.role}</span><span>{tasks.length} assigned task{tasks.length===1?'':'s'} · {tasks.filter(i=>i.status==='done').length} complete</span><span>{milestones.length} assigned milestone{milestones.length===1?'':'s'}</span></div></div></article>})}</div>:<div className={styles.labEmpty}><strong>Your team cards will appear once placements are accepted.</strong><p>No member information is invented or shared from another team.</p></div>}
+ </section>;
+}

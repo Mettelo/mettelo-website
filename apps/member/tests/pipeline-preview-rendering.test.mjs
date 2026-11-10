@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import ts from 'typescript';
+import {classifyJob} from '../lib/opportunities/job-classification.mjs';
+import {classifiedBatchRows} from '../lib/opportunities/classified-batch.mjs';
+const require=createRequire(import.meta.url);
+test('admin preview shows distinct eligible/review cases, current classification and restart guidance',async()=>{
+ const source=await readFile(new URL('../app/admin/opportunities/PipelineConsole.tsx',import.meta.url),'utf8');
+ let compiled=ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext}}).outputText;
+ for(const name of ['react/jsx-runtime','react'])compiled=compiled.replaceAll(`from "${name}"`,`from "${pathToFileURL(require.resolve(name)).href}"`).replaceAll(`from '${name}'`,`from '${pathToFileURL(require.resolve(name)).href}'`);
+ compiled=compiled.replace(/import styles from ['"]\.\/pipeline\.module\.css['"];?/,"const styles=new Proxy({}, {get:(_,key)=>String(key)});");
+ for(const file of ['job-taxonomy-labels.mjs','admin-messages.mjs'])compiled=compiled.replaceAll('@/lib/opportunities/'+file,new URL('../lib/opportunities/'+file,import.meta.url).href);
+ const {default:Console}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+ const job=title=>({title,provider:'nhs',externalId:title,description:'',organisation:'Synthetic Trust',opportunityType:'job',url:'https://www.jobs.nhs.uk/candidate/jobadvert/fixture',location:'Leeds',publishedAt:new Date().toISOString(),classification:classifyJob(title)});
+ const batch={runId:'10000000-0000-4000-8000-000000000999',...classifiedBatchRows([job('Senior BI Developer'),job('Information Officer')]),sourceStats:[{source:'Synthetic',configured:true,discovered:6,error:null,selection:{eligible:1,outOfScope:0,reviewRequired:5,duplicateReview:4,internalOnly:0,staleOrClosed:0,duplicates:0}}]};
+ const initial={jobs:[],runs:[],batch,scanProgress:{requiresRestart:true,complete:true,pagesScanned:3,uniqueVacancies:2,nextKeyword:null,nextPage:1}};
+ const html=renderToStaticMarkup(createElement(Console,{initial}));
+ assert.ok(html.includes('4 possible duplicate adverts held for review'));
+ for(const phrase of ['21 professional categories','Senior BI Developer','Relevance 88/100','Needs description review','Information Officer','excluded from publication','Search terms updated. Start a fresh scan.'])assert.ok(html.includes(phrase),phrase);
+ const stale=renderToStaticMarkup(createElement(Console,{initial:{...initial,batch:{...batch,taxonomyVersion:'legacy'}}}));assert.match(stale,/disabled=""[^>]*>Review &amp; publish eligible jobs/);assert.ok(stale.includes('Prepare a fresh preview before publishing.'));
+});

@@ -1,0 +1,11 @@
+import {randomUUID} from 'node:crypto';
+import type {ReactNode} from 'react';
+export function SocialAction({action,view='community',fields={},children}:{action:string;view?:string;fields?:Record<string,string>;children:ReactNode}){
+ return <form className="marketForm" action="/api/market-community" method="post"><input type="hidden" name="action" value={action}/><input type="hidden" name="return_view" value={view}/><input type="hidden" name="client_nonce" value={randomUUID()}/>{Object.entries(fields).map(([name,value])=><input type="hidden" key={name} name={name} value={value}/>)}{children}</form>;
+}
+export function MarketLinks(){return <nav className="marketTabs" aria-label="Market experiences"><a href="/member/market">For You</a><a href="/member/market?tab=projects">Projects</a><a href="/member/market?tab=people">People</a><a href="/member/market/community?view=following">Following</a><a href="/member/market/community">Community</a><a href="/member/market/proposals">Project ideas</a><a href="/member/market/messages">Messages</a></nav>;}
+export function Report({kind,id,view='community',conversation}:{kind:string;id:string;view?:string;conversation?:string}){
+ return <details className="marketSafety"><summary>Report</summary><SocialAction action="report" view={view} fields={{kind,target_id:id,...(conversation?{conversation_id:conversation}:{})}}><label>What should the team review?<textarea name="reason" minLength={8} maxLength={1000} rows={2} required/></label><p className="marketMeta">Only the reported excerpt is shared with the review team.</p><button className="pcButton">Submit report</button></SocialAction></details>;
+}
+export function Notices({query}:{query:Record<string,string|undefined>}){return <>{query.notice&&<p className="marketNotice" role="status">{query.notice}</p>}{query.error&&<p className="marketNotice marketError" role="alert">{query.error}</p>}</>;}
+export function Older({path,rows,extra={}}:{path:string;rows:{id:string;created_at:string}[];extra?:Record<string,string>}){const last=rows.at(-1);return rows.length===25&&last?<a className="pcButton" href={path+'?'+new URLSearchParams({...extra,before_at:last.created_at,before_id:last.id})}>Older entries →</a>:null;}

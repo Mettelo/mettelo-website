@@ -1,0 +1,83 @@
+/* One visual language for application receipts and project placements. */
+.pcCollection {
+ --pc-ink:var(--navy,#141824);
+ --pc-muted:var(--muted,#60616a);
+ --pc-line:var(--line,#ded9cd);
+ --pc-soft:var(--surface-soft,#f1ecdf);
+ color:var(--pc-ink);
+}
+.pcCollection .shell{max-width:1120px}
+.pcPageHeader{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:24px}
+.pcPageHeader h1{font-size:clamp(1.8rem,3vw,2.25rem);letter-spacing:-.045em;margin:8px 0 10px;line-height:1.15}
+.pcPageHeader p{margin:0;max-width:58ch;color:var(--pc-muted);font-size:.95rem}
+.pcEyebrow{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pc-muted);font-weight:600}
+.pcSectionHeading{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 0 16px}
+.pcSectionHeading h2{font-size:.88rem;font-weight:600;margin:0}
+.pcSectionHeading a{font-size:.8rem;text-underline-offset:4px}
+.pcGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}
+.pcCard{display:flex;flex-direction:column;gap:20px;padding:24px;background:var(--white,#fff);border:1px solid var(--pc-line);border-radius:16px;min-width:0}
+.pcCardHeader{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pcProjectIcon{width:40px;height:40px;display:grid;place-items:center;background:var(--pc-soft);color:var(--pc-ink);border-radius:11px;flex:none}
+.pcStatus{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:6px;color:#5d6066;background:#f2f2ef;font-size:.7rem;font-weight:600;line-height:1.4}
+.pcStatus>span{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.pcStatus[data-tone=active]{color:#286448;background:#edf5ef}
+.pcStatus[data-tone=attention]{color:#865b1e;background:#faf1df}
+.pcCollection .pcOverline{margin:0 0 8px;font-size:.72rem;color:var(--pc-muted);font-weight:500}
+.pcProjectTitle h2{font-size:1.25rem;letter-spacing:-.025em;line-height:1.4;margin:0;font-weight:650;overflow-wrap:anywhere}
+.pcCollection .pcReference{margin:8px 0 0;font-size:.72rem;color:var(--pc-muted)}
+.pcFacts{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;margin:0;padding:18px 0;border-block:1px solid var(--pc-line)}
+.pcFacts dt{font-size:.7rem;color:var(--pc-muted);margin-bottom:6px}
+.pcFacts dd{font-size:.85rem;font-weight:600;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.pcCollection .pcCardNote{font-size:.82rem;line-height:1.65;color:var(--pc-muted);margin:0}
+.pcCollection .pcDetail{font-size:.75rem;color:var(--pc-muted);margin:-10px 0 0;line-height:1.6}
+.pcCardFooter{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.pcButton{display:inline-flex;justify-content:center;align-items:center;gap:18px;min-height:44px;padding:10px 16px;border:1px solid var(--pc-line);border-radius:9px;background:var(--white,#fff);color:var(--pc-ink);font:inherit;font-size:.8rem;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none;text-align:center}
+.pcButton.primary{background:var(--pc-ink);color:white;border-color:var(--pc-ink)}
+.pcButton:hover:not(:disabled){border-color:#979ba3;background:#f5f4f0}
+.pcButton.primary:hover:not(:disabled){background:#2c3140;border-color:#2c3140}
+.pcButton:disabled{opacity:.62;cursor:not-allowed}
+.pcTextLink{display:inline-flex;align-items:center;gap:12px;min-height:44px;font-size:.8rem;text-decoration:none}
+.pcTextLink:hover{text-decoration:underline;text-underline-offset:4px}
+.pcPending{font-size:.72rem;color:var(--pc-muted)}
+.pcOffer summary{list-style:none;width:100%;justify-content:space-between}
+.pcOffer{flex:1;min-width:180px}
+.pcOffer[open]{flex-basis:100%}
+.pcOffer summary::-webkit-details-marker{display:none}
+.pcOffer[open]>summary>span{transform:rotate(180deg)}
+.pcOfferPanel{margin-top:12px;padding:18px;background:var(--surface,#fcfaf5);border:1px solid var(--pc-line);border-radius:10px}
+.pcOfferPanel h3,.pcFollowUp h3{font-size:.9rem;margin:0 0 10px;line-height:1.4}
+.pcCollection .pcOfferPanel p,.pcCollection .pcFollowUp p{font-size:.8rem;line-height:1.65;color:var(--pc-muted);margin:10px 0 16px}
+.pcOfferPanel form+form{margin-top:10px}
+.pcOfferPanel .pcButton{width:100%}
+.pcAgreement{display:flex;gap:10px;align-items:start;font-size:.78rem;line-height:1.6;margin:16px 0}
+.pcAgreement input{width:18px;height:18px;margin:3px 0 0;flex:none;accent-color:var(--pc-ink)}
+.pcFollowUp{border:1px solid var(--pc-line);padding:16px;border-radius:10px;background:var(--surface,#fcfaf5)}
+.pcFollowUp summary{display:flex;justify-content:space-between;align-items:center;min-height:44px;cursor:pointer;font-size:.85rem;font-weight:600}
+.pcPreview{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;border-block:1px solid var(--pc-line);padding:14px 0;margin-bottom:4px;font-size:.75rem}
+.pcPreview>div{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pcPreview>div>span{color:var(--pc-muted)}
+.pcPreview nav{display:flex;gap:16px;flex-wrap:wrap}
+.pcPreview a{display:inline-flex;align-items:center;min-height:32px;text-underline-offset:4px}
+.pcPreview details{flex-basis:100%;font-size:.72rem;color:var(--pc-muted)}
+.pcPreview summary{cursor:pointer;min-height:28px}
+.pcCollection .pcPreview p{font-size:.75rem;margin:6px 0 0;max-width:85ch}
+.pcPreviewLink{font-size:.75rem;margin:12px 0}
+.pcHelp{font-size:.8rem;margin:28px 0 0;color:var(--pc-muted)}
+.pcHelp a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
+.pcEmpty{padding:36px;background:white;border:1px solid var(--pc-line);border-radius:16px}
+.pcEmpty h2{font-size:1.4rem;letter-spacing:-.025em;margin:10px 0}
+.pcEmpty p{color:var(--pc-muted);font-size:.9rem;max-width:60ch;margin:10px 0 20px}
+.pcCollection :is(button,a,summary,input):focus-visible{outline:3px solid var(--gold-text,#8b5a17);outline-offset:3px}
+@media(max-width:850px){.pcGrid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+ .pcPageHeader{align-items:start;flex-direction:column;gap:16px}
+ .pcCard{padding:20px;gap:18px}
+ .pcProjectTitle h2{font-size:1.15rem}
+ .pcFacts{gap:16px;padding:16px 0}
+ .pcSectionHeading{align-items:start;flex-direction:column;gap:8px}
+ .pcCardFooter .pcButton{flex:1}
+ .pcPreview{align-items:start;flex-direction:column;gap:6px}
+ .pcPreview details{flex-basis:auto}
+ .pcOfferPanel{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){.pcCollection *{scroll-behavior:auto!important;transition:none!important}}
