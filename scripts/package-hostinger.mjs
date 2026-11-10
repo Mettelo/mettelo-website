@@ -1,4 +1,4 @@
-import {cpSync,mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {cpSync,mkdirSync,readFileSync,writeFileSync,rmSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve,dirname,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -7,8 +7,8 @@ const target=process.argv[2];
 if(!target||!isAbsolute(target))throw new Error('Provide a new absolute destination directory.');
 // Explicit public-file list keeps repository metadata, tests and review notes out of hosting.
 mkdirSync(target,{recursive:false});
-for(const file of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','assets','start','community-guidelines','our-story','terms','privacy','contact','waitlist'])cpSync(resolve(root,file),resolve(target,file),{recursive:true});
-mkdirSync(resolve(target,'shared'));
+for(const file of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','assets','start','community-guidelines','our-story','terms','privacy','contact','waitlist','resources'])cpSync(resolve(root,file),resolve(target,file),{recursive:true});
+// Publish the approved immigration reading interface and resource content, but not internal release notes.\nrmSync(resolve(target,'resources','IMPLEMENTATION.md'),{force:true});\nmkdirSync(resolve(target,'shared'));
 cpSync(resolve(root,'shared/public.css'),resolve(target,'shared/public.css'));
 cpSync(resolve(root,'shared/trust.css'),resolve(target,'shared/trust.css'));
 cpSync(resolve(root,'shared/design.css'),resolve(target,'shared/design.css'));
