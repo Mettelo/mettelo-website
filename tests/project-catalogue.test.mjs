@@ -31,3 +31,14 @@ test('member app uses the identical public project catalogue',()=>{
 });
 
 test('pilot activity ranking puts 20 contributors ahead of 15, with stable team and reference ties',()=>{const row=(reference,people,teams,forming=0)=>({reference,title:reference,recorded:true,active_contributors:people,active_teams:teams,forming_teams:forming});const rows=[row('C',10,1),row('B',15,2),row('A',20,3),row('D',15,3),{reference:'E',title:'E',recorded:false}];assert.deepEqual([...rows].sort((a,b)=>filtering.compareProjectActivity(a,b,'active')).map(p=>p.reference),['A','D','B','C','E']);assert.deepEqual([row('Z',0,0,2),row('A',20,3,1)].sort((a,b)=>filtering.compareProjectActivity(a,b,'forming')).map(p=>p.reference),['Z','A']);assert.equal(filtering.compareProjectActivity(row('A',15,2),row('B',15,2),'active')<0,true);});
+test('pagination covers every matching project once and clamps stale or invalid pages',()=>{
+ const items=Array.from({length:50},(_,id)=>id);
+ const pages=Array.from({length:7},(_,i)=>filtering.paginateProjects(items,i+1));
+ assert.deepEqual(pages.flatMap(result=>result.items),items);
+ assert.equal(pages[6].items.length,2);
+ assert.equal(filtering.paginateProjects(items,999).page,7);
+ assert.equal(filtering.paginateProjects(items,'invalid').page,1);
+ assert.equal(filtering.paginateProjects(items,-2).page,1);
+ assert.deepEqual(filtering.paginateProjects([],7).items,[]);
+ assert.equal(filtering.paginateProjects(items.slice(0,3),7).page,1);
+});

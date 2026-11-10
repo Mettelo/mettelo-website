@@ -1,0 +1,6 @@
+import AdminEmailStatus from '@/components/lab/AdminEmailStatus';
+import {adminCapabilities,roleLabels} from '@/lib/admin-capabilities';
+export default async function Page(){
+ const c=await adminCapabilities();if(!c)return null;
+ return <section className="section"><div className="shell"><div className="eyebrow">Mettelo · Website operations</div><h1>Administration</h1><p>{roleLabels[c.role]||'Member'} · Your tools and permissions.</p><div className="adminOverview">{c.operations&&<a className="panel" href="/admin/members"><h2>Members →</h2><p>Find registered members, review records and manage website access.{c.roles?' Assign and review administrative roles.':''}</p></a>}{c.news&&<a className="panel" href="/admin/news"><h2>Industry News →</h2><p>{c.publish?'Review, edit and publish articles.':'Create and edit your own private drafts for editorial review.'}</p></a>}{c.operations&&<a className="panel" href="/admin/projects"><h2>Project teams →</h2><p>Review interests, offer places and start ready Labs.</p></a>}{c.operations&&<a className="panel" href="/admin/support"><h2>Support inbox →</h2><p>Review and reply to private enquiries.</p></a>}{c.opportunities&&<a className="panel" href="/admin/opportunities"><h2>Opportunity pipeline →</h2><p>Discover, review and manage job listings.</p></a>}</div>{c.operations&&<AdminEmailStatus/>}</div></section>;
+}

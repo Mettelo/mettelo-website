@@ -25,3 +25,7 @@ test('completed scans do not refetch and stale candidates cannot enter publicati
  await advanceDurableScan(db,{fetcher:()=>{throw Error('should not fetch');}});assert.deepEqual(db.calls,['read']);
  db.box.state.startedAt='2000-01-01';const result=await durableScanCandidates(db);assert.deepEqual(result.jobs,[]);assert.match(result.coverageNote,/stale/);
 });
+
+test('changed keywords invalidate a completed checkpoint without claiming or fetching',async()=>{
+ const db=fakeDb();db.box.state.complete=true;db.box.state.terms=['legacy'];await assert.rejects(advanceDurableScan(db,{fetcher:()=>{throw Error('must not fetch');}}),/Search terms changed/);assert.deepEqual(db.calls,['read']);
+});

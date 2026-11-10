@@ -1,20 +1,10 @@
+import {classifyJob} from './job-classification.mjs';
 import { createClient } from '@supabase/supabase-js';
 import {requireWebsitePipelineWrite} from './website-pipeline-guard';
 
-type OpportunityRow={id:string;title:string;organisation:string|null;location:string|null;role_family:string|null;source_type:string|null;country_code:string|null;region_code:string|null;sponsorship_status:string|null;classification_version:string|null};
+type OpportunityRow={id:string;title:string;organisation:string|null;summary?:string|null;location:string|null;role_family:string|null;source_type:string|null;country_code:string|null;region_code:string|null;sponsorship_status:string|null;classification_version:string|null};
 
-const explicitDataAiTitle=/\b(data|analytics?|business intelligence|\bbi\b|ai|artificial intelligence|machine learning|\bml\b|mlops|dataops|nlp|llm|generative ai|genai|computer vision|statistic(?:ian|al)|quant(?:itative)?|insights?)\b/i;
-const explicitAiEngineering=/\b(agentic|foundation model|world model|language model|pre-training|post-training|model training)\b/i;
-const allowedAppliedAnalyst=/\b(marketing|crm|digital|web|product|business|performance|research|commercial|operations|risk|financial)\s+analyst\b/i;
-const genericEngineering=/\b(software engineer|software developer|solutions? architect|platform engineer|backend engineer|frontend engineer|full[ -]?stack|devops engineer)\b/i;
-
-function shouldRemainPublished(row:OpportunityRow){
-  const title=row.title||'';
-  if(explicitDataAiTitle.test(title)||explicitAiEngineering.test(title)||allowedAppliedAnalyst.test(title))return true;
-  if(genericEngineering.test(title))return false;
-  if(row.role_family==='Data / AI adjacent'||row.role_family==='Data / AI Software Engineering')return false;
-  return true;
-}
+function shouldRemainPublished(row:OpportunityRow){return classifyJob(row.title,row.summary||'',{organisation:row.organisation||undefined}).eligible;}
 
 const locationRules:[RegExp,string,string][]=[
   [/\b(united kingdom|england|scotland|wales|northern ireland|london|manchester|birmingham|leeds|glasgow|edinburgh|cheltenham)\b/i,'GB','UK'],
@@ -43,7 +33,7 @@ async function isLicensedSponsor(previewUrl:string,organisation:string){try{cons
 
 export async function runOpportunityQualitySweep(){requireWebsitePipelineWrite();
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!key)throw new Error('Opportunity quality sweep is not configured.');
-  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});const rowsResult=await db.from('opportunities').select('id,title,organisation,location,role_family,source_type,country_code,region_code,sponsorship_status,classification_version').eq('status','published').eq('access_level','public').eq('data_ai_relevance_status','high').limit(500);if(rowsResult.error)throw rowsResult.error;
+  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});const rowsResult=await db.from('opportunities').select('id,title,organisation,summary,location,role_family,source_type,country_code,region_code,sponsorship_status,classification_version').eq('status','published').eq('access_level','public').eq('data_ai_relevance_status','high').limit(500);if(rowsResult.error)throw rowsResult.error;
   const rows=(rowsResult.data||[]) as OpportunityRow[];let removed=0,geoUpdated=0,sponsorMatched=0;const sponsorPreview=await getSponsorPreviewUrl();const sponsorCache=new Map<string,boolean>();
   for(const row of rows){if(String(row.source_type||'').startsWith('discovery_')&&!shouldRemainPublished(row)){const now=new Date().toISOString();await db.from('opportunities').update({status:'archived',expired_at:now,rejection_reason:'Removed by automated Data & AI title-quality sweep.',review_required:false,updated_at:now}).eq('id',row.id);removed++;continue;}
     const geo=geoFor(row),updates:Record<string,unknown>={};if(geo.countryCode&&geo.countryCode!==row.country_code)updates.country_code=geo.countryCode;if(geo.regionCode&&geo.regionCode!==row.region_code)updates.region_code=geo.regionCode;if(Object.keys(updates).length){updates.updated_at=new Date().toISOString();await db.from('opportunities').update(updates).eq('id',row.id);geoUpdated++;}

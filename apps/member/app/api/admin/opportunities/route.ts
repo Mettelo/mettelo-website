@@ -1,4 +1,5 @@
 import {NextResponse} from 'next/server';
+import {assertCurrentTaxonomyBatch} from '@/lib/opportunities/classified-batch.mjs';
 import {randomUUID} from 'node:crypto';
 import {opportunityAdmin} from '@/lib/opportunities/admin';
 import {prepareWebsiteOpportunityBatch} from '@/lib/opportunities/website-runner';
@@ -20,7 +21,7 @@ export async function POST(request:Request){
   const body=JSON.parse(raw);let result;
   if(body.action==='prepare')result=await rpc(db,'prepare',await prepareWebsiteOpportunityBatch(randomUUID(),await durableScanCandidates(db)));
   else if(body.action==='scan-civilservice')result=await advanceDurableScan(db,{restart:body.restart===true});
-  else if(body.action==='publish')result=await rpc(db,'publish',{runId:body.runId});
+  else if(body.action==='publish'){const latest=await rpc(db,'list');if(latest.batch?.runId!==body.runId)throw Error('Prepare a fresh preview before publishing.');assertCurrentTaxonomyBatch(latest.batch);result=await rpc(db,'publish',{runId:body.runId});}
   else if(body.action==='expire')result=await rpc(db,'expire');
   else if(body.action==='archive')result=await rpc(db,'archive',{id:body.id,reason:body.reason});
   else if(body.action==='verify'){

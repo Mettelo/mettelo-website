@@ -12,8 +12,8 @@
     "start": "next start --hostname 127.0.0.1 --port 3001",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "prebuild": "node ../../scripts/sync-design-tokens.mjs",
-    "predev": "node ../../scripts/sync-design-tokens.mjs",
+    "prebuild": "node ../../scripts/sync-design-tokens.mjs && node ../../scripts/build-job-taxonomy.mjs",
+    "predev": "node ../../scripts/sync-design-tokens.mjs && node ../../scripts/build-job-taxonomy.mjs",
     "opportunities:dry-run": "node scripts/opportunity-discovery-dry-run.mjs",
     "opportunities:prepare": "node scripts/opportunity-pipeline.mjs prepare",
     "opportunities:run": "node scripts/opportunity-pipeline.mjs run",
@@ -21,7 +21,10 @@
     "opportunities:expire": "node scripts/opportunity-pipeline.mjs expiry",
     "opportunities:maintenance": "node scripts/opportunity-maintenance.mjs",
     "dev:preview": "node scripts/isolated-preview.mjs",
-    "predev:preview": "node ../../scripts/sync-design-tokens.mjs"
+    "predev:preview": "node ../../scripts/sync-design-tokens.mjs && node ../../scripts/build-job-taxonomy.mjs",
+    "lab:meeting-mail": "node scripts/lab-meeting-mail.mjs",
+    "lab:weekly-pulse": "node scripts/lab-weekly-pulse.mjs",
+    "lab:project-email-previews": "node scripts/project-email-previews.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.6.1",

@@ -1,6 +1,7 @@
 import {XMLParser,XMLValidator} from 'fast-xml-parser';
+import {discoveryTerms,discoveryPlan} from './job-classification.mjs';
 
-export const UK_TECH_SEARCH_TERMS=['data','information','informatics','data governance','chief data','machine learning','business analyst','performance analyst','information analyst','analytics','artificial intelligence','digital','software','cyber','cloud'];
+export const UK_TECH_SEARCH_TERMS=[...new Set([...discoveryTerms,'data governance','chief data','machine learning'])];
 export const HOME_OFFICE_FEED='https://homeofficejobs.tal.net/vx/mobile-0/appcentre-2/brand-3/candidate/jobboard/vacancy/1/feed';
 export const DWP_DIGITAL_JOBS='https://careers.dwp.gov.uk/all-digital-jobs/';
 const nhsHosts=new Set(['www.jobs.nhs.uk','jobs.nhs.uk','beta.jobs.nhs.uk']);
@@ -39,14 +40,14 @@ async function fetchXml(url,fetcher){
  try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2_000_000)throw Error('Job feed exceeds size limit.');chunks.push(value);}}finally{await reader.cancel();}
  return Buffer.concat(chunks).toString('utf8');
 }
-export async function fetchNhsJobs({fetcher=fetch,terms=UK_TECH_SEARCH_TERMS,maxPages=2}={}){
+export async function fetchNhsJobs({fetcher=fetch,terms=discoveryPlan().terms,maxPages=2}={}){
  const jobs=new Map();
  for(const keyword of terms){for(let page=1;page<=Math.min(2,maxPages);page++){
   const url=new URL('https://www.jobs.nhs.uk/api/v1/search_xml');url.search=new URLSearchParams({keyword,limit:'100',page:String(page),externalOnly:'true',sort:'publicationDate'}).toString();
   const result=parseNhsFeed(await fetchXml(url.href,fetcher));for(const job of result.jobs)jobs.set(job.externalId,job);
   if(page>=result.totalPages)break;
  }}
- return [...jobs.values()];
+ return Object.assign([...jobs.values()],{coverageNote:'NHS external-only: '+terms.length+' keyword searches; up to '+Math.min(2,maxPages)+' pages each. Bounded rotating taxonomy coverage; not all NHS vacancies.'});
 }
 export async function fetchCivilServiceJobs({fetcher=fetch}={}){return parseCivilServiceFeed(await fetchXml(HOME_OFFICE_FEED,fetcher));}
 // Department-maintained cards link straight to Civil Service Jobs. Do not invent posting dates.

@@ -1,3 +1,5 @@
+import './sync-public-footer.mjs';
+import './sync-public-navigation.mjs';
 import {copyFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 const root=new URL('../',import.meta.url);

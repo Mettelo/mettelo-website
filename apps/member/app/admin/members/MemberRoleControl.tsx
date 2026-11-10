@@ -1,0 +1,16 @@
+'use client';
+import {useState} from 'react';
+export const roles=[
+ {value:'member',label:'Member',description:'Normal member features. No website administration.'},
+ {value:'writer',label:'Writer',description:'Create and edit their own unpublished Industry News drafts. Cannot publish.'},
+ {value:'editor',label:'Editor',description:'Review, edit, publish and unpublish Industry News articles.'},
+ {value:'operations_admin',label:'Operations admin',description:'Manage members, applications, project teams and enquiries. Cannot change roles or publish news.'},
+ {value:'full_admin',label:'Full admin',description:'All website administration, including role management, editorial publishing and the job-board pipeline.'}
+];
+export const roleLabel=(role:string)=>roles.find(r=>r.value===role)?.label||'Member';
+type Entry={id:number;actor_name:string;previous_role:string;new_role:string;reason:string;created_at:string};
+export default function MemberRoleControl({role,version,email,canManage,busy,audit,onSave,message}:{role:string;version:number;email:string;canManage:boolean;busy:boolean;message:string;audit:Entry[];onSave:(payload:Record<string,unknown>)=>Promise<boolean>}){
+ const [editing,setEditing]=useState(false),[choice,setChoice]=useState(role);
+ return <section className="mmRoleControl"><h3>Website role</h3><strong>{roleLabel(role)}</strong><p>{roles.find(r=>r.value===role)?.description}</p><small>Project coordinator is a separate responsibility within an assigned project.</small>{canManage?(editing?<form onSubmit={async e=>{e.preventDefault();const fields=new FormData(e.currentTarget);if(await onSave({role:choice,role_version:version,reason:String(fields.get('reason')||''),confirmation:String(fields.get('confirmation')||'')}))setEditing(false);}}><fieldset disabled={busy}><label>New role<select value={choice} onChange={e=>setChoice(e.target.value)}>{roles.map(r=><option key={r.value} value={r.value}>{r.label}</option>)}</select></label><p className="mmRoleSummary">{roles.find(r=>r.value===choice)?.description}</p><p>This changes website permissions immediately. At least one available Full admin must remain.</p><label>Reason for changing role<textarea name="reason" minLength={8} maxLength={500} required/></label><label>Type {email} to confirm<input name="confirmation" type="email" autoComplete="off" required/></label><div className="mmControlButtons"><button className="button dark" disabled={busy||choice===role}>{busy?'Saving…':'Confirm role change'}</button><button type="button" className="button ghost" onClick={()=>setEditing(false)}>Cancel role change</button></div>{message&&!busy&&<p role="alert">{message}</p>}</fieldset></form>:<button className="button ghost" disabled={busy} onClick={()=>{setChoice(role);setEditing(true);}}>Manage role</button>):<p>Only a Full admin can change website roles.</p>}
+ <details className="mmDisclosure"><summary>Role history ({audit.length})</summary>{audit.length?audit.map(item=><div className="mmAudit" key={item.id}><strong>{roleLabel(item.previous_role)} → {roleLabel(item.new_role)}</strong><p>{item.reason}</p><small>{item.actor_name} · {new Date(item.created_at).toLocaleString('en-GB',{timeZone:'UTC'})} UTC</small></div>):<p>No role changes recorded.</p>}</details></section>;
+}

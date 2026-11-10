@@ -1,0 +1,38 @@
+.pcJourneyList{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.pcProjectJourney{min-width:0}
+.pcParticipationUsage{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px 20px;padding:12px 0;border-block:1px solid var(--pc-line);font-size:.8rem}
+.pcParticipationUsage>div{display:flex;gap:8px 16px;flex-wrap:wrap}
+.pcParticipationUsage span{color:var(--pc-muted)}
+.pcParticipationUsage summary{min-height:32px;cursor:pointer}
+.pcParticipationUsage details[open]{flex-basis:100%}
+.pcParticipationUsage p{max-width:85ch;color:var(--pc-muted);line-height:1.6}
+.pcJourneyCollection .pcCard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 20px;padding:20px}
+.pcJourneyCollection .pcCard>*{grid-column:1/-1}
+.pcJourneyCollection .pcProjectIcon{display:none}
+.pcJourneyCollection .pcCardHeader{grid-column:2;grid-row:1;justify-content:flex-end;align-self:start;gap:12px}
+.pcJourneyCollection .pcProjectTitle{grid-column:1;grid-row:1;margin:0}
+.pcJourneyCollection .pcOverline{margin-bottom:4px}
+.pcJourneyCollection .pcReference{margin-top:4px}
+.pcJourneyCollection .pcFacts{padding:10px 0;gap:12px}
+.pcJourneyCollection .pcFacts dt{margin-bottom:2px}
+.pcJourneyCollection .pcDetail{margin:0}
+.pcJourneyCollection .pcCardFooter{margin-top:0;padding-top:0}
+.pcJourney{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:12px;padding:0;margin:0;list-style:none}
+.pcJourney>li{display:flex;align-items:center;gap:8px;min-width:0;border-top:3px solid var(--pc-line,var(--line,#ded9cd));padding-top:8px;color:var(--pc-muted,var(--muted,#60616a));font-size:.78rem;overflow-wrap:anywhere}
+.pcJourney>li[data-stage=done],.pcJourney>li[data-stage=current]{border-top-color:var(--gold-text,#8b5a17);color:var(--pc-ink,var(--navy,#141824))}
+.pcJourney>li[data-stage=current]{font-weight:650}
+.pcJourneyMark{display:grid;place-items:center;flex:none;width:24px;height:24px;background:var(--pc-soft,var(--surface-soft,#f1ecdf));border-radius:50%;font-size:.72rem}
+.pcJourney small{display:block;font-weight:400}
+.pcApplicationHistory{border-top:1px solid var(--pc-line,var(--line,#ded9cd));padding-top:8px;font-size:.8rem}
+.pcApplicationHistory summary,.pcOtherPlacements summary{min-height:44px;align-content:center;cursor:pointer}
+.pcApplicationHistory p{font-size:.8rem;color:var(--pc-muted);line-height:1.6}
+.pcOtherPlacements{margin-top:12px;padding:0 20px;font-size:.8rem}
+.pcOtherPlacements>.pcJourneyList{margin:12px 0 20px}
+@media(max-width:600px){
+ .pcJourneyCollection .pcCard{padding:16px;gap:12px;grid-template-columns:minmax(0,1fr)}
+ .pcJourneyCollection .pcProjectTitle{grid-column:1;grid-row:1}
+ .pcJourneyCollection .pcCardHeader{grid-column:1;grid-row:2;justify-content:flex-start}
+ .pcJourney{gap:6px}
+ .pcJourney>li{flex-direction:column;align-items:flex-start;gap:4px;font-size:.72rem;line-height:1.4}
+ .pcOtherPlacements{padding:0 8px}
+}

@@ -84,3 +84,78 @@ Updated the Discord invite to the owner-confirmed yy9qJZ7W link. Refined all sev
 ## Homepage correction — 21 October 2026
 Restored the earlier dark homepage, compact three-row desktop ecosystem and two-column resource directory following owner feedback. Added Apply for membership, Explore member support and Join the waitlist hero buttons. Corrected Discord and waitlist form preserved. Shared generation now keeps homepage styling separate from supporting-page refinements. No deployment or collection activation. See docs/HOMEPAGE-CORRECTION.md.
 
+
+## 5 November 2026 — admin readiness fixes
+News/application server imports, SEO release gates/live sitemap, private support ownership, review counts, email readiness visibility and offline migration checks implemented. 106 integrated checks pass; production build remains blocked by Windows EPERM. Email delivery and real-member migration remain inactive. See docs/V2-ADMIN-READINESS-FIXES-2026-11-05.md for evidence and remaining release gates.
+
+## 5 November 2026 — occupational taxonomy pipeline upgrade
+Integrated the supplied role library into 21-category rule-based discovery/classification, structured metadata, contextual review previews and version guards. Bounded rotating search plans and explicit checkpoint restart are in place. 136 unit/107 integration checks and six rolled-back SQL groups pass. Existing listings/schedules unchanged. See docs/V2-OPPORTUNITY-TAXONOMY-2026-11-05.md.
+
+## Pipeline quality corrections · 2026-11-05
+
+Implemented v9 duplicate holds, corrected compound occupations/warehouse exclusion, regional source checks and evidence-based public-sector context. 143 unit, 107 HTTP and 7 rollback SQL groups passed; TypeScript/static build passed. Final preview 63 eligible / 67 review, including 4 duplicate holds; 232 published listings untouched. No publication or email/schedule activation. Details: docs/V2-PIPELINE-QUALITY-2026-11-05.md.
+
+## Hosted staging architecture preparation · 2026-11-05
+
+Audited hosting, routing/auth, database/storage, email, SEO and build boundaries. Added one-origin staging assets/routing, exact staging URLs, access protection, environment preflight, standalone packaging/start and manual Linux build workflow. Hostinger Business confirmed Node 22 and 1/5 web-app slots. 147 unit, 107 local HTTP and 20 hosted-configuration HTTP checks passed; TypeScript/static build passed; dependency audit 0 known production vulnerabilities. Hosted DNS/SSL/callbacks/Linux production build and three-account UAT remain pending. Reviewed all 22 cleaned malware-history rows: hometechway.com only; shared-account security follow-up required before deployment. No production, DNS, VPS, account, email or schedule changes. See docs/V2-HOSTED-STAGING-ARCHITECTURE-2026-11-05.md.
+
+### 2026-11-05 — Separate hosted staging deployment
+
+- Hostinger Linux build and standalone environment-file check passed from source commit 98fdfa7. Separate staging.mettelo.com app deployed; Next.js ready in 581ms, zero startup errors shown.
+- Verified HTTPS and 503/noindex/no-store on five anonymous page/API/asset routes. Owner staging credential and exact Supabase callback remain pending; no shared UAT yet.
+- Production/main, VPS, member data, email activation and schedules unchanged. Shared-hosting historical WordPress security follow-up remains before shared testing.
+
+### 2026-11-05 — Member enquiries and workspace alignment
+
+- Approved local-preview fixes: remove the centred 1080px member-home constraint; align breadcrumb, hero, KPIs and lower cards with 40px desktop / 16px mobile gutters. Improve supporting-text readability without new homepage sections or navigation.
+- General enquiries now work without a project placement. Existing private support inbox, ownership, replies and notifications are reused. General/project topics have server-side boundaries; explicit team enquiries retain placement checks. Nonces prevent duplicate retry submissions, reporter identity comes from auth.uid(), and creation is limited to five per hour.
+- Applied isolated staging migration 20261105182110_website_general_member_enquiries. Existing records and staff roles retained; no public table grants. Member footer Support now opens My enquiries. Enquiry dialog has one scroll container on mobile and locks background scrolling.
+- Verification: 147 unit tests; TypeScript; eight SQL groups in rollback (submission, retry, cross-member privacy, writer/editor separation, staff notes, replies/notifications, closure, project scope, account restrictions and rate limiting). Nine existing accounts remain; zero synthetic accounts/enquiries retained. Security-advisor counts unchanged.
+- Browser: signed-in owner with no current placement can open General help and see its four topics; empty submission stays in the form with native validation. No real support message sent. Member home tested at 1920, 1024, 768 and 390px; no horizontal overflow and breadcrumb/content alignment matched at all four sizes. Mobile enquiry has one internal scroll container.
+- UI changes are available on local port 3001 only; hosted staging has not been re-uploaded. The exact Supabase Auth callback remains an unsaved draft awaiting separate confirmation. Production, email delivery and schedules unchanged.
+
+### 2026-11-05 — Multiple placement responsibilities
+
+- Approved local-preview change: solo owners automatically receive every selected essential responsibility; team members can receive several roles. People and capacity are still counted per member, with coordinator agreement unchanged.
+- Migration 20261105185608_website_placement_responsibilities adds a validated responsibilities array and preserves canonical primary roles. Existing memberships backfilled with their original role only. Formation, additional offers, acceptance displays, Lab roster, admin member directory, email previews and public role-coverage aggregates carry all responsibilities. No existing accepted placement was reassigned.
+- Readiness and activation guards recognise all assigned responsibilities. Project-catalogue validation rejects foreign roles; staff authority and placement constraints remain. Accepted role sets cannot be silently edited.
+- Verification: 150 unit tests, TypeScript, six rollback SQL groups covering solo/team offer → acceptance → readiness → start → roster, plus existing formation and operations rollback suites. No test identities retained; nine existing accounts remain. Security-advisor counts unchanged. Operations test now prioritises its own synthetic outbox entries so unrelated older staging jobs cannot invalidate its queue assertion; no mail provider called.
+- Browser: previewed solo auto-assignment and team multi-selection without submitting offers. Formation references reset when switching arrangement. Responsibility dialogs use one scroll container. Hosted UI remains unchanged; no emails, production deployment or Auth URL save.
+
+### Follow-up review requested during this build — approved and implemented below
+
+- Offer copy must identify actual Solo/Team placement. Flexible is an application preference, not a third working arrangement; show which arrangement this offer uses and whether additional teammates may join. Never silently convert Solo to Team.
+- Current solo test is accepted but repository access is unchecked. Staff preview is visible to the owner because the account also has administrative access; ordinary member entry still waits on activation. Separate staff preparation copy from member-facing readiness.
+- Propose one member acceptance, clear remaining blockers/owner, and automatic Lab activation when existing readiness checks pass, avoiding an extra manual Start action. This changes workflow and has not been implemented or approved yet. Do not automatically claim external repository access is verified.
+- Lab focused tabs centre content at 1180px; other tabs reserve a 286px right rail with duplicated loose links. Propose one consistent full-width Lab workspace across all tabs with useful text widths inside panels and existing nav providing context/actions.
+- Chat hides its composer when workspace is forming/paused/completed or viewer is unassigned; it currently labels all assigned read-only states as completed. Propose accurate state-specific messages; composer for active assigned members, project notes wording for Solo, and a compact input fixed within the Chat panel. No request to weaken access checks.
+
+### 2026-11-05 — Clear placement journey and consistent Lab workspace
+
+- User approved the preceding review. Solo/Team offer and acceptance labels now name the actual arrangement; Flexible is shown as the original application preference. Solo explicitly promises independent work without surprise teammates. Member home uses the same journey copy.
+- Isolated staging migration 20261105191350_website_lab_ready_activation prepares the starter milestone after ownership/coordinator confirmation and activates forming placements after validated readiness-changing actions when every check passes. Members accept once; remaining checks are visible on their card. Repository access is never inferred. Existing account, role coverage, commitment, coordinator, two-person consent and project capacity gates remain. Paused work still requires deliberate administrator resumption; additional active-team members still require onboarding admission. No migration-time activation or reassignment of existing placements.
+- Admin readiness explains automatic initial opening; Resume remains explicit. Successful acceptance redirects directly to a newly opened Lab. All Lab tabs share the same available-width layout, without a separate right rail. Solo navigation uses Notes/Responsibilities. Chat composer is contained in the panel and read-only messages distinguish preparation, pause, completion and unassigned staff preview.
+- Validation: 157 automated tests and TypeScript pass, including rendering the actual Solo/Team Chat component to verify its labelled textarea and Send control, and absence of a writable composer in preparation. Five rollback activation groups plus six multi-role and eight enquiry regression groups pass. Existing multi-role tests now assert automatic opening rather than invoking a redundant manual Start. Synthetic fixtures all rolled back; nine existing accounts remain. Security-advisor categories/counts unchanged from the preceding review.
+- Browser verified current accepted Solo card and its actual repository-access blocker; notes layout has no horizontal overflow at 1920, 1024, 768 and 390px. Current user placement was not activated or marked verified. Active-member note submission is covered in rollback SQL; interactive composer still needs the planned signed-in active-member journey check. Saved local preview screenshots in hyi/outputs.
+- Frontend available locally on port 3001, not yet uploaded to hosted staging. No production changes, email sends, schedule activation or Supabase Auth URL save.
+
+### 2026-11-05 — Restore clear Chat naming
+
+- User clarified that shared member chat must remain prominent. Restored Chat on Solo desktop/mobile navigation, heading and overview link instead of Notes. Team messaging remains the existing shared bubble conversation with message input and Send; no AI chatbot was added.
+- Read-only Chat now retains a visible disabled message field and Send control alongside the precise access explanation. Actual member/status permissions are unchanged. Corrected composer grid placement so the accessible label cannot occupy the message-input column.
+- Seven affected render/journey tests and TypeScript pass. Browser verified the current Solo preparation view with Chat navigation, correctly positioned input and Send, and clear preparation message. Screenshot: hyi/outputs/mettelo-chat-restored.png. No placement activation, repository verification, external messages or hosted deployment.
+
+### 2026-11-05 — Lab functionality and mobile/tablet audit
+
+- Reviewed all ten Lab destinations: Home, Plan, Tasks, Chat, Data, Contributions, Meetings, Support, Resources and Team. Meeting booking and contribution controls were hidden by the current forming status, rather than deleted. Both actions are now discoverable in the header and open their existing editors. In unavailable states, the editor states why it cannot save and keeps its fieldset disabled; handlers also reject a submit before any request. Active member forms retain their existing API and backend authorisation.
+- Forming, paused and completed views receive accurate explanations. No readiness requirement was removed or auto-verified. Current MTL-AI-010-S02 still needs repository verification. No existing user or placement was changed.
+- Lab dialogs now use one scroll container, lock background scrolling, fit the viewport and retain 44px close controls. Phone/tablet inputs use 16px text, form rows wrap, and contribution actions remain visible. Browser opened the actual meeting and contribution editors on mobile and tablet, verified their fields, permission messages, no horizontal clipping and single scrolling area. Mobile More reaches Contributions and Meetings.
+- Browser checked every destination at 360, 390, 768 and 1024px: 40 successful page/width checks, no horizontal overflow or application errors. Evidence saved in hyi/outputs/mettelo-lab-responsive-audit.json, mettelo-meeting-form-mobile.png, mettelo-contribution-form-mobile.png and mettelo-contribution-form-tablet.png.
+- Verification: 161 automated tests and TypeScript pass. Extended rollback SQL covers active Solo owner and ordinary Team member meeting creation/retry/edit/cancel, contribution attribution and persistence, resource links and Chat, plus task creation → assigned-member progress → coordinator review. Eight activation/functional groups pass, as do existing operations and delivery SQL suites. Those older fixtures now assert automatic opening instead of issuing a redundant Start. Nine existing accounts remain; zero synthetic test identities retained. No email provider was called.
+- Remaining release check: a signed-in multi-account journey on hosted staging, including actual browser save/refresh/re-login and cross-member visibility, still needs completion before production. Local/read-only UI checks and rollback backend tests are not a production release approval. Hosted frontend, production, Auth URL settings, email delivery and schedules unchanged.
+
+### 2026-11-05 — Current member photo on Lab roster
+
+- Fixed reported Johnson card showing J while the header showed his photo. The roster previously rendered initials only. It now receives the current member's existing short-lived private photo URL from the cached header account, with an image-error/missing-photo initials fallback.
+- Other members retain initials under the existing owner-only photo-storage policy; no bucket was made public and no cross-member photo access was granted. No database migration or profile mutation.
+- TypeScript passes. Browser verified the actual photo loaded at 52px desktop and 44px mobile, without mobile horizontal overflow. Screenshot: hyi/outputs/mettelo-team-photo-fixed.png. Existing placement is now active following user activity; this fix did not activate it or change access. Local frontend only.

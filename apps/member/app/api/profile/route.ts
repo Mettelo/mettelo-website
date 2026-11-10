@@ -11,7 +11,7 @@ export async function PATCH(request:Request){
   let body;
   try{
     const text=await request.text();
-    if(text.length>24000)return NextResponse.json({error:'Profile request is too large.'},{status:413});
+    if(text.length>131072)return NextResponse.json({error:'Profile request is too large.'},{status:413});
     body=JSON.parse(text);
     if(!Number.isSafeInteger(body.expected_version)||body.expected_version<0||typeof body.use_prefill!=='boolean')throw new Error('Reload your profile before saving.');
     body.patch=validateProfilePatch(body.patch);

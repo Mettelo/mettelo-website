@@ -1,5 +1,7 @@
 # Website page-by-page QA and redesign tracker
 
+Latest cross-site results and gaps: [4 November integrated staging review](V2-INTEGRATED-TESTING-2026-11-04.md). That report distinguishes current checks from the historical entries below and does not sign off the complete public-route inventory.
+
 Created 2 November 2026 from the website repository at local commit d6893c1. Platform remains a read-only design and behaviour reference. This is an inventory and review plan, not evidence that these pages have passed QA.
 
 ## Review sequence

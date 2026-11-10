@@ -5,7 +5,7 @@ export function safeMemberPath(value,fallback='/member'){
     const url=new URL(value,base);
     if(url.origin!==base)return fallback;
     const path=url.pathname;
-    if(!(path==='/member'||path.startsWith('/member/')||path==='/onboarding'||path==='/auth/update-password'))return fallback;
+    if(!(path==='/admin'||path.startsWith('/admin/')||path==='/member'||path.startsWith('/member/')||path==='/onboarding'||path==='/auth/update-password'))return fallback;
     return url.pathname+url.search+url.hash;
   }catch{return fallback;}
 }

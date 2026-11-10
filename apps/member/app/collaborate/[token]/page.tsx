@@ -1,0 +1,11 @@
+import Link from 'next/link';
+import {readPublicRecruitment} from '@/lib/shared-recruitment';
+import {publicWebsiteOrigin} from '@/lib/site-origins.mjs';
+import '@/components/recruitment-sharing.css';
+export const dynamic='force-dynamic';
+export async function generateMetadata({params}:{params:Promise<{token:string}>}){const {token}=await params,p=await readPublicRecruitment(token);return {title:p?p.title+' · Collaborate with Mettelo':'Recruitment unavailable',description:'Explore an approved public Lab recruitment summary. Joining requires account and placement checks.',robots:{index:false,follow:false},openGraph:{type:'article',title:p?.title||'Mettelo collaboration',description:p?.description.slice(0,200)||'This recruitment link is no longer available.'}};}
+export default async function Page({params}:{params:Promise<{token:string}>}){
+ const {token}=await params,p=await readPublicRecruitment(token);
+ if(!p)return <section className="recruitmentPublic"><h1>This recruitment link is no longer available.</h1><p>The Lab may have filled its places, changed its listing or stopped public sharing.</p><Link href={publicWebsiteOrigin()+'/projects/'}>Explore Mettelo projects →</Link></section>;
+ return <section className="recruitmentPublic"><span className="eyebrow">Mettelo Lab · Looking for collaborators</span><h1>{p.title}</h1><p>An authorised Lab leader chose to share this recruitment summary publicly. Private Lab activity and member details are not included.</p><article className="recruitmentPreview"><span className="eyebrow">{p.project_ref} · {p.available} collaborator {p.available===1?'place':'places'} available</span><p>{p.description}</p><dl><div><dt>Roles</dt><dd>{p.roles.join(' · ')}</dd></div><div><dt>Commitment</dt><dd>{p.commitment}</dd></div></dl><p>Skills: {p.skills.join(' · ')||'See the advertised roles.'}</p></article><Link href={'/member/market/recruitment/'+token}>View opportunity &amp; request to collaborate →</Link><small>You will need a verified Mettelo account. Requests are reviewed by the Lab leader. Project permissions, capacity, safety checks and your participation allowance still apply. Opening this link does not grant Lab or repository access.</small></section>;
+}

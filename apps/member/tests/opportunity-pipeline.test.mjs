@@ -6,7 +6,7 @@ const job={provider:'arbeitnow',externalId:'example',title:'Data Engineer',organ
 test('transferred discovery dry run deduplicates, excludes stale jobs and classifies without a database',async()=>{
  const result=await runOpportunityDiscovery({sourceCalls:[['Synthetic',async()=>[job,job,{...job,externalId:'old',publishedAt:'2000-01-01'},{...job,externalId:'excluded',title:'Warehouse Operative'}]],['Failed source',async()=>{throw new Error('Synthetic failure');}]]});
  assert.equal(result.dry_run,true);assert.equal(result.scanned,2);assert.equal(result.qualifying,1);assert.equal(result.source_errors.length,1);
- assert.deepEqual(result.source_stats[0].selection,{eligible:1,internalOnly:0,outOfScope:1,staleOrClosed:1,duplicates:1});
+ assert.deepEqual(result.source_stats[0].selection,{eligible:1,internalOnly:0,outOfScope:1,reviewRequired:0,staleOrClosed:1,duplicates:1});
  assert.equal(result.source_stats[1].error,'Synthetic failure');
 });
 test('all pipeline write paths stay disabled before network or database work',async()=>{

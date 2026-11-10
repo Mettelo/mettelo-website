@@ -6,11 +6,10 @@ const {runOpportunityDiscovery}=loadPipelineModule('discovery');
 const base={provider:'nhs',organisation:'Synthetic NHS Trust',description:'Help our team deliver better services.',location:'London',url:'https://www.jobs.nhs.uk/candidate/jobadvert/test',publishedAt:new Date().toISOString(),closesAt:'2099-01-01T23:59:59Z',remote:false,countryCode:'GB',opportunityType:'job',sourceOrganisation:'NHS Jobs'};
 const discover=jobs=>runOpportunityDiscovery({sourceCalls:[['NHS fixtures',async()=>jobs.map((job,i)=>({...base,externalId:String(i),...job}))]]});
 
-test('Data, AI and Information titles qualify across seniority without tool keywords',async()=>{
- const titles=['Chief Data and Analytics Officer','Chief Information Security Officer (CISO)','Information Governance Support Officer','Contract Information Manager – Community & MH','Information Analyst','Data Governance Lead','Data Engineer','NIHR Data Manger','Data and AI Research Governance Coordinator','Applied Clinical Data Linkage Programme Officer','Health Informatics Administrator','AI Research Fellow','Machine Learning Scientist','Data Entry Clerk','Data Administrative Assistant','Information Assistant','Director of Information Services','Analytics Apprentice'];
- const result=await discover(titles.map(title=>({title})));
- assert.equal(result.qualifying,titles.length);
- for(const job of result.candidates)assert.equal(job.classification.status,'high',job.title);
+test('recognised professional roles qualify; routine data entry and vague information titles do not',async()=>{
+ const titles=['Chief Data and Analytics Officer','Chief Information Security Officer (CISO)','Information Governance Support Officer','Information Analyst','Data Governance Lead','Data Engineer','NIHR Data Manger','Data and AI Research Governance Coordinator','Applied Clinical Data Linkage Programme Officer','Health Informatics Administrator','AI Research Fellow','Machine Learning Scientist','Analytics Apprentice'];
+ const result=await discover(titles.map(title=>({title})));for(const job of result.candidates)assert.equal(job.classification.status,'high',job.title);
+ const uncertain=await discover(['Contract Information Manager – Community & MH','Information Assistant','Director of Information Services','Data Entry Clerk','Data Administrative Assistant'].map(title=>({title})));assert.equal(uncertain.qualifying,0);
 });
 
 test('incidental description words and substring matches do not qualify unrelated roles',async()=>{

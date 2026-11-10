@@ -10,6 +10,11 @@
     "build": "node scripts/build-static.mjs",
     "test": "node scripts/check-all.mjs",
     "test:packaging": "node --test tests/static-package-boundary.test.mjs",
-    "check:static-output": "node scripts/audit-static-output.mjs"
+    "check:static-output": "node scripts/audit-static-output.mjs",
+    "preview": "node scripts/integrated-preview.mjs",
+    "test:integrated": "node scripts/test-integrated-preview.mjs",
+    "staging:prepare": "node scripts/build-static.mjs && node scripts/prepare-hosted-staging.mjs",
+    "staging:build": "node scripts/staging-preflight.mjs --build && npm --prefix apps/member ci --no-audit --no-fund && npm run staging:prepare && npm --prefix apps/member run build && node scripts/finish-hosted-staging.mjs",
+    "staging:start": "node scripts/start-hosted-staging.mjs"
   }
 }

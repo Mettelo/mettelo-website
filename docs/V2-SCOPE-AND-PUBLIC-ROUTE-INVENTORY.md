@@ -1,5 +1,8 @@
 # V2 scope correction — 1 November 2026
 
+**Scope reset — 4 November 2026:** The owner has superseded automatic platform feature parity. This is a historical reference, not a requirement to build or accept every old route. Current decisions and real release gaps are in [V2-SIMPLIFICATION-AND-GAP-PLAN-2026-11-04.md](V2-SIMPLIFICATION-AND-GAP-PLAN-2026-11-04.md).
+
+
 This supersedes the earlier narrow account-and-catalogue definition. V2 is incomplete. The present four-card member screen is a foundation, not the accepted member homepage. Platform source remains read-only; implementation belongs in mettelo-website. No production release is authorised.
 
 ## Required transfer sequence
@@ -15,7 +18,7 @@ This supersedes the earlier narrow account-and-catalogue definition. V2 is incom
 
 V2 is done only when the owner-approved public-page inventory, real member homepage, opportunity journeys, refreshed website homepage, accounts, profiles and 50-project catalogue all pass their acceptance checks. Each page needs a working destination, correct navigation, honest published data, appropriate empty/error states, keyboard/mobile checks and a verified production build. Database/import, reachable email callbacks, pilot acceptance and explicit deployment approval remain release requirements.
 
-## Source inspection findings
+## Source inspection findings — historical 1 November snapshot
 
 - app/member/page.tsx reads profile, project applications/members/runs/tasks, contribution counts, saved opportunities/projects, spotlights, account identity and domain/tool preferences. Transferring it whole requires these contracts; presentation alone cannot make those workflows work.
 - lib/member-navigation.ts includes work, discovery, account and community groups. Current website member home has no equivalent shell.
@@ -28,53 +31,55 @@ Account and email journeys, private profiles, import preparation, 50 project bri
 
 ## Public route inventory
 
+Current destinations and gaps are maintained in [V2-PUBLIC-ROUTE-COVERAGE.md](V2-PUBLIC-ROUTE-COVERAGE.md) and content/v2-route-coverage.json. The table below records the original acceptance requirements; the current report replaces its historical pending-destination wording.
+
 Generated from the inspected local platform snapshot. Every route below requires a destination/disposition and content/data acceptance review. Presence in source does not prove it is working or approved for publication. Authentication, admin, developer and member-only routes are outside this public inventory; member-home dependencies are listed above. Utility and dynamic routes are included so they are not lost.
 
 | Platform route | Website transfer status |
 |---|---|
-| / | Pending explicit destination and acceptance review |
-| /about | Pending explicit destination and acceptance review |
-| /activity | Pending explicit destination and acceptance review |
-| /blog | Pending explicit destination and acceptance review |
-| /blog/[slug] | Pending explicit destination and acceptance review |
-| /careers | Pending explicit destination and acceptance review |
-| /careers/[slug] | Pending explicit destination and acceptance review |
-| /careers/applications | Pending explicit destination and acceptance review |
-| /collaborate/[id] | Pending explicit destination and acceptance review |
-| /community | Pending explicit destination and acceptance review |
-| /community-guidelines | Pending explicit destination and acceptance review |
-| /contact | Pending explicit destination and acceptance review |
-| /contribute | Pending explicit destination and acceptance review |
-| /credentials/[credentialId] | Pending explicit destination and acceptance review |
-| /events | Pending explicit destination and acceptance review |
-| /events/[slug] | Pending explicit destination and acceptance review |
-| /faq | Pending explicit destination and acceptance review |
-| /feedback | Pending explicit destination and acceptance review |
-| /join | Pending explicit destination and acceptance review |
-| /media | Pending explicit destination and acceptance review |
-| /membership | Pending explicit destination and acceptance review |
-| /mentors | Pending explicit destination and acceptance review |
-| /newsletter | Pending explicit destination and acceptance review |
-| /newsletter/preferences | Pending explicit destination and acceptance review |
-| /opportunities | Pending explicit destination and acceptance review |
-| /opportunities/[id] | Pending explicit destination and acceptance review |
-| /organisation | Pending explicit destination and acceptance review |
-| /organisations | Pending explicit destination and acceptance review |
-| /partnership | Pending explicit destination and acceptance review |
-| /people | Pending explicit destination and acceptance review |
-| /people/[id] | Pending explicit destination and acceptance review |
-| /privacy | Pending explicit destination and acceptance review |
-| /project-architect | Pending explicit destination and acceptance review |
-| /projects | Pending explicit destination and acceptance review |
-| /projects/[id] | Pending explicit destination and acceptance review |
-| /projects/master/[id] | Pending explicit destination and acceptance review |
-| /projects/paths | Pending explicit destination and acceptance review |
-| /projects/paths/[slug] | Pending explicit destination and acceptance review |
-| /proof/[id] | Pending explicit destination and acceptance review |
-| /search | Pending explicit destination and acceptance review |
-| /showcase | Pending explicit destination and acceptance review |
-| /signin | Pending explicit destination and acceptance review |
-| /spotlight | Pending explicit destination and acceptance review |
-| /spotlight/[id] | Pending explicit destination and acceptance review |
-| /submitted | Pending explicit destination and acceptance review |
-| /terms | Pending explicit destination and acceptance review |
+| / | implemented → /; acceptance pending |
+| /about | mapped → /our-story/; acceptance pending |
+| /activity | missing; acceptance pending |
+| /blog | mapped → /industry-news?format=blog; acceptance pending |
+| /blog/[slug] | mapped → /industry-news/[slug]; acceptance pending |
+| /careers | missing; acceptance pending |
+| /careers/[slug] | missing; acceptance pending |
+| /careers/applications | missing; acceptance pending |
+| /collaborate/[id] | missing; acceptance pending |
+| /community | mapped → /start/; acceptance pending |
+| /community-guidelines | implemented → /community-guidelines/; acceptance pending |
+| /contact | implemented → /contact/; acceptance pending |
+| /contribute | missing; acceptance pending |
+| /credentials/[credentialId] | missing; acceptance pending |
+| /events | missing; acceptance pending |
+| /events/[slug] | missing; acceptance pending |
+| /faq | mapped → /#faq-title; acceptance pending |
+| /feedback | missing; acceptance pending |
+| /join | mapped → /signup; acceptance pending |
+| /media | missing; acceptance pending |
+| /membership | mapped → /signup; acceptance pending |
+| /mentors | missing; acceptance pending |
+| /newsletter | missing; acceptance pending |
+| /newsletter/preferences | missing; acceptance pending |
+| /opportunities | implemented → /opportunities; acceptance pending |
+| /opportunities/[id] | implemented → /opportunities/[id]; acceptance pending |
+| /organisation | missing; acceptance pending |
+| /organisations | missing; acceptance pending |
+| /partnership | missing; acceptance pending |
+| /people | missing; acceptance pending |
+| /people/[id] | missing; acceptance pending |
+| /privacy | implemented → /privacy/; acceptance pending |
+| /project-architect | missing; acceptance pending |
+| /projects | implemented → /projects/; acceptance pending |
+| /projects/[id] | mapped → /projects/[projectRef]/; acceptance pending |
+| /projects/master/[id] | mapped → /projects/[projectRef]/; acceptance pending |
+| /projects/paths | missing; acceptance pending |
+| /projects/paths/[slug] | missing; acceptance pending |
+| /proof/[id] | missing; acceptance pending |
+| /search | missing; acceptance pending |
+| /showcase | missing; acceptance pending |
+| /signin | implemented → /signin; acceptance pending |
+| /spotlight | missing; acceptance pending |
+| /spotlight/[id] | missing; acceptance pending |
+| /submitted | mapped → /member/projects/[id]/interest; acceptance pending |
+| /terms | implemented → /terms/; acceptance pending |

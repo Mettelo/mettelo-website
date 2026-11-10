@@ -1,0 +1,29 @@
+import {MarketMessageButton} from '@/components/MarketMessaging';
+import MarketAvatar from '@/components/MarketAvatar';
+import MarketConnections from '@/components/MarketConnections';
+import MarketWorkspace from '../../MarketWorkspace';
+import {redirect} from 'next/navigation';
+import {labSession} from '@/lib/lab';
+import {marketRpc,type MarketLab} from '@/lib/lab-market';
+import {discoveryRpc,type PublicMember} from '@/lib/market-discovery';
+import {directoryReturnHref} from '@/lib/market-directory.mjs';
+import {SocialAction,Report,Notices} from '../../CommunityControls';
+import '../../market.css';
+export const dynamic='force-dynamic';
+export default async function Page({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<Record<string,string|undefined>>}){
+ const {id}=await params,query=await searchParams,{db,user}=await labSession();if(!user)redirect('/signin?next='+encodeURIComponent('/member/market/people/'+id));
+ let member:PublicMember|null=null,labs:MarketLab[]=[];try{member=await discoveryRpc(db,'profile',{member_id:id});}catch{}try{labs=await marketRpc(db,'my_labs');}catch{}
+ const connections=member?await MarketConnections({db,memberId:member.id,userId:user.id}):null;
+ const back=directoryReturnHref('people',query),own=member?.id===user.id,name=member?.full_name||member?.username||'Member';
+ return <MarketWorkspace active="people" title="Member profile" description="Get to know a potential collaborator through the details they choose to share." action={<a className="pcButton" href={back}>← Back to people</a>}><Notices query={query}/>
+ {!member?<div className="pcEmpty" role="alert"><h2>Member profile unavailable.</h2><p>Members choose whether their profile appears in the Market.</p><a href={back}>Return to people →</a></div>:<div className="marketDetailStack">
+  <article className="marketCard marketDetailHero"><div className="workspaceIdentity marketProfileIdentity"><MarketAvatar memberId={member.id} name={name}/><div><h2 className="workspaceDetailTitle">{name}</h2>{member.username&&<p className="marketMeta">@{member.username}{own?' · Your profile':''}</p>}</div></div>{member.headline&&<p>{member.headline}</p>}{member.skills.length>0&&<div className="marketTags" aria-label="Shared skills">{member.skills.map(skill=><span key={skill}>{skill}</span>)}</div>}
+  {own?<div className="marketActions"><a className="pcButton" href="/member/profile#market-visibility">Manage your visibility →</a></div>:<><div className="marketActions">{member.contactable&&<MarketMessageButton className="pcButton primary" memberId={member.id} label="Message request →"/>}<SocialAction action="follow" fields={{member_id:member.id,enabled:String(!member.following)}}><button className="pcButton" aria-pressed={member.following}>{member.following?'Unfollow':'Follow member'}</button></SocialAction></div><p className="marketMeta">{member.contactable?'A message request lets this member decide whether to start a conversation.':'This member is not accepting new message requests or project invitations. You can still follow their shared updates.'}</p></>}
+  <p className="marketMeta">Only the details this member has chosen to share appear here.</p></article>
+  {connections}
+  {member.id!==user.id&&member.contactable&&labs.some(l=>l.roles?.length)&&<section className="marketCard"><h2>Build together</h2><p className="marketMeta">Invite this member to an advertised role in a Lab you lead. An invitation reserves no participation slot.</p><details><summary className="pcButton">Invite to a project</summary><form className="marketForm" method="post" action="/api/lab-market"><input type="hidden" name="action" value="invite"/><input type="hidden" name="return_tab" value="requests"/><input type="hidden" name="member_id" value={member.id}/><label>Advertised Lab role<select name="lab_role" required><option value="">Choose a Lab and role</option>{labs.flatMap(lab=>(lab.roles||[]).map(role=><option key={lab.team_id+role} value={JSON.stringify({team_id:lab.team_id,role})}>{lab.title} · {role}</option>))}</select></label><label>Invitation message<textarea name="proposal" minLength={10} maxLength={2000} rows={3} placeholder="Explain the work, why you would like to collaborate and what they could contribute." required/></label><label>Proposed commitment<input name="commitment" minLength={3} maxLength={300} placeholder="For example, 3 hours a week for 6 weeks" required/></label><button className="pcButton primary">Send invitation</button></form></details></section>}
+  {Boolean(member.bio||member.professional_area||member.experience_level||member.technical_interests||member.preferred_roles||member.weekly_availability||member.problem_interests||member.location)&&<section className="marketCard"><h2>About and collaboration interests</h2><dl className="marketProfileDetails">{[['About',member.bio],['Professional area',member.professional_area],['Experience',member.experience_level],['Technical interests',member.technical_interests],['Preferred roles',member.preferred_roles],['Availability',member.weekly_availability],['Project interests',member.problem_interests],['Location',member.location]].map(([title,text])=>text?<div key={title}><dt>{title}</dt><dd>{text}</dd></div>:null)}</dl></section>}
+  {!own&&<details className="marketCard marketMemberOptions"><summary>Member options · Report or block</summary><p className="marketMeta">Use these controls if a profile or contact needs attention.</p><Report kind="member" id={member.id}/><details className="marketSafety"><summary>Block member</summary><SocialAction action="block" fields={{member_id:member.id,enabled:'true'}}><p>Stop Market contact and hide each other’s posts. Existing Lab responsibilities remain governed by the Lab.</p><button className="pcButton">Confirm block</button></SocialAction></details></details>}
+ </div>}
+ </MarketWorkspace>;
+}

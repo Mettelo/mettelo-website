@@ -1,3 +1,4 @@
+import {assertCurrentTaxonomyBatch} from '../lib/opportunities/classified-batch.mjs';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {loadPipelineModule} from './pipeline-test-loader.mjs';
@@ -16,7 +17,7 @@ if(action==='prepare'){
 }else if(action==='expiry'){
  console.log(JSON.stringify({expired:await runner.retryWebsiteOpportunityExpiry()}));
 }else{
- const batch=await loadPreparedBatch(root,id);
+ const batch=await loadPreparedBatch(root,id);assertCurrentTaxonomyBatch(batch);
  await saveRunReceipt(root,id,{state:'dispatching'});
  try{const result=await runner.runWebsiteOpportunityPipeline(batch);await saveRunReceipt(root,id,{state:'complete',result});console.log(JSON.stringify(result,null,2));}
  catch{await saveRunReceipt(root,id,{state:'unconfirmed',guidance:'Inspect database run status. Retry the same prepared batch, or expiry only when publication is confirmed.'});throw new Error('Run not confirmed. The saved receipt records recovery instructions; do not generate a replacement batch for this run ID.');}

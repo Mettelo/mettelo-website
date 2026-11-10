@@ -9,7 +9,7 @@ for(const page of pages){
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
  assert.equal(ids.length,new Set(ids).size);
  assert.equal((html.match(/<h1\b/g)||[]).length,1);
- assert(html.includes('aria-label="Legal and trust"'));
+ assert(html.includes('aria-label="Help and trust"'));
  for(const [,href] of html.matchAll(/href="([^"]+)"/g)){
   if(href.startsWith('#'))assert(ids.includes(href.slice(1)),`${page}: ${href}`);
   if(href.startsWith('/')){const u=new URL(href,'https://example.test');const file=resolve(root,u.pathname==='/'?'index.html':u.pathname.replace(/^\/|\/$/g,'')+'/index.html');assert(existsSync(file),href);if(u.hash)assert(readFileSync(file,'utf8').includes(`id="${u.hash.slice(1)}"`),href);}

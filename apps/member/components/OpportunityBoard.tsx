@@ -1,7 +1,6 @@
 'use client';
 
 import {safeOpportunityLink} from '@/lib/opportunity-links.mjs';
-import SaveOpportunityButton from './SaveOpportunityButton';
 import {opportunitySourceGroup} from '@/lib/opportunity-source-group.mjs';
 import {useMemo,useState} from 'react';
 
@@ -22,7 +21,7 @@ function workLabel(value:string|null){if(!value||value==='unknown')return null;i
 function initials(name:string|null){return(name||'Mettelo').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()}
 function freshness(value:string|null){if(!value)return null;const days=Math.floor((Date.now()-new Date(value).getTime())/86400000);if(days<=0)return'Added today';if(days===1)return'Added yesterday';if(days<7)return`Added ${days} days ago`;return`Added ${new Date(value).toLocaleDateString('en-GB')}`}
 
-export default function OpportunityBoard({items,savedIds,signedOut=false}:{items:Opportunity[];savedIds?:string[];signedOut?:boolean}){
+export default function OpportunityBoard({items}:{items:Opportunity[]}){
   const [query,setQuery]=useState('');
   const [type,setType]=useState('all');
   const [country,setCountry]=useState('all');
@@ -121,7 +120,7 @@ export default function OpportunityBoard({items,savedIds,signedOut=false}:{items
           <div className="opportunitySignalRow" aria-label="Opportunity context">{applicant&&<span>{applicant}</span>}{sponsor&&<span className={sponsorPositive?'positive':''}>{sponsorPositive?'✓ ':''}{sponsor}</span>}{item.closes_at&&<span>Closes {new Date(item.closes_at).toLocaleDateString('en-GB')}</span>}</div>
           {item.summary&&<p className="opportunitySummary">{short(item.summary)}</p>}
         </div>
-        <footer className="opportunityCardFoot"><small>{freshness(item.published_at)}{item.source_organisation?` · Source: ${item.source_organisation}`:''}</small><div className="opportunityActions"><SaveOpportunityButton opportunityId={item.id} initialSaved={savedIds?.includes(item.id)} signedOut={signedOut} compact/><>{apply?<a className="button dark" href={apply} target="_blank" rel="noopener noreferrer" aria-label={`Apply on source website for ${item.title} (opens in a new tab)`}>Apply on source website ↗</a>:<span>Application link unavailable</span>}</></div></footer>
+        <footer className="opportunityCardFoot"><small>{freshness(item.published_at)}{item.source_organisation?` · Source: ${item.source_organisation}`:''}</small><div className="opportunityActions"><>{apply?<a className="button dark" href={apply} target="_blank" rel="noopener noreferrer" aria-label={`Apply on source website for ${item.title} (opens in a new tab)`}>Apply on source website ↗</a>:<span>Application link unavailable</span>}</></div></footer>
       </article>})}</div>:<div className="panel emptyState"><h3>No opportunities match that search.</h3><p>Try removing a filter or broadening your search terms.</p>{hasFilters&&<button className="button ghost" type="button" onClick={clearFilters}>Clear filters</button>}</div>}
 
     {totalPages>1&&<nav className="opportunityPagination" aria-label="Opportunity result pages"><button className="button ghost" type="button" onClick={()=>goPage(safePage-1)} disabled={safePage===1}>← Previous</button><span>Page {safePage} of {totalPages}</span><button className="button ghost" type="button" onClick={()=>goPage(safePage+1)} disabled={safePage===totalPages}>Next →</button></nav>}

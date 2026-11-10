@@ -46,6 +46,7 @@ summary::-webkit-details-marker{display:none}
 }
 
 /* Profile: quieter guidance and clear field grouping. */
+body:has(.memberEnquiryDialog[open]){overflow:hidden}.memberEnquiryDialog{overflow-y:auto;overscroll-behavior:contain;max-height:calc(100dvh - 32px)}.memberEnquiryDialog .lxDialogInner{max-height:none;overflow:visible}
 .profileShell>.lead{max-width:64ch}.profilePrivacyNote{padding:14px 16px;background:var(--surface-soft);border-radius:10px}.profileGroupIntro{margin:0 0 18px;color:var(--muted);font-size:.875rem;max-width:62ch}.profileForm .profileFieldHint{font-size:.8125rem;line-height:1.5;color:var(--muted);margin:7px 0 16px}.profileForm fieldset{min-width:0}.profileForm .profileCompletion h2{font-size:1.125rem}.profileCompletion progress{width:100%;height:8px;accent-color:var(--navy)}.profileCompletion summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline}.profileCompletion li{font-size:.875rem;margin-block:6px}.profilePhoto input[type=file]{max-width:100%;font-size:.875rem}.profilePhoto .tinyNote{font-size:.8125rem;line-height:1.5}.profileForm fieldset:disabled{opacity:.7}
 
 /* Member collections share a consistent heading, state and action hierarchy. */
@@ -61,3 +62,5 @@ summary::-webkit-details-marker{display:none}
 .profileSectionLinks{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}.profileSectionLinks a{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:.8125rem;text-decoration:none;background:var(--surface-soft)}.profileSectionLinks a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}.profileForm fieldset{scroll-margin-top:100px}
 /* Override the shared current-navigation fill within the form step indicator. */
 .interestDetail .mpi3Progress button.current{background:var(--sand);color:var(--navy);border-color:var(--gold-text)}.interestDetail .mpi3Progress button.current small,.interestDetail .mpi3Progress button.current strong{color:inherit}
+/* Keep account entry quiet, with one clear create-account action. */
+.guestAccountHeader .guestCreateAccount{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px!important;border:1px solid var(--ink);border-radius:10px;background:var(--ink);color:white!important;text-decoration:none}.guestAccountHeader .guestCreateAccount:hover{background:var(--ink)!important;filter:brightness(1.15)}.guestAccountMobile .guestCreateAccount{margin-top:8px}.guestAccountDesktop{align-items:center;gap:22px}.guestAccountDesktop>a:not(.guestCreateAccount){min-height:44px;display:inline-flex;align-items:center}

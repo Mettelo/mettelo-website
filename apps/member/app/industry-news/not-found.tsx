@@ -1,0 +1,1 @@
+export default function NotFound(){return <section className="newsEmpty"><span className="newsEyebrow">INDUSTRY NEWS</span><h1>This story isn’t available.</h1><p>It may have been unpublished, or the link may be incorrect.</p><a href="/industry-news" className="newsButton dark">Explore the latest stories ↗</a></section>;}

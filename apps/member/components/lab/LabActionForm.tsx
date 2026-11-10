@@ -1,0 +1,7 @@
+'use client';
+import {useRef,useState} from 'react';
+import {useRouter} from 'next/navigation';
+export default function LabActionForm({action,children,onSaved,successMessage='Saved.',disabled=false}:{disabled?:boolean;action:string;children:React.ReactNode;onSaved?:(result?:{case_id?:string})=>void;successMessage?:string}){
+ const nonce=useRef('');const router=useRouter(),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ return <form className="labOperationsForm" aria-busy={busy} onSubmit={async e=>{e.preventDefault();if(busy||disabled)return;const form=e.currentTarget,data=new FormData(form),body=new URLSearchParams();data.forEach((v,k)=>body.append(k,String(v)));body.set('action',action);if(action==='meeting_save'||action==='support_create'){nonce.current||=crypto.randomUUID();body.set('client_nonce',nonce.current);}setBusy(true);setMessage('Saving…');try{const r=await fetch('/api/lab',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body});const result=await r.json();if(!r.ok)throw Error(result.error||'Could not save.');setMessage(successMessage);nonce.current='';form.reset();onSaved?.(result.result);router.refresh();}catch(error){setMessage(error instanceof SyntaxError?'We could not confirm the save. Try again; your entries are still here.':error instanceof Error?error.message:'Could not save. Your answers are still here.');}finally{setBusy(false);}}}><fieldset disabled={busy||disabled}>{children}</fieldset><p role="status" aria-live="polite">{message}</p></form>;
+}

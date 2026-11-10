@@ -43,5 +43,5 @@ test('NHS absence needs a valid exact-reference feed; outages never imply closur
 });
 test('UK technical families qualify including data operations while unrelated clinical jobs do not',async()=>{
  const base=parseNhsFeed(xml).jobs[0];const titles=['Business Analyst','Performance Analyst','Data Architect','AI Engineer','Cloud Engineer','Data Entry Clerk','Staff Nurse'];
- const result=await runOpportunityDiscovery({sourceCalls:[['UK synthetic',async()=>titles.map((title,i)=>({...base,title,externalId:String(i)}))]]});assert.equal(result.qualifying,6);assert.equal(result.scanned,7);
+ const result=await runOpportunityDiscovery({sourceCalls:[['UK synthetic',async()=>titles.map((title,i)=>({...base,title,externalId:String(i)}))]]});assert.equal(result.qualifying,4);assert.equal(result.scanned,7);
 });

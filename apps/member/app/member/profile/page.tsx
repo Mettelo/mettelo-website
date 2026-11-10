@@ -1,12 +1,14 @@
+import MarketConnections from '@/components/MarketConnections';
+import MarketProfilePreferences from '@/components/MarketProfilePreferences';
+import './sharing.css';
 import {safeMemberPath} from '@/lib/auth-navigation.mjs';
 import {redirect} from 'next/navigation';
 import {createServerSupabaseClient} from '@/lib/supabase/server';
 import {profileColumns} from '@/lib/profile-contract.mjs';
-import MemberProfileForm from '@/components/MemberProfileForm';
-import ProfilePhotoEditor from '@/components/ProfilePhotoEditor';
+import MemberProfileView from '@/components/MemberProfileView';
 export const dynamic='force-dynamic';
-export default async function ProfilePage({searchParams}:{searchParams:Promise<{next?:string}>}){
-  const requestedNext=(await searchParams).next;
+export default async function ProfilePage({searchParams}:{searchParams:Promise<{next?:string;notice?:string;error?:string}>}){
+  const query=await searchParams,requestedNext=query.next;
   const returnTo=requestedNext?safeMemberPath(requestedNext,'/member/profile'):undefined;
   const db=await createServerSupabaseClient();
   const {data:{user}}=await db.auth.getUser();
@@ -17,5 +19,5 @@ export default async function ProfilePage({searchParams}:{searchParams:Promise<{
   const profile=data as unknown as Record<string,unknown>;
   if(!profile.username)redirect('/onboarding');
   const photo=profile.avatar_path?await db.storage.from('website-profile-photos').createSignedUrl(String(profile.avatar_path),300):null;
-  return <section className="section"><div className="shell profileShell"><div className="eyebrow">My Mettelo</div><h1>Your professional profile</h1><p className="lead">Introduce yourself, share your focus and add the work you want to build on. Your details stay private.</p><ProfilePhotoEditor photoUrl={photo?.data?.signedUrl||null}/><MemberProfileForm profile={profile} prefill={prefill.data} returnTo={returnTo}/></div></section>;
+  return <section className="section"><div className="shell"><MemberProfileView profile={profile} prefill={prefill.data} photoUrl={photo?.data?.signedUrl||null} returnTo={returnTo} sharingSettings={<><MarketConnections db={db} memberId={user.id} userId={user.id}/><MarketProfilePreferences db={db} notice={query.notice} error={query.error}/></>}/></div></section>;
 }

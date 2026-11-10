@@ -10,7 +10,7 @@ Prepared 3 November 2026. Planning only: no Lab code, schema, member import, Dri
 - Project Assignments has 93 populated rows in the inspected range: 40 Confirmed, 51 Awaiting acknowledgement, one Withdrawn and one Awaiting project choice. Do not treat all 93 as current accepted memberships.
 - Platform checkout reviewed at 4c80cec7d0a6cf6614ec9d0ed0af1e6beaac347f. This is source inspection, not a fresh verification of the running platform.
 - Relevant source: app/member/projects/page.tsx; app/member/projects/[id]/page.tsx; components/MetteloLabPanel.tsx; components/MetteloLabNavigation.tsx; lib/project-start-service.ts; lib/project-lab-canonical-data.ts.
-- Website foundations: website_project_interests, website_project_teams, website_project_team_members and website_project_pilot_settings; migrations 20261102085628 and 20261102150000; tests/pilot-team-lifecycle.staging.sql.
+- Website foundations: website_project_interests, website_project_teams, website_project_team_members and website_project_pilot_settings; migrations 20261102085628 and 20261102150000. The original lifecycle test was replaced by tests/lab-admission.staging.sql when manual readiness and unique project placement were introduced.
 
 ## Product decision
 
@@ -131,3 +131,142 @@ Source files inspected additionally: app/member/projects/[id]/layout.tsx, compon
 Several source handlers call notifyUser/notifyAdmins and email queue services. Do not transfer those calls into active sending behaviour: the current website scope explicitly excludes emails. Omitted modules must be removed from navigation and data loading, not merely hidden with CSS. Keep team access checks on server routes and persistence policies. Preserve existing source tests as reference and adapt meaningful persistence/access tests to website tables.
 
 Deliver in reviewable transfer batches: (1) admission/placement foundation and accepted cards; (2) existing Lab shell + Plan/Team/Resources; (3) Tasks/Chat/Data/Contributions with working persistence. These are implementation batches within one proposed pilot release, not a requirement to launch incomplete screens separately. Pilot release acceptance requires the enabled areas to work together and excludes placeholder controls.
+
+## Team changes, support enquiries and simple meetings — design addendum
+
+Recorded 3 November 2026 from the user's spoken requirements. Status: proposed design for review, not an instruction to send emails or alter placements. This addendum supplements the implemented formation workflow described in V2-LAB-TRANSFER-STATUS.md.
+
+### Requirements captured
+
+1. Administrators must be able to add people to an existing team, including growing an already-started two-person pilot to three or more within its capacity.
+2. Administrators must be able to remove a member for withdrawal, inactivity, disruptive behaviour or other recorded operational reasons; existing work must remain attributed and retained.
+3. Coordinators need an enquiry form inside each Lab for questions, access problems, membership changes and delivery concerns. Members also need a private route when a concern involves their coordinator.
+4. The Lab should support simple meeting scheduling using an externally created Google Meet, Microsoft Teams or other approved meeting URL, with topic, date, time and time zone.
+5. All current accepted team members should receive a meeting email with the topic, localised time and join link. No complex platform meeting/video implementation is required.
+6. Membership must remain manageable after team formation and after work starts. Formation is not a permanent lock on team composition.
+
+### Current implementation versus proposed changes
+
+| Area | Current website behaviour | Proposed addition/change |
+|---|---|---|
+| Adding someone | Shortlisted applicants can be offered a place in forming/paused placements; a running team must first pause. | Add a dedicated admission flow to active teams while existing members continue work. Pending invitees have no Lab access. |
+| Removing someone | An administrator releases a placement with a reason; an active team pauses, membership access is revoked and records remain. | Structured reason, impact preview, task/milestone reassignment and separate disciplinary restriction on re-offering. Pause according to remaining readiness and risk. |
+| Coordinator change | Nominate an accepted member, collect agreement and recheck readiness. | Make this available from membership/support review with a clear acting-coordinator recovery path; never infer new consent. |
+| Support | No website Lab support-case module has been transferred. | Private enquiries, replies and admin queue, adapted from platform support boundaries. |
+| Meetings | No simple website meeting workflow or meeting email delivery is implemented. | Small external-link meeting form, team agenda and dependable invitation/update/cancellation email delivery. |
+
+### A. Add a member to an existing active team
+
+Admin > Projects > selected team > Add member:
+
+1. Select an unallocated, shortlisted applicant from that project's interest pool. Show Team/Flexible preferences, roles and availability; Solo-only applicants require an explicit change of preference first.
+2. Select their offered role and review capacity, essential responsibilities and schedule. A pending offer reserves a capacity slot and the applicant's place on that project.
+3. Issue an offer without changing the existing team's active status. The person sees the actual arrangement and commitment and accepts or declines it.
+4. Acceptance confirms their placement but does not grant access to the running Lab until onboarding is complete. Track onboarding/access eligibility separately from acceptance; audit every transition.
+5. Verify external repository access, record onboarding completion and select Admit to active Lab. Only then grant workspace access, include them in the roster and deliver future meeting notices. For a forming team, keep the existing team-wide start checks.
+6. Offer expiry, cancellation and rejection release the reservation. Concurrent offers/admissions cannot exceed capacity or create two current placements for the same person on the same project. Retry of a saved offer/admission must not duplicate it.
+
+Do not apply the initial team's 'no unanswered offers' start condition to everyday work by an already-active team. Pending growth should not freeze an established team. Show accepted, onboarding, active and available-place counts separately.
+
+Two-person growth: retain the historic exception for audit. When a third member is admitted, use the ordinary three-person rule. The third person must not be asked to agree to a two-person arrangement. If later reduced to two, require a fresh administrator exception review and agreement from the actual remaining pair; do not reuse stale consent after a composition change. The current readiness implementation needs adjusting because it checks historic two-person agreement even when a team has grown beyond two.
+
+Solo-to-Team is a deliberate arrangement change, not an ordinary Add member operation. The existing solo owner must agree before a conversion or replacement team is created. A completed Lab does not reopen through a membership offer.
+
+### B. Remove or replace a member
+
+Only an authorised project administrator removes a member. A coordinator submits a request rather than receiving unilateral disciplinary power.
+
+Proposed reasons: member requested withdrawal; unavailable/inactive; change of role or project; capacity/restructure; conduct concern; other. Require a private explanation. 'Conduct concern' is an allegation/review category, not an automatic finding of misconduct.
+
+Before confirmation, display the affected coordinator role, assigned open tasks/milestones, remaining active-member count, minimum/capacity and repository access obligations. Confirm whether a replacement/reassignment is required.
+
+On confirmation:
+
+- Revoke future website Lab access immediately; invalidate any outstanding admission/offer and suppress unsent team notices for that person.
+- Preserve authored messages, completed work, evidence and membership history. Do not redistribute or erase authorship.
+- Mark open assignments as requiring reassignment. Retained contributors must not be allowed to keep writing through stale sessions or direct API calls; check current database membership on protected operations.
+- If the coordinator leaves, nominate a replacement and obtain explicit agreement. Pause delivery actions until the replacement/readiness decision is complete.
+- If fewer than the permitted minimum remain, pause and request replacement or a new two-person exception. A one-person remainder must not silently become Solo.
+- If minimum, coordinator and responsibility coverage remain satisfied, allow an administrator to keep delivery active after recording that review. A risk-related pause remains available at any time. The current blanket-pause rule is conservative and must not change until the finer checks are implemented and tested.
+- A disciplinary release must not return the person automatically to Ready to form. Record a placement restriction/review flag; re-offering requires an explicit authorised clearance. Do not turn a team-specific restriction into an account-wide ban without a separate decision.
+- Website removal cannot revoke Google/Teams meeting access or GitHub permissions already granted externally. Show a manual external-access revocation checklist and record completion.
+
+### C. Private support inside Mettelo Lab
+
+Add a persistent Contact Mettelo / Get support action, not another discussion thread visible to the team.
+
+Suggested reason dropdown:
+
+- Project brief, scope or source-data question.
+- Lab technical issue or repository access.
+- Request another member / replacement.
+- Request a member removal.
+- Coordinator change / coordination support.
+- Inactive or unavailable teammate.
+- Team communication or conduct concern.
+- Deadline, workload or milestone support.
+- Meeting question.
+- Other enquiry.
+
+Form: automatically attach project and team IDs from the authorised context; collect reason, short subject, description and optional affected member. Start with text and safe evidence links; no new attachment-storage system is needed. Explain that reports are private to the reporter and authorised support staff; do not promise absolute confidentiality.
+
+On submission, show a case reference and status. The reporter can view their own cases and replies. All current members, including coordinators, may submit; regular members cannot perform administrator membership actions. No automatic removal follows an enquiry.
+
+Admin > Support: filter by project, reason, status and assigned operator. Minimal states: New, In review, Waiting for member, Resolved, Closed. Keep internal administrator notes separate from reporter-visible replies. Link a resulting membership/coordinator action to the case and its audit record.
+
+A case about the coordinator must not automatically be disclosed to that coordinator. Sensitive cases are not visible through team chat, the roster or ordinary project-admin list data. The platform source already contains support privacy hardening; reuse its access principles and selected components, not its full recovery/escalation machinery. Define support permissions explicitly; opportunity-pipeline permission alone is insufficient. Initially restrict support administration to the approved website project operator.
+
+A reporter who later leaves a team should still be able to follow their own case through an account-level My enquiries page, without regaining Lab access. Set no response-time guarantee until an operational owner and response policy are agreed.
+
+Source references inspected: platform app/api/project-support-cases/route.ts, app/admin/project-support/page.tsx, migrations 20260908010000_project_experience_phase_17_support_conflict_safeguarding.sql and 20260908011000_project_experience_phase_17_support_privacy_hardening.sql. These are reuse references, not an assertion that the website module is already transferred.
+
+### D. Simple meetings with external links
+
+Add Meetings within the Lab. Team coordinator and approved administrator can schedule/edit/cancel; members can view and join. A Solo owner can schedule their own project meeting, with no arbitrary invitation list. Members can request a meeting through support initially; broader scheduling permissions can be decided later.
+
+Form: topic, optional short agenda, date, start time, time zone, duration/end time, provider and external join URL. Require valid future time, positive duration, recognised time zone and a safe HTTPS meeting URL. Store the instant in UTC plus the selected event time zone; display each viewer's local time with its zone. Reject invalid daylight-saving transition times rather than silently moving a meeting. Do not create meeting rooms, fetch user-supplied links or request Google/Microsoft account permissions. Provide an approved-provider policy and a reviewed route for other providers rather than unrestricted arbitrary links.
+
+Team view: upcoming meetings ordered by time, topic, organiser, agenda, local time/duration and Join meeting. Keep past/cancelled meetings as lightweight history. Updating or cancelling records an event revision. External provider attendance permissions remain external; Lab visibility is membership-scoped, not proof that an external link is private.
+
+Email behaviour:
+
+- After a meeting is saved, queue an invitation for each currently active/admitted team member, including the organiser where applicable. Offered, declined, removed or not-yet-admitted people do not receive it. Send separately; never expose the team email list.
+- Include project/team, topic, start/end with time zone, agenda, external join link and a link back to the Lab. Include a simple calendar attachment where practical. Do not claim an external calendar event was automatically created.
+- Queue revised notices on time/link changes and cancellation notices on cancellation. Use stable meeting identity and versioning for calendar updates.
+- Add a newcomer to future scheduled meetings only after admission; do not resend past notices to the whole team. Recheck current membership before queued sends. Removal cancels pending delivery but cannot recall already-delivered email or external links.
+- Persist an outbox/job in the same transaction as the meeting change. Deduplicate by meeting/event revision and recipient; retry transient failures and show pending/failed/provider-accepted delivery in admin. Reconcile uncertain provider responses before retrying; 'provider accepted' is not proof of inbox delivery.
+- Reuse Resend and Mettelo's email styling through a server-only application sender. Supabase Auth SMTP configuration alone does not send meeting emails. Keep credentials server-side. Choose a durable worker/schedule compatible with the eventual Hostinger Node hosting; do not rely on a page remaining open or an in-memory development timer.
+- Initial scope is invitations, material changes and cancellations. Automated reminders are optional later work, not silently added here. No real outbound email is authorised by this planning review.
+
+### Small architecture extension
+
+Reuse existing membership/offer/audit records. Add explicit onboarding/admission state and membership restrictions, with team-composition versioning for fresh exception consent. Add private support cases/replies, team-scoped meetings and a private notification outbox/delivery log. Access must be enforced in server/database operations, not only by hiding buttons. All records reference the actual team instance, not just the shared project brief.
+
+Delivery order proposed:
+
+1. Active-team additions, onboarding, reasoned removals, reassignment and two-person-growth fixes.
+2. Private Lab support and a small /admin/support queue.
+3. Simple external-link meeting form and upcoming-meetings view.
+4. Meeting emails, failure/retry controls and synthetic-recipient checks before any real-member sending.
+
+### Acceptance examples
+
+- An active two-person pilot continues work while a third member receives an offer. Only an accepted/onboarded/admitted third member gains workspace access; no two-person consent is demanded from that third member.
+- Two simultaneous administrators cannot overfill a team or allocate the same applicant twice on one project.
+- Removing a member revokes their API access, preserves history and flags open assignments. A coordinator departure or below-minimum team cannot continue silently. An administrator can review a still-ready remaining team without mandatory unnecessary shutdown.
+- A conduct-related removal cannot immediately regenerate a suggested placement for the same person. External repository/meeting access revocation is explicitly tracked.
+- A member can privately report a coordinator; unrelated members cannot read the case. A coordinator request cannot remove another member automatically. Former members can still see their own enquiries without seeing the Lab.
+- A meeting displays the correct time in two different member time zones and through daylight-saving transitions. Invalid/unsafe links and unauthorised edits are rejected.
+- Invitation retries do not duplicate messages. Updates/cancellations have the correct meeting revision. Removed members receive no queued future notices, and newly admitted members get only relevant future meetings.
+- Preview/testing uses synthetic records and controlled recipients only; there is no production deployment, real team change or real email send as a consequence of documenting this addendum.
+
+### Addendum implementation status
+
+The membership, support and meeting addendum is now implemented in the website and applied to V2 staging. See V2-LAB-TRANSFER-STATUS.md for exact migration versions and validation. Application email sending remains disabled pending controlled sender/recipient configuration and a delivery check; production hosting/scheduling and final visual QA remain release work. This supersedes the earlier design-only status for these modules. No real-member messages or production deployment were performed.
+
+### Self-service meetings and support UX correction
+
+- Meetings are team operations, with no staff approval step. Any admitted member of an active team can schedule. The organiser, coordinator or authorised staff can edit/cancel; other members can join and copy the link. Compact meeting cards open separate scheduling/editing and cancellation dialogs.
+- Get support opens a private enquiry with team/project context. My enquiries is the member's searchable case list and conversation history. The admin Support inbox handles these requests, with staff-only notes kept separate from replies visible to the member. A member reply to a waiting case returns it to In review.
+- Email delivery is background infrastructure, not a support approval process. Remove delivery diagnostics from the support inbox. No member meeting waits for email approval; saving it makes it visible immediately. Sending remains disabled in staging.
+- Later notification work must map the full journey: interest receipt, placement offer/acceptance, admission, meeting invitations/changes/cancellations and optional reminders, and support replies. Agree useful triggers, preferences, recipient eligibility, deduplication, provider budgets and monitoring together before enabling sends. No quota or sending guarantee is assumed, and no new email-admin dashboard is required by this scope.

@@ -1,3 +1,4 @@
+import {validateHistory} from './profile-history.mjs';
 // Field names, taxonomy and bounds transferred from the platform profile API.
 export const professionalAreas=['Data Analysis / BI','Data Science / ML','Data Engineering','AI / Generative AI','Analytics Engineering','Research / Product / Design','Career transition / Student','Other'];
 export const profileFields=[
@@ -18,13 +19,19 @@ export const profileFields=[
   {key:'preferred_roles',label:'Preferred project roles',max:240},
   {key:'weekly_availability',label:'Weekly project availability',max:40,options:['Not sure yet','Less than 2 hours','2–4 hours','5–8 hours','9–12 hours','More than 12 hours']},
   {key:'problem_interests',label:'Problems you would like to solve',max:400},
+  {key:'education_qualification',label:'Qualification or degree',max:160},
+  {key:'education_institution',label:'School, college or university',max:200},
+  {key:'education_subject',label:'Field of study',max:160},
+  {key:'education_period',label:'Dates attended',max:80},
+  {key:'education_additional',label:'Additional education and learning',max:1500,multiline:true},
   {key:'community_contribution',label:'What would you like to contribute?',max:1000,multiline:true}
 ];
-export const profileColumns=['id','username','member_id','profile_version','profile_completed_at',...profileFields.map(f=>f.key)].join(',');
+export const profileColumns=['id','username','member_id','profile_version','profile_completed_at',...profileFields.map(f=>f.key),'education_entries','experience_entries'].join(',');
 export function validateProfilePatch(input){
   if(!input||typeof input!=='object'||Array.isArray(input))throw new Error('Enter valid profile details.');
   const patch={};
   for(const [key,raw] of Object.entries(input)){
+    if(key==='education_entries'||key==='experience_entries'){patch[key]=validateHistory(raw,key);continue;}
     const field=profileFields.find(f=>f.key===key);
     if(!field)throw new Error('This profile field cannot be changed.');
     if(typeof raw!=='string')throw new Error(`${field.label} must be text.`);

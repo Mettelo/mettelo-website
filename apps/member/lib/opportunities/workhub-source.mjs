@@ -1,7 +1,8 @@
+import {discoveryTerms,discoveryPlan} from './job-classification.mjs';
 // GOV.UK /find-a-job links to Work Hub. Only exact GRS employer records qualify here.
 const origin='https://www.jobs.service.gov.uk';
 export const WORKHUB_SOURCE='Work Hub · Civil Service (GRS)';
-export const WORKHUB_TERMS=['data','information','analytics','artificial intelligence','machine learning','business analyst','digital','software','cyber'];
+export const WORKHUB_TERMS=discoveryTerms;
 const clean=value=>String(value??'').replace(/<[^>]*>/g,' ').replace(/&amp;/g,'&').replace(/&nbsp;|&#160;/g,' ').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
 export function workhubAdvertUrl(value){try{const u=new URL(value,origin);return u.origin===origin&&!u.username&&!u.password&&!u.search&&!u.hash&&/^\/jobs\/[a-f0-9]{24}$/.test(u.pathname)?u.href:null;}catch{return null;}}
 export function parseWorkhubSearch(html){
@@ -83,7 +84,7 @@ export async function scanWorkhubBatch({fetcher=fetch,cursor={term:0,page:1},pag
  }
  return {jobs:mergeWorkhubJobs(jobs),pages,cursor:{term,page},complete:term===WORKHUB_TERMS.length};
 }
-export async function fetchWorkhubJobs({fetcher=fetch,terms=WORKHUB_TERMS,maxPages=3}={}){
+export async function fetchWorkhubJobs({fetcher=fetch,terms=discoveryPlan().terms,maxPages=3}={}){
  const urls=new Set();
  // This is explicitly a bounded search, not complete nationwide department coverage.
  for(const keyword of terms){for(let page=1;page<=Math.max(1,Math.min(3,maxPages));page++){
@@ -104,7 +105,7 @@ export async function fetchWorkhubJobs({fetcher=fetch,terms=WORKHUB_TERMS,maxPag
   if(existing){existing.location=[...new Set([existing.location,job.location].filter(Boolean))].join('; ');continue;}
   unique.set(job.externalId,job);
  }
- return [...unique.values()];
+ return Object.assign([...unique.values()],{coverageNote:'GRS only: '+terms.length+' keyword searches; up to '+Math.min(3,maxPages)+' pages each. Bounded rotating taxonomy coverage; not all departments.'});
 }
 export async function probeWorkhubVacancy(value,fetcher=fetch){
  const url=workhubAdvertUrl(value);if(!url)return null;

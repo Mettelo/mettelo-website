@@ -31,5 +31,7 @@ test('CPS discovery validates application routes; outages cannot imply closure',
 test('Civil Service technology and information roles qualify while unrelated legal roles stay out',async()=>{
  const {runOpportunityDiscovery}=loadPipelineModule('discovery');const base=parseCpsJob(advert(),parseCpsCards(card())[0]);
  const titles=['Area Performance Analyst','Senior IT Service Manager','Lead Corporate Knowledge and Information Manager','Finance Systems Analyst','Senior Infrastructure Engineer','Technical Architect','Crown Prosecutor','Paralegal Officer'];
- const result=await runOpportunityDiscovery({sourceCalls:[['Official departmental fixtures',async()=>titles.map((title,i)=>({...base,title,externalId:String(i)}))]]});assert.equal(result.qualifying,6);
+ const result=await runOpportunityDiscovery({sourceCalls:[['Official departmental fixtures',async()=>titles.map((title,i)=>({...base,title,externalId:String(i)}))]]});assert.equal(result.qualifying,1);
+ assert.ok(result.candidates.slice(1,6).every(job=>job.classification.status==='medium'));assert.ok(result.candidates.slice(6).every(job=>job.classification.status==='low'));
+ const withDuties=await runOpportunityDiscovery({sourceCalls:[['Technical duty fixtures',async()=>titles.slice(0,6).map((title,i)=>({...base,title,externalId:String(i),description:'You will build data pipelines in SQL and Python and develop reporting dashboards.'}))]]});assert.equal(withDuties.qualifying,6);
 });

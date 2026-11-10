@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFileSync,readdirSync,statSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+const template=readFileSync(resolve(root,'shared/footer.html'),'utf8').trim();let checked=0;
+const check=p=>{if(statSync(p).isDirectory()){for(const e of readdirSync(p,{withFileTypes:true}))if(e.isDirectory()||e.name.endsWith('.html'))check(resolve(p,e.name));return;}const html=readFileSync(p,'utf8');if(!/<html[ >]/i.test(html))return;const footers=[...html.matchAll(/<footer class="footer publicSiteFooter">[\s\S]*?<\/footer>/g)];assert.equal(footers.length,1,`Exactly one public footer: ${p}`);assert.equal(footers[0][0].replace(/src="(?:\.\.\/|\/)*assets\/logo-sand.svg"/,'src="{{ASSETS}}assets/logo-sand.svg"').trim(),template,`Shared footer drift: ${p}`);checked++;};
+for(const area of ['index.html','start','community-guidelines','our-story','terms','privacy','contact','projects','industry-news'])check(resolve(root,area));
+assert.equal(JSON.parse(readFileSync(resolve(root,'apps/member/components/public-footer.snapshot.json'),'utf8')),template,'Runtime footer must match shared source');
+assert.equal(readFileSync(resolve(root,'apps/member/components/public-footer.css'),'utf8'),readFileSync(resolve(root,'shared/footer.css'),'utf8'),'Runtime/static footer styles must match');
+const css=readFileSync(resolve(root,'shared/public.css'),'utf8');assert.ok(css.startsWith('@import url("/shared/footer.css");'));assert.equal((css.match(/@import/g)||[]).length,2);
+console.log(`Shared footer parity passed across ${checked} public HTML pages, runtime snapshot and shared styles.`);

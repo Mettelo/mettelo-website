@@ -1,0 +1,53 @@
+begin;
+create temp table readiness_results(check_name text,passed boolean);
+do $$
+declare a uuid;b uuid;cid uuid;src text;result jsonb;denied boolean;r text;v bigint;
+begin
+ select user_id into a from private_website_lab.member_roles where role='full_admin' and private_website_lab.permitted(user_id,'operations') limit 1;
+ select id into b from auth.users where email_confirmed_at is not null and private_website_lab.account_allowed(id) and private_website_lab.assigned_role(id)='member' order by id limit 1;
+ if a is null or b is null then raise exception 'Staging admin and member fixtures required';end if;
+ if has_function_privilege('anon','public.website_admin_readiness(text,jsonb)','execute') then raise exception 'Anonymous admin RPC access';end if;
+ foreach r in array array['member','writer','editor'] loop
+  insert into private_website_lab.member_roles(user_id,role) values(b,r) on conflict(user_id) do update set role=r;
+  perform set_config('request.jwt.claim.sub',b::text,true);
+  denied:=false;begin perform public.website_admin_readiness('list');exception when insufficient_privilege then denied:=true;end;
+  if not denied then raise exception 'Unauthorised ownership read';end if;
+  denied:=false;begin perform public.website_admin_readiness('email_status');exception when insufficient_privilege then denied:=true;end;
+  if not denied then raise exception 'Unauthorised email status read';end if;
+  denied:=false;begin perform public.website_admin_readiness('assign','{}');exception when insufficient_privilege then denied:=true;end;
+  if not denied then raise exception 'Unauthorised assignment write';end if;
+ end loop;
+ insert into readiness_results values('Anonymous, member, writer and editor denied operational data/actions',true);
+ insert into private_website_lab.member_roles(user_id,role) values(b,'operations_admin') on conflict(user_id) do update set role='operations_admin';
+ perform set_config('request.jwt.claim.sub',b::text,true);
+ result:=public.website_admin_readiness('email_status');
+ if not (result?'project_previews' and result?'weekly_preparations' and result?'meeting_states') or result::text like '%@%' then raise exception 'Invalid aggregate status';end if;
+ insert into readiness_results values('Operations administrator sees aggregate email status without addresses',true);
+ foreach src in array array['public','member'] loop
+  if src='public' then select id into cid from private_website_lab.public_contacts order by id limit 1;
+  else select id into cid from private_website_lab.support_cases order by id limit 1;end if;
+  if cid is null then raise exception 'Both source fixtures required';end if;
+  result:=public.website_admin_readiness('case',jsonb_build_object('source',src,'id',cid));v:=(result#>>'{assignment,version}')::bigint;
+  if not exists(select 1 from jsonb_array_elements(result->'owners') x where x->>'id'=a::text) then raise exception 'Full admin missing from eligible owners';end if;
+  result:=public.website_admin_readiness('assign',jsonb_build_object('source',src,'id',cid,'assigned_to',a,'version',v));
+  if (result->>'version')::bigint<>v+1 then raise exception 'Version did not increment';end if;
+  denied:=false;begin perform public.website_admin_readiness('assign',jsonb_build_object('source',src,'id',cid,'assigned_to',b,'version',v));exception when serialization_failure then denied:=true;end;
+  if not denied then raise exception 'Stale assignment accepted';end if;
+  result:=public.website_admin_readiness('assign',jsonb_build_object('source',src,'id',cid,'assigned_to','','version',v+1));
+  if result->>'assigned_to' is not null then raise exception 'Unassign failed';end if;
+  if not exists(select 1 from private_website_lab.audit where action='support_assignment' and payload->>'case_id'=cid::text and payload->>'source'=src) then raise exception 'Assignment audit missing';end if;
+ end loop;
+ insert into readiness_results values('Both enquiry sources support assign/unassign, audit and stale-write rejection',true);
+ insert into private_website_lab.member_access(user_id,suspended,reason,changed_by) values(b,true,'Rollback-only suspended owner check',a) on conflict(user_id) do update set suspended=true;
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ result:=public.website_admin_readiness('case',jsonb_build_object('source',src,'id',cid));
+ if exists(select 1 from jsonb_array_elements(result->'owners') x where x->>'id'=b::text) then raise exception 'Suspended owner selectable';end if;
+ denied:=false;begin perform public.website_admin_readiness('assign',jsonb_build_object('source',src,'id',cid,'assigned_to',b,'version',v+2));exception when raise_exception then denied:=true;end;
+ if not denied then raise exception 'Suspended staff assigned';end if;
+ insert into readiness_results values('Suspended staff cannot receive ownership',true);
+ if has_table_privilege('authenticated','private_website_lab.support_assignments','select') or has_table_privilege('authenticated','private_website_lab.support_assignments','insert') then raise exception 'Direct assignment table access';end if;
+ if exists(select 1 from information_schema.columns where table_schema='private_website_lab' and table_name in ('support_cases','public_contacts') and column_name='assigned_to') then raise exception 'Member-visible source row changed';end if;
+ insert into readiness_results values('Private ownership table inaccessible and member-visible enquiry shape unchanged',true);
+end $$;
+select * from readiness_results;
+rollback;

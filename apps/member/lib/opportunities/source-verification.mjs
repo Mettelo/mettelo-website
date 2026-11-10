@@ -3,7 +3,7 @@ import {probeHmrcVacancy} from './hmrc-source.mjs';
 import {probeCpsVacancy} from './cps-source.mjs';
 import {probeWorkhubVacancy} from './workhub-source.mjs';
 // Verify only known feed hosts. Employer URLs require a separately reviewed registry.
-const allowedHosts=new Set(['homeofficejobs.tal.net','www.arbeitnow.com','arbeitnow.com','remotive.com','www.remotive.com','remotive.io','www.remotive.io']);
+const allowedHosts=new Set(['homeofficejobs.tal.net','www.arbeitnow.com','arbeitnow.com','www.arbeitnow.co.uk','arbeitnow.co.uk','www.arbeitnow.fr','arbeitnow.fr','www.arbeitnow.ch','arbeitnow.ch','www.arbeitnow.nl','arbeitnow.nl','remotive.com','www.remotive.com','remotive.io','www.remotive.io']);
 export function verifiedSourceUrl(value){
  try{const url=new URL(value);if(url.protocol!=='https:'||url.port||url.username||url.password||!allowedHosts.has(url.hostname))return null;return url.href;}catch{return null;}
 }

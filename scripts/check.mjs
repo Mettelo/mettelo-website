@@ -20,6 +20,7 @@ const required = [ '/projects/', 'https://github.com/Mettelo', 'https://www.yout
 for (const url of required) assert(html.includes(`href="${url}"`), `Missing integration: ${url}`);
 assert(!html.includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Public homepage must route career resources through community membership');
 assert(readFileSync(resolve(root, 'start/index.html'), 'utf8').includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Preserve onboarding resource access');
+assert.equal((html.match(/data-member-route="\/member\/resources"/g)||[]).length,1,'Keep one consolidated career resource route; no duplicate application/interview links');
 assert(!readFileSync(resolve(root, 'assets/logo-sand.svg'), 'utf8').includes('M704.36 702'), 'Embedded tagline returned');
 const files = ['index.html', 'tokens.css', 'styles.css', 'shared/public.css', 'shared/home.css', 'shared/home-experience.css', 'shared/home-experience.js', 'script.js', 'projects/catalogue.js', 'assets/logo-sand.svg', 'assets/logo-navy.svg', 'assets/favicon.svg'];
 const bytes = files.reduce((total, file) => total + statSync(resolve(root, file)).size, 0);

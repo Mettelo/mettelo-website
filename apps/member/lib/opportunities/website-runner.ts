@@ -1,3 +1,4 @@
+import {classifiedBatchRows,assertCurrentTaxonomyBatch} from './classified-batch.mjs';
 import {createClient} from '@supabase/supabase-js';
 import {runOpportunityDiscovery,type DiscoveredJob} from './discovery';
 import {safeOpportunityLink} from '../opportunity-links.mjs';
@@ -17,22 +18,13 @@ export async function prepareWebsiteOpportunityBatch(runId:string,extended?:{job
  validatePreparedBatch({runId,candidates:[]});
  const discovery=await runOpportunityDiscovery({extraSource:extended?['Civil Service · Work Hub extended scan',async()=>Object.assign(extended.jobs,{coverageNote:extended.coverageNote})]:undefined});
  if(!('candidates' in discovery)||!discovery.candidates||!discovery.source_stats.some(source=>source.configured&&!source.error))throw new Error('No opportunity source completed successfully. Nothing published.');
- const candidates=discovery.candidates.filter(item=>item.classification.status==='high'&&item.classification.score>=85).map(item=>({
-  external_job_id:`${item.provider}:${item.externalId}`,title:item.title,organisation:item.organisation,
-  opportunity_type:item.opportunityType,summary:item.description.slice(0,320),location:item.location,closes_at:item.closesAt||null,
-  source_url:safeOpportunityLink(item.url),official_application_url:safeOpportunityLink(item.url),
-  original_published_at:item.publishedAt,data_ai_relevance_score:item.classification.score,
-  data_ai_relevance_status:item.classification.status,role_family:item.classification.roleFamily,
-  source_organisation:item.sourceOrganisation,country_code:item.countryCode,
-  work_arrangement:item.remote?'remote':'unknown',remote_scope:item.remote?'remote':null,
-  applicant_scope:'unknown',sponsorship_status:'not_stated',classification_version:'website-uk-tech-v7'
- }));
+ const {candidates,reviewCandidates,taxonomyVersion}=classifiedBatchRows(discovery.candidates);
  // Never silently discard qualifying jobs when the database batch limit is reached.
  validatePreparedBatch({runId,candidates});
- return {runId,candidates,sourceStats:discovery.source_stats};
+ return {runId,candidates,reviewCandidates,taxonomyVersion,sourceStats:discovery.source_stats};
 }
 export async function runWebsiteOpportunityPipeline(batch:Awaited<ReturnType<typeof prepareWebsiteOpportunityBatch>>){
- validatePreparedBatch(batch);
+ validatePreparedBatch(batch);assertCurrentTaxonomyBatch(batch);
  const db=pipelineClient();
  return executePreparedBatch((name:string,args?:Record<string,unknown>)=>db.rpc(name,args),batch);
 }
