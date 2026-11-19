@@ -1,10 +1,24 @@
-import {createSign} from 'node:crypto';
+import {createSign,createPrivateKey} from 'node:crypto';
 export const githubLogin=value=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9-]{0,38}$/.test(value);
+function privateKeyFromSetting(value){
+ const slash=String.fromCharCode(92),newline=String.fromCharCode(10);
+ let raw=String(value||'').trim();
+ while(raw.includes(slash+slash))raw=raw.replaceAll(slash+slash,slash);
+ raw=raw.replaceAll(slash+'r'+slash+'n',newline).replaceAll(slash+'n',newline).trim();
+ if((raw.startsWith('"')&&raw.endsWith('"'))||(raw.startsWith("'")&&raw.endsWith("'")))raw=raw.slice(1,-1).trim();
+ // Hosting text fields can flatten PEM line breaks. Re-wrap only a complete,
+ // matching private-key envelope and base64 body; never infer missing key data.
+ const pem=raw.match(/^-----BEGIN (RSA PRIVATE KEY|PRIVATE KEY)-----\s*([A-Za-z0-9+/=\s]+?)\s*-----END \1-----$/);
+ if(!pem)return '';
+ const body=pem[2].replace(/\s/g,'');
+ const normalised='-----BEGIN '+pem[1]+'-----\n'+(body.match(/.{1,64}/g)||[]).join('\n')+'\n-----END '+pem[1]+'-----\n';
+ try{return createPrivateKey(normalised).asymmetricKeyType==='rsa'?normalised:''}catch{return ''}
+}
 export function githubConfiguration(env=process.env){
  const organisation=env.METTELO_GITHUB_ORGANISATION||'Mettelo';
- const appId=env.METTELO_GITHUB_APP_ID||'',installationId=env.METTELO_GITHUB_APP_INSTALLATION_ID||'',privateKey=(env.METTELO_GITHUB_APP_PRIVATE_KEY||'').replaceAll('\\n','\n');
+ const appId=env.METTELO_GITHUB_APP_ID||'',installationId=env.METTELO_GITHUB_APP_INSTALLATION_ID||'',privateKey=privateKeyFromSetting(env.METTELO_GITHUB_APP_PRIVATE_KEY);
  const enabled=env.METTELO_GITHUB_INVITATIONS_ENABLED==='true';
- return {organisation,appId,installationId,privateKey,enabled,configured:enabled&&githubLogin(organisation)&&/^\d+$/.test(appId)&&/^\d+$/.test(installationId)&&privateKey.includes('PRIVATE KEY')&&Boolean(env.METTELO_GITHUB_SUPABASE_SERVICE_ROLE_KEY)};
+ return {organisation,appId,installationId,privateKey,enabled,configured:enabled&&githubLogin(organisation)&&/^\d+$/.test(appId)&&/^\d+$/.test(installationId)&&Boolean(privateKey)&&Boolean(env.METTELO_GITHUB_SUPABASE_SERVICE_ROLE_KEY)};
 }
 export class GitHubConnectionError extends Error{constructor(code,status=0){super(code);this.code=code;this.status=status}}
 export function appJwt(config,now=Date.now()){
