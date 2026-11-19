@@ -508,7 +508,7 @@
 @media(max-width:680px){
   .experience :global(#discussion.messagePanel){
     padding:0!important;
-    border-radius:16px!important;
+    border-radius:var(--radius-card)!important;
     box-shadow:none!important;
   }
   .experience :global(#discussion .messagePanelHeader){
@@ -636,11 +636,11 @@
   }
   .experience :global(#discussion .messageActions>button[role="menuitem"]){
     width:100%!important;
-    min-height:48px!important;
+    min-height:var(--control-height)!important;
     padding:11px 10px!important;
     border:0!important;
     border-bottom:1px solid #f0f1f3!important;
-    border-radius:8px!important;
+    border-radius:var(--radius-control)!important;
     text-align:left!important;
     font-size:.82rem!important;
     font-weight:750!important;
@@ -658,7 +658,7 @@
     border-bottom:1px solid #f0f1f3!important;
   }
   .experience :global(#discussion .messageLinkControl select){
-    min-height:44px!important;
+    min-height:var(--control-height)!important;
   }
 }
 

@@ -12,6 +12,6 @@
   .opportunityQuickFilterHint{grid-area:hint;margin-top:2px;color:#66707d;font-size:.67rem;font-weight:600;line-height:1.35}
   .opportunityQuickFilterDisclosure summary:focus-visible{outline:3px solid rgba(198,137,42,.34);outline-offset:2px}
   .opportunityQuickFiltersMobile{display:grid!important;grid-template-columns:1fr;gap:7px;padding:10px 0 2px;overflow:visible!important}
-  .opportunityQuickFiltersMobile button{width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:10px;text-align:left}
+  .opportunityQuickFiltersMobile button{width:100%;min-height:var(--control-height);display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:var(--radius-control);text-align:left}
   .opportunityQuickFiltersMobile button.isActive::after{content:'Selected';font-size:.62rem;font-weight:800;color:#6a430f}
 }

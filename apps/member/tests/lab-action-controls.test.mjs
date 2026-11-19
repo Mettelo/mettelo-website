@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -10,7 +11,7 @@ const cache=new Map();
 const routerStub='data:text/javascript;base64,'+Buffer.from('export function useRouter(){return {refresh(){}}}').toString('base64');
 async function componentUrl(url){
  if(cache.has(url.href))return cache.get(url.href);
- let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+ let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
  for(const match of [...code.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
   const specifier=match[2];
   const local=specifier.startsWith('@/')?new URL('../'+specifier.slice(2)+'.tsx',import.meta.url):specifier.startsWith('.')?new URL(specifier+(specifier.endsWith('.mjs')?'':'.tsx'),url):null;
@@ -29,6 +30,10 @@ test('active member meeting UI exposes scheduling and the complete enabled booki
  assert.match(html,/Schedule meeting/);
  for(const name of ['topic','local_start','duration','time_zone','join_url','agenda'])assert.ok(html.includes(`name="${name}"`),name);
  assert.doesNotMatch(html,/<fieldset disabled/);
+ assert.match(html,/class="lxDialog lxMeetingEditor"/);
+ assert.match(html,/class="labOperationsForm lxMeetingEditorForm"/);
+ assert.match(html,/class="lxMeetingEditorFields"/);
+ assert.ok(html.indexOf('</div><footer class="lxFormFooter">')>html.indexOf('name="agenda"'),'Meeting actions sit outside the scrolling field body');
 });
 test('preparation meeting UI keeps the booking action discoverable and explains why saving is unavailable',()=>{
  const html=render(Meetings,{teamId:'fixture',meetings:[],canSchedule:false,readOnlyReason:'Repository access still needs verification.'});

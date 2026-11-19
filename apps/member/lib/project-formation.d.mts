@@ -7,4 +7,4 @@ export function formationCandidates(i:LabInterest[],t:LabTeam[],p:string,a:strin
 export function proposedGroups(i:LabInterest[],t:LabTeam[],p:string):{arrangement:string;members:LabInterest[]}[];
 export function assignedResponsibilities(value:string|string[]|undefined):string[];
 export function proposalResponsibilities(arrangement:string,value:string|string[]|undefined,requiredRoles?:string[]):string[];
-export function validateProposal(p:{members:LabInterest[];arrangement:string;roles:Record<string,string|string[]>;requiredRoles?:string[];projectRoles?:string[];nominee:string;capacity?:number;twoPersonReason?:string}):string;
+export function validateProposal(p:{members:LabInterest[];arrangement:string;roles:Record<string,string|string[]>;requiredRoles?:string[];projectRoles?:string[];nominee:string;capacity?:number;minimum?:number;twoPersonReason?:string}):string;

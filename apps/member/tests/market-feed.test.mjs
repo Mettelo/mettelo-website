@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -10,8 +11,8 @@ const discovery=data(`export async function discoveryRpc(db,action,payload){cons
 const proposals=data(`export async function proposalRpc(){const f=globalThis.feedFixture;return {proposal:f.proposal}}`);
 const origin=data(`export function profileRequestOriginAllowed(origin){return origin==='http://127.0.0.1:3001'}`);
 const next=data(`export const NextResponse={json(body,options={}){return new Response(JSON.stringify(body),{...options,headers:{...options.headers,'Content-Type':'application/json'}})},redirect(url,status=307){return new Response(null,{status,headers:{Location:String(url)}})}}`);
-async function route(path){let source=ts.transpileModule(await fs.readFile(new URL(path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
- for(const match of [...source.matchAll(/from\s+(['"])([^'"]+)\1/g)]){const s=match[2],target=s==='@/lib/lab'?lab:s==='@/lib/lab-market'?social:s==='@/lib/market-discovery'?discovery:s==='@/lib/market-proposals'?proposals:s==='@/lib/market-community'?social:s==='@/lib/request-origin.mjs'?origin:s==='@/lib/market-feed.mjs'?new URL('../lib/market-feed.mjs',import.meta.url).href:s==='next/server'?next:null;if(!target)throw Error('Unexpected import '+s);source=source.replace(match[0],'from '+JSON.stringify(target));}
+async function route(path){let source=ts.transpileModule(await fs.readFile(new URL(path,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
+ for(const match of [...source.matchAll(/from\s+(['"])([^'"]+)\1/g)]){const s=match[2],target=s==='@/lib/lab'?lab:s==='@/lib/lab-market'?social:s==='@/lib/market-discovery'?discovery:s==='@/lib/market-proposals'?proposals:s==='@/lib/market-community'?social:s==='@/lib/request-origin.mjs'?origin:s==='@/lib/market-feed.mjs'?new URL('../lib/market-feed.mjs',import.meta.url).href:s==='@/lib/connect-copy.mjs'?new URL('../lib/connect-copy.mjs',import.meta.url).href:s==='next/server'?next:null;if(!target)throw Error('Unexpected import '+s);source=source.replace(match[0],'from '+JSON.stringify(target));}
  return import(data(source));
 }
 const {GET}=await route('../app/api/market-feed/route.ts'),{POST}=await route('../app/api/market-community/route.ts');
@@ -82,3 +83,5 @@ test('connection reads authenticate, bound pages and cannot select arbitrary dis
  const f=fixture({project:{followers:1,following:0,rows:[]}});const result=await PEOPLE(new Request(base+id+'&action=avatar&direction=unknown&page=9999999'));assert.equal(result.status,200);assert.deepEqual(f.discoveryCalls,[{action:'connections',payload:{member_id:id,direction:'followers',page:10000}}]);assert.equal(result.headers.get('cache-control'),'private, no-store');
  fixture({discoveryError:true});const failed=await PEOPLE(new Request(base+id));assert.equal(failed.status,403);assert.doesNotMatch(await failed.text(),/Private database/);
 });
+
+test('declining a collaboration redirects with the specific Connect confirmation',async()=>{fixture();const response=await MARKET(new Request('http://127.0.0.1:3001/api/lab-market',{method:'POST',headers:{Origin:'http://127.0.0.1:3001','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'decline',request_id:'00000000-0000-4000-8000-000000000001'})}));assert.equal(new URL(response.headers.get('location')).searchParams.get('notice'),'Collaboration request declined.');});

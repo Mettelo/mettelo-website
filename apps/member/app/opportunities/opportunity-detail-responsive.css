@@ -174,7 +174,7 @@
 
   .opportunityDetailSection{
     padding:20px;
-    border-radius:16px;
+    border-radius:var(--radius-card);
   }
 
   .opportunityDetailSection h2{

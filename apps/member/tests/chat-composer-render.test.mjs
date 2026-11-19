@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -7,7 +8,7 @@ import {renderToStaticMarkup} from 'react-dom/server';
 
 // Render the real component without effects, network requests or database writes.
 const source=await fs.readFile(new URL('../components/lab/ProjectMessagePanel.tsx',import.meta.url),'utf8');
-const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match))
  .replaceAll('"react/jsx-runtime"',JSON.stringify(import.meta.resolve('react/jsx-runtime')))
  .replaceAll("'react'",JSON.stringify(import.meta.resolve('react')));
 const {default:Panel}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
@@ -25,4 +26,18 @@ test('active assigned Solo and Team members receive a labelled textarea and send
 test('preparation and other read-only views explain the state with a visible disabled message box',()=>{
  const html=renderToStaticMarkup(createElement(Panel,{...props,solo:true,readOnly:true,readOnlyMessage:'This Solo Lab is being prepared.'}));
  assert.match(html,/<textarea[^>]*disabled/);assert.match(html,/<button[^>]*disabled/);assert.doesNotMatch(html,/<form/);assert.match(html,/This Solo Lab is being prepared/);
+});
+
+test('chat offers one message type control and safe empty-state starters only to writers',()=>{
+ const html=renderToStaticMarkup(createElement(Panel,{...props,readOnly:false}));
+ assert.equal((html.match(/aria-label="Message type"/g)||[]).length,1);
+ assert.doesNotMatch(html,/project-message-type/);
+ for(const label of ['Update','Question','Blocker','Decision','Share an update','Ask a question'])assert.ok(html.includes(label));
+ const locked=renderToStaticMarkup(createElement(Panel,{...props,readOnly:true}));assert.doesNotMatch(locked,/messageStarters/);
+});
+test('chat separates days and retains author, pin and failed-send recovery for populated conversations',()=>{
+ const message=(id,at,body,extra={})=>({id,author_user_id:'member',message_type:'update',body,mentioned_user_ids:[],created_at:at,...extra});
+ const html=renderToStaticMarkup(createElement(Panel,{...props,readOnly:false,initialMessages:[message('a','2026-11-11T10:00:00Z','First update',{pinned_at:'2026-11-11T10:00:00Z'}),message('b','2026-11-11T11:00:00Z','A second update'),message('c','2026-11-12T12:00:00Z','<script>not executable</script>',{delivery:'failed'})]}));
+ assert.equal((html.match(/class="messageDay"/g)||[]).length,2);
+ assert.match(html,/Test member/);assert.match(html,/Pinned messages/);assert.match(html,/Retry/);assert.match(html,/&lt;script&gt;/);assert.doesNotMatch(html,/<script>/);
 });

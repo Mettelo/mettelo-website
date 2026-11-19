@@ -13,6 +13,8 @@
   --gold-text: #82571d;
   --text-on-dark: #c0bfc3;
   --font-body: 'Segoe UI', Arial, sans-serif;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-mono: 'Cascadia Code', Consolas, monospace;
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
@@ -28,4 +30,27 @@
   --shadow-menu: 0 12px 32px #14182418;
   --space-8: 64px;
   --space-10: 80px;
+  --space-half: 4px;
+  --space-1-5: 12px;
+  --space-2-5: 20px;
+  --control-height: 44px;
+  --control-height-comfortable: 48px;
+  --radius-dialog: 20px;
+  --radius-badge: 6px;
+  --text-body: 1rem;
+  --text-control: .875rem;
+  --text-secondary: .875rem;
+  --text-caption: .8125rem;
+  --leading-body: 1.65;
+  --leading-control: 1.4;
+  --weight-label: 600;
+  --border: 1px solid var(--line);
+  --warning: #805317;
+  --surface-warning: #fcf3df;
+  --surface-success: #edf6f0;
+  --surface-danger: #fff1f2;
+  --shadow-dialog: 0 24px 80px #14182429;
+  --icon-size: 20px;
+  --icon-stroke: 1.75;
+  --content-reading: 72ch;
 }

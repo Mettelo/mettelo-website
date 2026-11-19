@@ -49,7 +49,9 @@ begin
  for k in 1..3 loop perform public.website_lab('verify_access',jsonb_build_object('team_id',team_id,'user_id',ids[k],'reason','Synthetic access check only'));end loop;
  perform public.website_lab('prepare_workspace',jsonb_build_object('team_id',team_id));
  result:=private_website_lab.readiness(team_id);if result->>'ready'<>'true' then raise exception 'Prepared team not ready: %',result;end if;
- perform public.website_lab('start',jsonb_build_object('team_id',team_id));
+ -- Ready activation has been automatic since the November 5 readiness migration.
+ if (select status from public.website_project_teams where id=team_id)<>'active' then perform public.website_lab('start',jsonb_build_object('team_id',team_id));end if;
+ if (select status from public.website_project_teams where id=team_id)<>'active' then raise exception 'Ready team did not activate';end if;
  perform set_config('request.jwt.claim.sub',ids[2]::text,true);
  perform public.website_lab('discussion',jsonb_build_object('team_id',team_id,'project_ref','MTL-DA-001','body','Synthetic newly formed team chat works.','client_nonce',gen_random_uuid()));
  perform set_config('request.jwt.claim.sub',admin_id::text,true);
@@ -57,7 +59,8 @@ begin
  solo_id:=(public.website_lab('form_group',jsonb_build_object('project_ref','MTL-DA-001','label','[ROLLBACK] Flexible Solo','participation','solo','compatibility_reviewed','true','members',jsonb_build_array(jsonb_build_object('interest_id',apps[4],'role','Data Analyst'))))->>'team_id')::uuid;
  perform set_config('request.jwt.claim.sub',ids[4]::text,true);perform public.website_lab('respond',jsonb_build_object('team_id',solo_id,'response','accept','commitment_confirmed','true'));
  if (select coordinator_id from public.website_project_teams where id=solo_id)<>ids[4] then raise exception 'Solo delivery authority not assigned to owner';end if;
- perform set_config('request.jwt.claim.sub',admin_id::text,true);perform public.website_lab('verify_access',jsonb_build_object('team_id',solo_id,'user_id',ids[4],'reason','Synthetic solo repository access'));perform public.website_lab('prepare_workspace',jsonb_build_object('team_id',solo_id));perform public.website_lab('start',jsonb_build_object('team_id',solo_id));
+ perform set_config('request.jwt.claim.sub',admin_id::text,true);perform public.website_lab('verify_access',jsonb_build_object('team_id',solo_id,'user_id',ids[4],'reason','Synthetic solo repository access'));perform public.website_lab('prepare_workspace',jsonb_build_object('team_id',solo_id));
+ if (select status from public.website_project_teams where id=solo_id)<>'active' then perform public.website_lab('start',jsonb_build_object('team_id',solo_id));end if;
  -- Removing an active member pauses the team and revokes workspace access without deleting work.
  perform public.website_lab('release_member',jsonb_build_object('team_id',team_id,'user_id',ids[2],'reason','Synthetic member withdrawal request','release_reason','inactive'));
  if (select status from public.website_project_teams where id=team_id)<>'paused' then raise exception 'Active team did not pause after removal';end if;
@@ -89,7 +92,9 @@ begin
  rejected:=false;begin perform public.website_lab('start',jsonb_build_object('team_id',pair_id));exception when raise_exception then rejected:=true;end;if not rejected then raise exception 'Pair started without explicit consent';end if;
  perform set_config('request.jwt.claim.sub',ids[2]::text,true);perform public.website_lab('agree_two',jsonb_build_object('team_id',pair_id));
  perform set_config('request.jwt.claim.sub',ids[5]::text,true);perform public.website_lab('agree_two',jsonb_build_object('team_id',pair_id));
- perform set_config('request.jwt.claim.sub',admin_id::text,true);perform public.website_lab('start',jsonb_build_object('team_id',pair_id));
+ perform set_config('request.jwt.claim.sub',admin_id::text,true);
+ if (select status from public.website_project_teams where id=pair_id)<>'active' then perform public.website_lab('start',jsonb_build_object('team_id',pair_id));end if;
+ if (select status from public.website_project_teams where id=pair_id)<>'active' then raise exception 'Consenting ready pair did not activate';end if;
  perform public.website_lab('placement_status',jsonb_build_object('team_id',pair_id,'status','completed','reason','Synthetic delivery completed for test'));
  perform set_config('request.jwt.claim.sub',ids[5]::text,true);rejected:=false;begin perform public.website_lab('discussion',jsonb_build_object('team_id',pair_id,'project_ref','MTL-DA-001','body','Must not write into a completed Lab.','client_nonce',gen_random_uuid()));exception when raise_exception or insufficient_privilege then rejected:=true;end;
  if not rejected then raise exception 'Completed placement remained writable';end if;
@@ -99,7 +104,7 @@ end $test$;
 select set_config('formation.test_admin',(select user_id::text from private_website_lab.admins limit 1),true);
 set local role authenticated;
 select set_config('request.jwt.claim.sub',current_setting('formation.test_admin'),true);
-select public.website_lab('formation_list');
+select jsonb_build_object('workflow_version',public.website_lab('formation_list')->>'workflow_version') as verified_projection;
 do $permissions$
 begin
  begin

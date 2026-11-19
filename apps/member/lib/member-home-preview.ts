@@ -6,6 +6,9 @@ export function memberHomePreview(name:string|undefined){
  const active={...exampleLabCards[0],commitment_confirmed:true,can_enter:true};
  const base={cards:[] as typeof exampleLabCards,applications:[] as typeof exampleApplications,applicationCount:0,profilePercent:80,labFailed:false,applicationsFailed:false};
  switch(name){
+ case 'explore':return base;
+ case 'paused':return {...base,cards:[{...active,team_status:'paused',can_enter:false}]};
+ case 'expired':return {...base,cards:[{...exampleLabCards[1],offer_expires_at:'2020-01-01T00:00:00Z'}]};
  case 'active':return {...base,cards:[active]};
  case 'progress':return {...base,cards:[active,{...exampleLabCards[2],team_status:'active',can_enter:true},exampleLabCards[3]],applications:exampleApplications.slice(1,2),applicationCount:1};
  case 'offer':return {...base,cards:[{...exampleLabCards[1],offer_expires_at:new Date(Date.now()+2*86400000).toISOString()},active]};

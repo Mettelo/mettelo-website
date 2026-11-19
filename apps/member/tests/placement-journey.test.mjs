@@ -10,7 +10,7 @@ test('Flexible preferences name the actual offer arrangement rather than a third
 });
 test('accepted places expose actionable blockers rather than a second acceptance',()=>{
  const j=placementJourney({...base,membership_status:'confirmed',readiness:{checks:[{label:'Repository access checked',ready:false},{label:'Lab prepared',ready:true}]}});
- assert.equal(j.status,'Solo placement accepted');assert.match(j.note,/No second acceptance/);assert.deepEqual(j.pending,['Mettelo needs to verify repository access.']);
+ assert.equal(j.status,'Solo placement confirmed');assert.match(j.note,/Your placement is confirmed/);assert.doesNotMatch(j.note,/You have accepted/);assert.deepEqual(j.pending,['Mettelo needs to verify repository access.']);
 });
 test('only admitted active or completed members get a workspace link',()=>{
  const card={...base,membership_status:'confirmed',lab_enabled:true,can_enter:true};

@@ -9,6 +9,8 @@ mkdirSync(target,{recursive:false});
 for(const file of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','assets','start','community-guidelines','our-story','terms','privacy','contact','projects','industry-news'])cpSync(resolve(root,file),resolve(target,file),{recursive:true});
 mkdirSync(resolve(target,'shared'));
 cpSync(resolve(root,'shared/public.css'),resolve(target,'shared/public.css'));
+cpSync(resolve(root,'shared/ui-foundations.css'),resolve(target,'shared/ui-foundations.css'));
+cpSync(resolve(root,'shared/lucide-license.txt'),resolve(target,'shared/lucide-license.txt'));
 cpSync(resolve(root,'shared/footer.css'),resolve(target,'shared/footer.css'));
 cpSync(resolve(root,'shared/navigation.css'),resolve(target,'shared/navigation.css'));
 cpSync(resolve(root,'shared/trust.css'),resolve(target,'shared/trust.css'));

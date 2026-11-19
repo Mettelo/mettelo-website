@@ -7,7 +7,7 @@
 .home-v3 p{max-width:62ch}.home-v3 .kicker,.home-v3 .eyebrow{font-size:.6875rem;letter-spacing:.12em;color:var(--gold-text);font-weight:700;text-transform:uppercase}
 .home-v3 .nav{position:sticky;top:0;z-index:10;background:var(--navy);color:var(--sand)}
 .home-v3 .navinner{min-height:88px;padding-block:16px}.home-v3 .navlinks{gap:28px}.home-v3 .navlinks a{font-size:.8125rem}.home-v3 .nav .logo img{width:160px}
-.home-v3 .btn{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:14px 24px;border-radius:var(--radius-control);font-size:.875rem;line-height:1.4;font-weight:650}
+.home-v3 .btn{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:var(--control-height);padding:14px 24px;border-radius:var(--radius-control);font-size:.875rem;line-height:1.4;font-weight:650}
 .home-v3 .btn.primary{background:var(--gold);color:var(--navy);border:1px solid var(--gold)}.home-v3 .btn.ghost{background:transparent;border:1px solid #ffffff66;color:var(--sand)}
 .home-v3 .btn:hover{background:#e0a94e;color:var(--navy)}.home-text-link{display:inline-flex;gap:16px;align-items:center;min-height:48px;font-size:.875rem;font-weight:650;text-decoration:none}
 .home-v3 a:focus-visible,.home-v3 button:focus-visible,.home-v3 summary:focus-visible{outline:3px solid var(--focus);outline-offset:5px}.home-v3 .hero a:focus-visible,.home-v3 .home-community a:focus-visible,.home-v3 .footer a:focus-visible{outline-color:#edc887}

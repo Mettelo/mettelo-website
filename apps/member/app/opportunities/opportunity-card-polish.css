@@ -160,8 +160,8 @@
 .opportunityActions>*{min-width:0!important}
 .opportunityActions .button,
 .opportunityActions .saveOpportunity .button{
-  min-height:44px!important;
-  border-radius:10px!important;
+  min-height:var(--control-height)!important;
+  border-radius:var(--radius-control)!important;
   white-space:nowrap!important;
 }
 .opportunityActions .saveOpportunity .button{
@@ -228,7 +228,7 @@
     width:100%!important;
   }
   .opportunityActions>*{width:100%!important}
-  .opportunityActions .button{width:100%!important;min-height:46px!important}
+  .opportunityActions .button{width:100%!important;min-height:var(--control-height)!important}
 }
 
 @media(max-width:360px){

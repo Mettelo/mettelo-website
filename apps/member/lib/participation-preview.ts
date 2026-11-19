@@ -12,6 +12,6 @@ function card(ref:string,overrides:Partial<LabCard>):LabCard{return {team_id:`ex
 export const exampleLabCards:LabCard[]=[
  card('MTL-DA-001',{team_id:'example-active',team_status:'active',confirmed:4,can_enter:true,label:'Example · Team Atlas'}),
  card('MTL-AI-010',{team_id:'example-offered',membership_status:'offered',label:'Example · Team Horizon',offer_availability:'2–4 hours per week',offer_time_zone:'Europe/London'}),
- card('MTL-DE-007',{team_id:'example-forming',label:'Example · Team Compass'}),
+ card('MTL-DE-007',{team_id:'example-forming',label:'Example · Team Compass',commitment_confirmed:false,is_nominee:true,coordinator_agreed:false,minimum:2,confirmed:2}),
  card('MTL-BA-041',{team_id:'example-completed',team_status:'completed',participation:'solo',role:'Project owner',minimum:1,confirmed:1,can_enter:true,label:'Example · Solo project'})
 ];

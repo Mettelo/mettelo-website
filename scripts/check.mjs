@@ -22,9 +22,10 @@ assert(!html.includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6u
 assert(readFileSync(resolve(root, 'start/index.html'), 'utf8').includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Preserve onboarding resource access');
 assert.equal((html.match(/data-member-route="\/member\/resources"/g)||[]).length,1,'Keep one consolidated career resource route; no duplicate application/interview links');
 assert(!readFileSync(resolve(root, 'assets/logo-sand.svg'), 'utf8').includes('M704.36 702'), 'Embedded tagline returned');
-const files = ['index.html', 'tokens.css', 'styles.css', 'shared/public.css', 'shared/home.css', 'shared/home-experience.css', 'shared/home-experience.js', 'script.js', 'projects/catalogue.js', 'assets/logo-sand.svg', 'assets/logo-navy.svg', 'assets/favicon.svg'];
+// Include imported CSS too: navigation/footer were previously omitted from this budget.
+const files = ['index.html', 'tokens.css', 'styles.css', 'shared/public.css', 'shared/navigation.css', 'shared/footer.css', 'shared/ui-foundations.css', 'shared/home.css', 'shared/home-experience.css', 'shared/home-experience.js', 'script.js', 'projects/catalogue.js', 'assets/logo-sand.svg', 'assets/logo-navy.svg', 'assets/favicon.svg'];
 const bytes = files.reduce((total, file) => total + statSync(resolve(root, file)).size, 0);
-assert(bytes < 100_000, 'Homepage asset budget exceeds 100KB');
+assert(bytes < 130_000, 'Homepage complete local asset budget exceeds 130KB');
 console.log(`Passed: unique IDs, section destinations, assets, H1, tagline, safe external tabs, all public integrations. Initial local assets: ${bytes} bytes.`);
 
 assert(html.includes('data-member-route="/signup"'), 'Membership must route to website signup');

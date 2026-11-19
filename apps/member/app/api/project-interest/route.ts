@@ -1,3 +1,4 @@
+import {githubStatus} from '@/lib/github-connection';
 import {completionColumns,profileCompletion} from '@/lib/profile-completion.mjs';
 import {NextResponse} from 'next/server';
 import {createServerSupabaseClient} from '@/lib/supabase/server';
@@ -43,6 +44,8 @@ export async function POST(request:Request){
  if(profileError)return reply({error:'Your profile could not be checked. Try again.'},503);
  if(!profile?.username)return reply({error:'Complete your member identity before submitting.'},409);
  const completion=profileCompletion(profile||{});if(!completion.eligible)return reply({error:'Complete at least 80% of your profile before submitting project interest.',code:'PROFILE_INCOMPLETE',completion:completion.percent,required:80},403);
+ let github;try{github=await githubStatus(db)}catch{return reply({error:'Your GitHub connection could not be checked. Try again.'},503)}
+ if(github.required_for_projects&&!github.connected)return reply({error:'Connect GitHub in My profile before submitting project interest. Your Mettelo username stays unchanged.',code:'GITHUB_REQUIRED'},403);
  const {data:brief,error:briefError}=await db.from('website_project_briefs').select('intake_open').eq('project_ref',project.id).maybeSingle();
  if(briefError)return reply({error:'Project interest is temporarily unavailable.'},503);
  if(!brief?.intake_open)return reply({error:'This project is not accepting interest.'},409);

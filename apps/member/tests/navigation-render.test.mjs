@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -12,7 +13,7 @@ async function component(file){
  if(cache.has(file))return cache.get(file);
  let source=await fs.readFile(new URL(file,import.meta.url),'utf8');
  source=source.replace(/import\s+['"][^'"]+\.css['"];?/g,'');
- source=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
+ source=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
  for(const match of [...source.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
   const spec=match[2];let target;
   if(spec==='next/link')target=nextLink;
@@ -30,6 +31,12 @@ const {default:Member}=await import(await component('../components/MemberNavigat
 const {default:Admin}=await import(await component('../components/AdminNavigation.tsx'));
 const account={name:'Member',fullName:'Example Member',avatar:null,administration:false};
 const render=(C,props)=>renderToStaticMarkup(React.createElement(C,props));
+
+test('account identity has a stable initial before its authorised photo is ready',()=>{
+ const html=render(Account,{account:{...account,avatar:'https://example.invalid/authorised-photo.png'}});
+ assert.match(html,/class="mnAvatarFallback">M<\/span>/);assert.match(html,/data-ready="false"/);
+ assert.match(html,/width="34" height="34"/);assert.match(html,/aria-label="Open account menu"/);
+});
 test('public, member and Lab account menus keep the same gateway and account destinations',()=>{
  for(const context of ['public','member']){
   const html=render(Account,{account,context});

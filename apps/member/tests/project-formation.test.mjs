@@ -48,3 +48,9 @@ test('every selected team member needs a valid project responsibility',()=>{
  assert.match(validateProposal(base),/at least one/);
  assert.match(validateProposal({...base,roles:{...base.roles,c:['Foreign role']}}),/this project/);
 });
+
+test('a configured two-person minimum permits a pair without an exception, but still requires coordinator and role coverage',()=>{
+ const members=[{id:'a',user_id:'a',participation:'team',review_status:'approved',answers:{coordination_preference:'comfortable'}},{id:'b',user_id:'b',participation:'team',review_status:'approved',answers:{}}];
+ const input={members,arrangement:'team',roles:{a:['Engineer'],b:['Engineer']},requiredRoles:['Engineer'],projectRoles:['Engineer'],nominee:'a',minimum:2};
+ assert.equal(validateProposal(input),'');assert.match(validateProposal({...input,nominee:''}),/Nominate/);assert.match(validateProposal({...input,requiredRoles:['Designer']}),/responsibilities/);assert.match(validateProposal({...input,members:members.slice(0,1)}),/between 2/);
+});

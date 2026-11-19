@@ -17,15 +17,14 @@ begin
  solo_tid:=(public.website_lab('form_group',jsonb_build_object('project_ref',ref,'label','[ROLLBACK] Automatic Solo','participation','solo','compatibility_reviewed','true','required_roles',to_jsonb(roles[1:2]),'members',jsonb_build_array(jsonb_build_object('interest_id',apps[1],'role',roles[1]))))->>'team_id')::uuid;
  perform set_config('request.jwt.claim.sub',ids[1]::text,true);
  result:=public.website_lab('respond',jsonb_build_object('team_id',solo_tid,'response','accept','commitment_confirmed','true'));
- if (select status from public.website_project_teams where id=solo_tid)<>'forming' or not (select lab_enabled from public.website_project_teams where id=solo_tid) then raise exception 'Acceptance bypassed checks or failed to prepare Solo workspace';end if;
- if (select admitted_at from public.website_project_team_members where team_id=solo_tid and user_id=ids[1]) is not null then raise exception 'Acceptance inferred repository permission';end if;
+ if (select status from public.website_project_teams where id=solo_tid)<>'active' or not (select lab_enabled from public.website_project_teams where id=solo_tid) then raise exception 'Accepted Solo failed to open automatically';end if;
+ if (select access_verified_at from public.website_project_team_members where team_id=solo_tid and user_id=ids[1]) is not null then raise exception 'Lab acceptance fabricated repository permission';end if;
  select x into one from jsonb_array_elements(public.website_lab('mine')) x where x->>'team_id'=solo_tid::text;
- if not exists(select 1 from jsonb_array_elements(one->'readiness'->'checks') c where c->>'label'='Repository access checked' and c->>'ready'='false') then raise exception 'Missing member-facing repository blocker';end if;
- denied:=false;begin perform public.website_lab('workspace',jsonb_build_object('team_id',solo_tid));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Ordinary member entered forming Lab';end if;
- insert into activation_results values('one Solo acceptance prepares workspace and shows the real blocker without granting Lab access',true);
+ if one->>'can_enter'<>'true' then raise exception 'Accepted Solo cannot enter internal Lab';end if;
+ insert into activation_results values('Solo acceptance opens its internal workspace without fabricating external repository access',true);
  perform set_config('request.jwt.claim.sub',staff::text,true);
  result:=public.website_lab('verify_access',jsonb_build_object('team_id',solo_tid,'user_id',ids[1],'reason','Synthetic repository verification only'));
- if result->'activation'->>'activated'<>'true' or (select status from public.website_project_teams where id=solo_tid)<>'active' then raise exception 'Last readiness check did not open Solo Lab';end if;
+ if (select status from public.website_project_teams where id=solo_tid)<>'active' then raise exception 'Last readiness check did not open Solo Lab';end if;
  perform public.website_lab('verify_access',jsonb_build_object('team_id',solo_tid,'user_id',ids[1],'reason','Synthetic repeated verification only'));
  if (select count(*) from private_website_lab.audit where team_id=solo_tid and action='automatic_lab_start')<>1 then raise exception 'Automatic activation was duplicated';end if;
  perform set_config('request.jwt.claim.sub',ids[1]::text,true);
@@ -42,10 +41,10 @@ begin
  for k in 2..3 loop perform public.website_lab('verify_access',jsonb_build_object('team_id',group_tid,'user_id',ids[k],'reason','Synthetic team access check'));end loop;
  if (select status from public.website_project_teams where id=group_tid)<>'forming' then raise exception 'Team started before minimum acceptance';end if;
  perform set_config('request.jwt.claim.sub',ids[4]::text,true);perform public.website_lab('respond',jsonb_build_object('team_id',group_tid,'response','accept','commitment_confirmed','true'));
- if (select status from public.website_project_teams where id=group_tid)<>'forming' then raise exception 'Team started before final repository check';end if;
+ if (select status from public.website_project_teams where id=group_tid)<>'active' then raise exception 'Team failed to open after final acceptance';end if;
  perform set_config('request.jwt.claim.sub',staff::text,true);perform public.website_lab('verify_access',jsonb_build_object('team_id',group_tid,'user_id',ids[4],'reason','Synthetic final team access check'));
  if (select status from public.website_project_teams where id=group_tid)<>'active' or (select count(*) from public.website_project_team_members where team_id=group_tid and admitted_at is not null)<>3 then raise exception 'Ready Team not activated with three actual people';end if;
- insert into activation_results values('Team activation preserves headcount, coordinator consent, multi-role coverage and repository checks',true);
+ insert into activation_results values('Team activation preserves headcount, coordinator consent and multi-role coverage',true);
  -- Exercise the actual member actions for an active Solo owner and a normal Team contributor.
  for k in 1..2 loop
   test_tid:=case when k=1 then solo_tid else group_tid end;
@@ -80,12 +79,12 @@ begin
  perform set_config('request.jwt.claim.sub',staff::text,true);
  perform public.website_lab('offer',jsonb_build_object('team_id',group_tid,'interest_id',apps[5],'role',roles[1]));
  perform set_config('request.jwt.claim.sub',ids[5]::text,true);perform public.website_lab('respond',jsonb_build_object('team_id',group_tid,'response','accept','commitment_confirmed','true'));
- if (select admitted_at from public.website_project_team_members where team_id=group_tid and user_id=ids[5]) is not null then raise exception 'Additional member bypassed admission review';end if;
- denied:=false;begin perform public.website_lab('workspace',jsonb_build_object('team_id',group_tid));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Unadmitted additional member entered active Lab';end if;
+ if (select admitted_at from public.website_project_team_members where team_id=group_tid and user_id=ids[5]) is null then raise exception 'Later accepted member was not admitted automatically';end if;
+ perform public.website_lab('workspace',jsonb_build_object('team_id',group_tid));
  perform set_config('request.jwt.claim.sub',staff::text,true);perform public.website_lab('placement_status',jsonb_build_object('team_id',group_tid,'status','paused','reason','Synthetic deliberate pause'));
  perform set_config('request.jwt.claim.sub',ids[2]::text,true);perform public.website_lab('confirm_commitment',jsonb_build_object('team_id',group_tid));
  if (select status from public.website_project_teams where id=group_tid)<>'paused' then raise exception 'Paused team resumed automatically';end if;
- insert into activation_results values('additional-member admission and intentional pauses remain controlled',true);
+ insert into activation_results values('later official acceptance admits automatically while intentional pauses remain controlled',true);
  perform set_config('request.jwt.claim.sub',staff::text,true);
  select count(*) into active_count from public.website_project_teams where project_ref=ref and status='active';
  update public.website_project_pilot_settings set max_active_teams=greatest(active_count,1) where project_ref=ref;

@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -14,7 +15,7 @@ const navigation=moduleUrl(`export function redirect(url){throw Error('REDIRECT:
 async function localUrl(url){
  if(cache.has(url.href))return cache.get(url.href);
  if(url.pathname.endsWith('.json')){const result=moduleUrl('export default '+await fs.readFile(url,'utf8'));cache.set(url.href,result);return result;}
- let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText;
+ let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
  code=code.replace(/import\s+['"][^'"]+\.css['"];?/g,'');
  for(const match of [...code.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
   const s=match[2];let target;
@@ -50,7 +51,14 @@ test('an offered placement replaces the duplicate application card and keeps its
 });
 test('accepted preparation retains real blockers and never offers a second acceptance',async()=>{
  const result=await page({cards:[{...card,membership_status:'confirmed',commitment_confirmed:true,readiness:{ready:false,checks:[{label:'Repository access checked',ready:false}]}}]});
- assert.match(result,/verify repository access/);assert.match(result,/No second acceptance/);assert.doesNotMatch(result,/name="response"|Enter Lab/);
+ assert.match(result,/verify repository access/);assert.match(result,/Your placement is confirmed/);assert.doesNotMatch(result,/You have accepted/);assert.doesNotMatch(result,/name="response"|Enter Lab/);
+});
+
+test('direct approval shows approval and preparation while Connect keeps its own consent journey',async()=>{
+ const direct=await page({statuses:[['app','approved']],cards:[{...card,membership_status:'confirmed',commitment_confirmed:false}]});
+ assert.match(direct,/Approved/);assert.match(direct,/Preparation/);assert.doesNotMatch(direct,/name="response"/);
+ const market=html(createElement(Placement,{application:{...application,review_status:'approved'},card:{...card,admission_route:'market',membership_status:'confirmed',commitment_confirmed:true}}));
+ assert.match(market,/Request \/ invitation/);assert.match(market,/Mutual agreement/);assert.match(market,/Lab admission/);
 });
 test('workspace links still require explicit admitted active/completed access',()=>{
  for(const team_status of ['forming','paused','active','completed'])for(const can_enter of [false,true]){
@@ -84,4 +92,13 @@ test('Lab usage displays the configured allowance without hiding discovery at th
 });
 test('a failed usage request reports uncertainty without hiding existing projects',async()=>{
  const result=await page({usageError:true});assert.match(result,/Lab usage could not load/);assert.match(result,/Shortlisted/);assert.doesNotMatch(result,/0 of 3/);
+});
+
+test('preparation shows required commitments and coordinator consent outside collapsed sections',()=>{
+ const result=html(createElement(Placement,{card:{...card,participation:'team',membership_status:'confirmed',commitment_confirmed:false,is_nominee:true,coordinator_agreed:false}}));
+ assert.match(result,/2 steps need your attention/);
+ assert.match(result,/<section class="pcRequiredAction"><h3>Accept your coordinator invitation/);
+ assert.match(result,/<button[^>]*class="pcButton primary"[^>]*>Agree to coordinate/);
+ assert.ok(result.indexOf('Confirm commitment')<result.indexOf('pcFacts'));
+ assert.doesNotMatch(result,/<details[^>]*><summary>Coordinator invitation/);
 });

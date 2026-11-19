@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -14,7 +15,7 @@ const publicOrigins=uri("export const publicWebsiteOrigin=()=> 'https://staging.
 const navigation=uri("export const useRouter=()=>({refresh(){}})");
 const link=uri('import React from '+JSON.stringify(import.meta.resolve('react'))+';export default function Link(p){return React.createElement("a",p,p.children)}');
 async function load(path){
- let s=ts.transpileModule(await fs.readFile(new URL(path,import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/import\s+['"][^'"]+\.css['"];?/g,'');
+ let s=ts.transpileModule(await fs.readFile(new URL(path,import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match)).replace(/import\s+['"][^'"]+\.css['"];?/g,'');
  for(const m of [...s.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
   const name=m[2],target=name==='next/server'?response:name==='next/link'?link:name==='next/navigation'?navigation:name==='@/lib/lab'?lab:name==='@/lib/market-community'?social:name==='@/lib/shared-recruitment'?recruitment:name==='@/lib/site-origins.mjs'?publicOrigins:name==='@/lib/request-origin.mjs'?origin:name==='@/lib/member-portfolio.mjs'?new URL('../lib/member-portfolio.mjs',import.meta.url).href:name==='@/components/PortfolioProofCard'?await load('../components/PortfolioProofCard.tsx'):import.meta.resolve(name);
   s=s.replace(m[0],'from '+JSON.stringify(target));

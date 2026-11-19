@@ -1,3 +1,6 @@
+import GithubConnectionPanel from '@/components/GithubConnectionPanel';
+import {githubStatus,githubProviderEnabled,syncGithub} from '@/lib/github-connection';
+import {githubConfiguration} from '@/lib/github-org.mjs';
 import MarketConnections from '@/components/MarketConnections';
 import MarketProfilePreferences from '@/components/MarketProfilePreferences';
 import './sharing.css';
@@ -18,6 +21,7 @@ export default async function ProfilePage({searchParams}:{searchParams:Promise<{
   if(error||prefill.error)throw new Error('Your private profile could not be loaded. Please try again.');
   const profile=data as unknown as Record<string,unknown>;
   if(!profile.username)redirect('/onboarding');
+  const [github,githubProvider]=await Promise.all([syncGithub(db,user.id).catch(()=>null),githubProviderEnabled()]);
   const photo=profile.avatar_path?await db.storage.from('website-profile-photos').createSignedUrl(String(profile.avatar_path),300):null;
-  return <section className="section"><div className="shell"><MemberProfileView profile={profile} prefill={prefill.data} photoUrl={photo?.data?.signedUrl||null} returnTo={returnTo} sharingSettings={<><MarketConnections db={db} memberId={user.id} userId={user.id}/><MarketProfilePreferences db={db} notice={query.notice} error={query.error}/></>}/></div></section>;
+  return <section className="section"><div className="shell"><MemberProfileView profile={profile} prefill={prefill.data} photoUrl={photo?.data?.signedUrl||null} returnTo={returnTo} githubRequired={Boolean(github?.required_for_projects)} githubReady={Boolean(github?.connected)} sharingSettings={<><GithubConnectionPanel connection={github} providerEnabled={githubProvider} invitesConfigured={githubConfiguration().configured} notice={query.notice} error={query.error}/><MarketConnections db={db} memberId={user.id} userId={user.id}/><MarketProfilePreferences db={db} notice={query.notice} error={query.error}/></>}/></div></section>;
 }

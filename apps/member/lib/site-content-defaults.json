@@ -1,0 +1,116 @@
+{
+  "home": {
+    "seo_title": "Mettelo | Data, AI & Technology Community",
+    "seo_description": "Connect with Data, AI and Technology professionals, contribute to practical projects and learn together. Mettelo is free to join.",
+    "share_title": "Mettelo | Data, AI & Technology Community",
+    "share_description": "Connect with Data, AI and Technology professionals, contribute to practical projects and learn together. Mettelo is free to join.",
+    "share_image": "https://mettelo.com/assets/community-collaboration-1200.webp",
+    "share_image_alt": "Professionals collaborating around laptops on a shared project",
+    "headline": "Put your skills to work.\nBuild with people in your field.",
+    "intro": "Turn what you know into work you can show. Take on practical challenges, meet people who share your ambition and build your next chapter. Free to join.",
+    "primary_label": "Find your next step",
+    "primary_href": "/signup",
+    "secondary_label": "Explore projects",
+    "secondary_href": "/projects/",
+    "faqs": [
+      {
+        "question": "How do I get started?",
+        "answer": "Create an account and confirm your email. Explore Mettelo Connect, learning resources or project briefs. You only need to reach 80% saved profile completion when you want to apply to a project."
+      },
+      {
+        "question": "Do I need a Lab to join the community?",
+        "answer": "No. Mettelo Connect brings together updates, questions, project ideas and collaboration posts. You can follow people and discover opportunities without a Lab. Participation does not guarantee employment or payment."
+      },
+      {
+        "question": "Who can see my profile?",
+        "answer": "Members see the details you choose to share. Control visibility and message requests in My profile. Hidden and blocked profiles stay unavailable; education, experience and private account details are not published automatically."
+      },
+      {
+        "question": "How do I apply and enter a Lab?",
+        "answer": "Read a brief, confirm your email and save at least 80% of your profile. Apply with a supported working preference and describe your contribution. Mettelo Lab shows the decision and any preparation steps. Legacy offers still need a response; approval alone does not open a Lab."
+      },
+      {
+        "question": "How many Labs can I join?",
+        "answer": "The current standard allowance is three. Official placements and Connect collaborations share it. Paused Labs, accepted places in preparation and unexpired official offers hold slots. Completed Labs and fully exited memberships do not. Leaving releases a slot after access revocation completes."
+      },
+      {
+        "question": "What goes into My Portfolio?",
+        "answer": "Your contributions, evidenced milestone acceptances, practised skills and confirmed team delivery outcomes. Member-reported work is distinct from reviewed outcomes; neither is an independently verified qualification. Your portfolio stays private unless you explicitly share a selected summary."
+      },
+      {
+        "question": "How do jobs and learning resources work?",
+        "answer": "Explore the Job Board and apply on the employer’s source website. Use the recorded workshops and member Resources to prepare. Check each advert’s deadline, eligibility and sponsorship details."
+      },
+      {
+        "question": "How do I get help?",
+        "answer": "Use My enquiries for private account, application or Lab support, and follow replies there. Or use Contact & Support without an account. Never send passwords, access keys or confidential project data."
+      },
+      {
+        "question": "Can an organisation partner with Mettelo?",
+        "answer": "Yes. Use the partnership enquiry form to discuss a project challenge, workshop, mentoring or other collaboration. Explain the organisation, proposed contribution and intended benefit. Enquiring does not create a partnership or project commitment."
+      }
+    ],
+    "ecosystem": [
+      {
+        "title": "Mettelo Community",
+        "description": "Meet people in your field, exchange practical knowledge and find collaborators."
+      },
+      {
+        "title": "Mettelo Labs",
+        "description": "Explore a brief and apply to contribute. Selected members build with their teams in the Lab."
+      },
+      {
+        "title": "Mettelo Talent",
+        "description": "Prepare your applications and explore externally advertised roles relevant to your skills."
+      },
+      {
+        "title": "Mettelo Proof",
+        "description": "Evidence of contribution and demonstrated capability."
+      },
+      {
+        "title": "Mettelo Research",
+        "description": "Practical insight into Data, AI and Technology work."
+      },
+      {
+        "title": "Mettelo AI",
+        "description": "Tools to support professional work and development."
+      },
+      {
+        "title": "Mettelo Summit",
+        "description": "Events and showcases connecting people and ideas."
+      }
+    ]
+  },
+  "about": {
+    "seo_title": "About Mettelo | Connect, Learn, Build & Grow",
+    "seo_description": "Discover Mettelo: an infrastructure for Data, AI and Technology professionals to connect with people in their field, learn, build and grow.",
+    "share_title": "About Mettelo | Connect, Learn, Build & Grow",
+    "share_description": "Discover Mettelo: an infrastructure for Data, AI and Technology professionals to connect with people in their field, learn, build and grow.",
+    "share_image": "https://mettelo.com/assets/community-collaboration-1200.webp",
+    "share_image_alt": "Professionals collaborating around laptops on a shared project",
+    "headline": "Connecting what you know\nwith what comes next.",
+    "intro": "Mettelo is an infrastructure for Data, AI and Technology professionals to connect, learn, build and grow.",
+    "support": "Find people in your field. Put knowledge into practice. Make your contribution visible.",
+    "story": "Knowing a tool is one step. Having somewhere to use it—and people to work through it with—is another.",
+    "mission": "The value comes from how people learn, work and contribute together.",
+    "founder_name": "O. Johnson Taiwo",
+    "founder_role": "Founder, Mettelo",
+    "founder_quote": "I believe professional growth should go beyond qualifications and certifications. People need opportunities to apply their knowledge, collaborate, solve real problems and demonstrate what they can do.",
+    "founder_image": "/assets/founder-960.jpg",
+    "founder_image_alt": "O. Johnson Taiwo, founder of Mettelo",
+    "hero_image": "/assets/community-collaboration-1200.webp",
+    "hero_image_alt": "Professionals collaborating around laptops and project notes in a shared workspace",
+    "founder_linkedin": "https://www.linkedin.com/in/ojtaiwo/",
+    "founder_website": "https://johnsontaiwo.com/"
+  },
+  "brand": {
+    "organisation_name": "Mettelo",
+    "organisation_description": "An infrastructure for Data, AI and Technology professionals to learn, build and grow.",
+    "tagline": "Where contribution becomes opportunity.",
+    "share_image": "/assets/community-collaboration-1200.webp",
+    "share_image_alt": "Professionals collaborating around laptops on a shared project",
+    "linkedin": "https://www.linkedin.com/company/officialmettelohq/",
+    "instagram": "https://www.instagram.com/officialmettelo/",
+    "website": "https://mettelo.com"
+  }
+}

@@ -1,5 +1,6 @@
 'use client';
 
+import AppIcon from '@/components/AppIcon';
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 
@@ -20,7 +21,7 @@ export default function TaskStatusControl({taskId,initialStatus,canReview=false}
   {status==='ready_for_review'&&selected==='ready_for_review'&&<small>Coordinators can approve this task or request changes.</small>}
   {selected!==status&&!needsBlocker&&!needsReviewComment&&<button className="lwButton primary" type="button" disabled={working} onClick={()=>void update(selected)}>{working?'Saving…':'Save status'}</button>}
   <button type="button" className="linkButton" aria-expanded={activityOpen} onClick={()=>void toggleActivity()}>{activityOpen?'Hide activity':'View activity'}</button>
-  {activityOpen&&<div className="taskActivity" aria-label="Task activity timeline">{activityError?<p role="alert">{activityError} Close and reopen activity to retry.</p>:activity===null?<small>Loading activity…</small>:activity.length?activity.map(item=><div className="taskActivityItem" key={item.id}><strong>{item.event_type.replaceAll('_',' ')}</strong><small>{item.actor_name} · {new Date(item.created_at).toLocaleString('en-GB')}</small>{item.from_status&&item.to_status&&<small>{labels[item.from_status]||item.from_status} → {labels[item.to_status]||item.to_status}</small>}{item.comment&&<p>{item.comment}</p>}{item.evidence_url&&<a href={item.evidence_url} target="_blank" rel="noopener noreferrer">Open evidence</a>}</div>):<small>No recorded task activity yet.</small>}</div>}
+  {activityOpen&&<div className="taskActivity" aria-label="Task activity timeline">{activityError?<p role="alert">{activityError} Close and reopen activity to retry.</p>:activity===null?<small>Loading activity…</small>:activity.length?activity.map(item=><div className="taskActivityItem" key={item.id}><strong>{item.event_type.replaceAll('_',' ')}</strong><small>{item.actor_name} · {new Date(item.created_at).toLocaleString('en-GB')}</small>{item.from_status&&item.to_status&&<small>{labels[item.from_status]||item.from_status}<AppIcon name="forward"/>{labels[item.to_status]||item.to_status}</small>}{item.comment&&<p>{item.comment}</p>}{item.evidence_url&&<a href={item.evidence_url} target="_blank" rel="noopener noreferrer">Open evidence</a>}</div>):<small>No recorded task activity yet.</small>}</div>}
   {message&&<p role="status" aria-live="polite">{message}</p>}
  </div>;
 }

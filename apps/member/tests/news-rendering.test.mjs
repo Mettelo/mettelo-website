@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import {test} from 'node:test';
 import {readFile} from 'node:fs/promises';
 import {createRequire} from 'node:module';
@@ -9,7 +10,7 @@ import ts from 'typescript';
 const require=createRequire(import.meta.url);
 test('article formatting renders headings and links while escaping HTML and unsafe links',async()=>{
  const source=await readFile(new URL('../components/news/ArticleBody.tsx',import.meta.url),'utf8');
- let output=ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext}}).outputText;
+ let output=ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
  for(const name of ['react/jsx-runtime','react'])output=output.replaceAll(`from "${name}"`,`from "${pathToFileURL(require.resolve(name)).href}"`).replaceAll(`from '${name}'`,`from '${pathToFileURL(require.resolve(name)).href}'`);
  output=output.replaceAll('@/lib/news.mjs',new URL('../lib/news.mjs',import.meta.url).href);
  const {default:Body}=await import('data:text/javascript;base64,'+Buffer.from(output).toString('base64'));

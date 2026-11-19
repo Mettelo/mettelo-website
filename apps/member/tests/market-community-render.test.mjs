@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -14,7 +15,7 @@ const nextLink=data(`import {createElement} from 'react';export default function
 const navigation=data(`export function useRouter(){return {refresh(){},push(){}}}export function redirect(url){throw Error('REDIRECT:'+url)}`);
 async function local(url){
  if(cache.has(url.href))return cache.get(url.href);
- let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/import\s+['"][^'"]+\.css['"];?/g,'');
+ let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match)).replace(/import\s+['"][^'"]+\.css['"];?/g,'');
  for(const m of [...code.matchAll(/from\s+(['"])([^'"]+)\1/g)]){
   const s=m[2];let target;
   if(s.endsWith('.module.css'))target=data('export default new Proxy({},{get:(_,key)=>key})');else if(s==='@/lib/lab')target=lab;else if(s==='@/lib/lab-market')target=market;else if(s==='@/lib/market-community')target=social;else if(s==='@/lib/market-proposals')target=proposals;else if(s==='@/lib/market-discovery')target=discovery;else if(s==='next/navigation')target=navigation;else if(s==='next/link')target=nextLink;
@@ -75,7 +76,7 @@ test('approved project details lead to the ordinary application route without cl
 test('unified feed mixes public opportunities and posts with one Messages link and Saved as a filter',async()=>{
  const opportunity={...post,id:'project-card',entry_type:'project',source_id:'lab',title:'Example Lab',roles:['Analyst'],commitment:'Two hours weekly',available:1};
  const html=await render('home',{feed:{rows:[post,opportunity]}});
- assert.match(html,/marketReadingColumn/);assert.match(html,/3 of 3 Lab slots used/);assert.match(html,/Example Lab/);assert.match(html,/Explore collaboration/);assert.match(html,/category=projects/);assert.match(html,/category=ideas/);assert.match(html,/category=seeking/);assert.match(html,/Your activity/);assert.equal((html.match(/href="\/member\/market\/messages"/g)||[]).length,1);assert.doesNotMatch(html,/Your Market|feedToolLinks|Manage your visibility/);
+ assert.match(html,/marketReadingColumn/);assert.match(html,/3 of 3 Lab slots used/);assert.match(html,/Example Lab/);assert.match(html,/Explore collaboration/);assert.match(html,/category=projects/);assert.match(html,/category=ideas/);assert.match(html,/category=seeking/);assert.match(html,/Your activity/);assert.equal((html.match(/href="\/member\/market\/messages"/g)||[]).length,1);assert.doesNotMatch(html,/Your Connect|feedToolLinks|Manage your visibility/);
  assert.match(await render('home',{fail:'feed'}),/Posts could not load/);
 });
 test('public member profiles omit absent private fields and offer invitations only through the current leader roles',async()=>{
@@ -92,7 +93,7 @@ test('public project details show approved recruitment and explicit highlights w
 
 test('saved posts scopes the search and removes publishing controls while retaining feed navigation',async()=>{
  const html=await render('home',{feed:{rows:[]}},{view:'bookmarks',q:'SQL'});
- assert.match(html,/<h1>Lab Market<\/h1>/);assert.match(html,/Your saved community posts/);assert.match(html,/name="view" value="bookmarks"/);assert.match(html,/Clear search/);assert.doesNotMatch(html,/name="action" value="publish"|Labs seeking collaborators/);
+ assert.match(html,/<h1>Mettelo Connect<\/h1>/);assert.match(html,/Your saved community posts/);assert.match(html,/name="view" value="bookmarks"/);assert.match(html,/Clear search/);assert.doesNotMatch(html,/name="action" value="publish"|Labs seeking collaborators/);
 });
 
 test('profile sharing preferences preserve saved choices and fail closed without rendering a reset form',async()=>{
@@ -101,20 +102,20 @@ test('profile sharing preferences preserve saved choices and fail closed without
  const failed=await render('sharing',{fail:'preferences'});assert.match(failed,/saved choices are unchanged/);assert.doesNotMatch(failed,/<form/);
 });
 
- test('Home community preview is bounded, safely escaped and hidden when empty or unavailable',async()=>{
+ test('Home community preview is bounded, safely escaped and distinguishes empty from unavailable',async()=>{
  const html=await render('homePreview',{feed:{rows:[post,{...post,id:'second',kind:'idea'}, {...post,id:'third',body:'Hidden third item'}]}});
- assert.match(html,/Latest from the community/);assert.match(html,/View community/);assert.match(html,/community\?post=post/);assert.match(html,/&lt;script&gt;/);assert.match(html,/>Idea</);assert.doesNotMatch(html,/Hidden third item|Publish post|Like<|Comment</);
- assert.equal(await render('homePreview',{feed:{rows:[]}}),'');assert.equal(await render('homePreview',{fail:'feed'}),'');
+ assert.match(html,/From Mettelo Connect/);assert.match(html,/Open Connect/);assert.match(html,/community\?post=post/);assert.match(html,/&lt;script&gt;/);assert.match(html,/>Idea(?:<| · )/);assert.doesNotMatch(html,/Hidden third item|Publish post|Like<|Comment</);
+ assert.match(await render('homePreview',{feed:{rows:[]}}),/No recent posts yet/);assert.match(await render('homePreview',{fail:'feed'}),/Community updates are unavailable/);
  });
  test('posting opens a dedicated labelled editor with optional details and guarded publish',async()=>{
  const html=await render('home',{feed:{rows:[post]}});
  assert.match(html,/<dialog[^>]*aria-labelledby="market-post-title"/);assert.match(html,/<details class="marketPostExtras">/);assert.match(html,/Keep draft &amp; close/);assert.match(html,/disabled="">Publish post/);assert.match(html,/Drafts are kept on this page/);
  });
 
-test('people suggestions provide follow controls and photos with an accessible compact mobile panel',async()=>{
+test('people suggestions preserve photos and follow controls with direct mobile discovery navigation',async()=>{
  const person={id:'00000000-0000-4000-8000-000000000001',full_name:'Shared member',headline:'Analyst'};
  const html=await render('home',{suggestions:{rows:[person]}});
- assert.match(html,/People to follow/);assert.match(html,/marketPeopleMobile/);assert.match(html,/Follow Shared member/);assert.match(html,/\/api\/market-avatar\?member_id=/);assert.match(html,/loading="lazy"/);
+ assert.match(html,/People to follow/);assert.match(html,/aria-label="Mettelo Connect navigation"/);assert.match(html,/<a[^>]+href="\/member\/market\?tab=people"/);assert.match(html,/Follow Shared member/);assert.match(html,/\/api\/market-avatar\?member_id=/);assert.match(html,/loading="lazy"/);
 });
 test('profile connections show bounded shared follower and following lists with follow actions',async()=>{
  globalThis.socialFixture={connections:{followers:26,following:1,rows:[{id:'00000000-0000-4000-8000-000000000001',full_name:'Visible follower',headline:'Shared role',following:true}]}};

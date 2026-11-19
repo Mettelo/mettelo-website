@@ -1,0 +1,31 @@
+/* Semantic product palette, scoped to authenticated member and Lab workspaces. */
+body:has(.memberBreadcrumb),body:has(.websiteLabWorkspace){
+ --paper:#fcfbf7;
+ --surface:#fcfbf7;
+ --navy:#141824;
+ --ink:#141824;
+ --indigo:#2a2f52;
+ --slate:#5b6472;
+ --muted:#5b6472;
+ --sand:#f7efdd;
+ --surface-soft:#f7efdd;
+ --gold:#c6892a;
+ --bronze:#c6892a;
+ --line:#ded9cd;
+ background:var(--paper);
+ color:var(--ink);
+}
+body:has(.memberBreadcrumb) #member-main{background:var(--paper)}
+body:has(.memberBreadcrumb) .workspaceDesktop a[aria-current=page],body:has(.memberBreadcrumb) .workspaceBottom a[aria-current=page]{background:var(--sand);color:var(--ink);border-color:var(--bronze)}
+.websiteLabWorkspace{--lw-muted:var(--slate);--lw-line:var(--line);--lx-muted:var(--slate);--lx-line:var(--line);background:var(--paper)}
+.websiteLabWorkspace .lw{--lw-muted:var(--slate);--lw-line:var(--line)}
+.websiteLabWorkspace .lwEvidenceCard>h3,.websiteLabWorkspace .lwHeader h2,.websiteLabWorkspace .lwRecognitionCompact h2{color:var(--indigo)}
+.websiteLabWorkspace .lwEvidenceCard{background:var(--white);border-inline-start:3px solid var(--bronze)}
+.websiteLabWorkspace .lwRecognitionCompact{background:var(--sand)}
+.websiteLabWorkspace .lwEvidenceActions>.lwButton,.websiteLabWorkspace .lwEvidenceActions summary,.websiteLabWorkspace .lwRecognitionCompact>header>a{color:var(--indigo)}
+.websiteLabWorkspace .lwEvidenceActions>.lwButton:hover,.websiteLabWorkspace .lwRecognitionCompact>header>a:hover{background:var(--surface-soft);text-decoration:underline;text-underline-offset:4px}
+.websiteLabWorkspace .lwButton.primary{background:var(--ink);color:var(--white)}
+
+body .websiteLabWorkspace{background:var(--paper)}
+body .websiteLabWorkspace .lwEvidenceActions>.lwButton,body .websiteLabWorkspace .lwEvidenceActions summary,body .websiteLabWorkspace .lwRecognitionCompact>header>a{color:var(--indigo)}
+body .websiteLabWorkspace .lwEvidenceActions summary:focus-visible,body .websiteLabWorkspace .lwRecognitionCompact>header>a:focus-visible{outline:2px solid var(--indigo);outline-offset:4px}

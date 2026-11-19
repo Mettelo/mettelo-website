@@ -18,7 +18,7 @@
 .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){
   width:100%;
   min-width:0;
-  min-height:48px;
+  min-height:var(--control-height);
   max-height:152px;
   padding:12px 13px;
   resize:vertical;
@@ -80,14 +80,14 @@
 }
 .composerExperience :global([data-lab-view="chat"] .mentionSuggestions button){
   width:100%;
-  min-height:44px;
+  min-height:var(--control-height);
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:14px;
   padding:8px 10px;
   border:0;
-  border-radius:9px;
+  border-radius:var(--radius-control);
   background:transparent;
   color:var(--lab-shell-ink);
   text-align:left;
@@ -105,7 +105,7 @@
     padding:9px 8px calc(9px + env(safe-area-inset-bottom));
   }
   .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){
-    min-height:48px;
+    min-height:var(--control-height);
     max-height:min(28dvh,140px);
     padding:12px;
     resize:none;
@@ -132,7 +132,7 @@
 @media(max-width:480px) and (orientation:landscape),
        (max-width:480px) and (max-height:520px){
   .composerExperience :global([data-lab-view="chat"] .messageComposer){padding-top:7px;padding-bottom:max(7px,env(safe-area-inset-bottom))}
-  .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){min-height:44px;max-height:96px}
+  .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){min-height:var(--control-height);max-height:96px}
   .composerExperience :global([data-lab-view="chat"] .messageSend){min-height:44px}
 }
 
@@ -151,7 +151,7 @@
 }
 .composerExperience :global([data-lab-view="chat"] .messageComposerInput){gap:4px!important}
 .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){
-  min-height:46px!important;
+  min-height:var(--control-height)!important;
   max-height:132px!important;
   padding:11px 12px!important;
   border:1px solid color-mix(in srgb,var(--lab-shell-border) 82%,var(--lab-shell-border-strong))!important;
@@ -200,7 +200,7 @@
     padding:9px 9px max(9px,env(safe-area-inset-bottom))!important;
   }
   .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){
-    min-height:48px!important;
+    min-height:var(--control-height)!important;
     max-height:112px!important;
     padding:11px!important;
     font-size:16px!important;
@@ -272,7 +272,7 @@
     outline-offset:2px!important;
   }
   .composerExperience :global([data-lab-view="chat"] .messageComposer textarea){
-    min-height:46px!important;
+    min-height:var(--control-height)!important;
     max-height:104px!important;
     padding:10px 11px!important;
     border-radius:12px!important;

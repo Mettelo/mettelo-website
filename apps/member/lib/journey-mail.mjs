@@ -1,6 +1,7 @@
 import {projectEmail} from './project-email-previews.mjs';
 const escape=v=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const copy={
+ application_approved:['Your project application is approved','Your participation has been approved. Sign in to see your Solo preparation, team formation or any remaining placement requirements. Lab access still depends on readiness and project permissions.'],
  delivery_test:['Mettelo staging email delivery test','This is the controlled delivery test you requested for your administrator inbox. It does not represent an application, offer or membership change.'],
  lab_status:['Your Lab status has changed','Your Lab has been paused or completed. Sign in to see its current status and the next steps available to you.'],
  placement_ended:['Your Lab placement has ended','Your project placement has changed. Review your current Labs or contact Support if this was unexpected.'],

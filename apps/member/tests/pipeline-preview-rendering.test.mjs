@@ -1,3 +1,4 @@
+import {resolveUiIcon} from './helpers/ui-icon-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -11,7 +12,7 @@ import {classifiedBatchRows} from '../lib/opportunities/classified-batch.mjs';
 const require=createRequire(import.meta.url);
 test('admin preview shows distinct eligible/review cases, current classification and restart guidance',async()=>{
  const source=await readFile(new URL('../app/admin/opportunities/PipelineConsole.tsx',import.meta.url),'utf8');
- let compiled=ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext}}).outputText;
+ let compiled=ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.ESNext}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match));
  for(const name of ['react/jsx-runtime','react'])compiled=compiled.replaceAll(`from "${name}"`,`from "${pathToFileURL(require.resolve(name)).href}"`).replaceAll(`from '${name}'`,`from '${pathToFileURL(require.resolve(name)).href}'`);
  compiled=compiled.replace(/import styles from ['"]\.\/pipeline\.module\.css['"];?/,"const styles=new Proxy({}, {get:(_,key)=>String(key)});");
  for(const file of ['job-taxonomy-labels.mjs','admin-messages.mjs'])compiled=compiled.replaceAll('@/lib/opportunities/'+file,new URL('../lib/opportunities/'+file,import.meta.url).href);

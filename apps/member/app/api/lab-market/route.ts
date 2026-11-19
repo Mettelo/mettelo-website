@@ -1,3 +1,4 @@
+import {collaborationActionNotice,connectSystemCopy} from '@/lib/connect-copy.mjs';
 import {NextResponse} from 'next/server';
 import {labSession} from '@/lib/lab';
 import {marketRpc} from '@/lib/lab-market';
@@ -24,10 +25,10 @@ export async function POST(request:Request){
   }
   const result=await marketRpc(db,action,payload);
   if(request.headers.get('accept')?.includes('application/json'))return NextResponse.json({ok:true,result});
-  back.searchParams.set('notice',action==='preferences'?'Sharing preferences saved.':action==='accept'?'Collaboration accepted. Lab access is ready; external repository access is handled separately.':action==='remove'?'Collaboration access ended. Any required external revocation is tracked separately.':'Market update saved.');
+  back.searchParams.set('notice',collaborationActionNotice(action));
  }catch(error){
   const e=error as {code?:string;message?:string};
-  const message=e.code==='23505'?'A pending request or existing placement already exists. Reload to check it.':e.code==='42501'?'This action is not permitted for your current project role or account.':e.code==='P0001'?e.message:'The update could not be saved. Check the fields and try again.';
+  const message=e.code==='23505'?'A pending request or existing placement already exists. Reload to check it.':e.code==='42501'?'This action is not permitted for your current project role or account.':e.code==='P0001'?connectSystemCopy(e.message):'The update could not be saved. Check the fields and try again.';
   if(request.headers.get('accept')?.includes('application/json'))return NextResponse.json({error:message},{status:e.code==='42501'?403:400});
   back.searchParams.set('error',(message||'Unable to save.').slice(0,400));
  }

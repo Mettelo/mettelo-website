@@ -12,7 +12,7 @@ async function walk(dir){for(const entry of await readdir(dir,{withFileTypes:tru
  const file=resolve(dir,entry.name),path=relative(source,file).split(sep).join('/');
  if(entry.isDirectory()){if(path==='industry-news')continue;await walk(file);continue;}
  if(entry.name.startsWith('.')||['robots.txt','sitemap.xml'].includes(path))continue;
- if(!/\.(html|css|js|svg|png|webp|jpg|jpeg|ico|woff2?)$/.test(path))throw Error('Unapproved public staging asset: '+path);
+ if(!/\.(html|css|js|svg|png|webp|jpg|jpeg|ico|woff2?)$/.test(path)&&path!=='shared/lucide-license.txt')throw Error('Unapproved public staging asset: '+path);
  const dest=resolve(target,path);await mkdir(dirname(dest),{recursive:true});
  if(path.endsWith('.html')){
   let html=await readFile(file,'utf8');
@@ -28,5 +28,6 @@ async function walk(dir){for(const entry of await readdir(dir,{withFileTypes:tru
  if(path==='index.html')routes.push({source:'/',destination:'/_site/index.html'});
 }}
 await walk(source);
+for(const route of routes){let page=route.source.replace(/index\.html$/,'');if(!page.endsWith('/')&&!/\.[a-z0-9]+$/i.test(page))page+='/';if(['/','/our-story/','/projects/'].includes(page)||/^\/projects\/mtl-[a-z0-9-]+\/$/.test(page))route.destination='/api/site-page?'+new URLSearchParams({path:page});}
 await writeFile(resolve(root,'apps/member/hosted-static-routes.json'),JSON.stringify(routes,null,2)+'\n');
 console.log(JSON.stringify({prepared:true,staticRewrites:routes.length,publicOrigin:'https://staging.mettelo.com',secretsIncluded:false}));

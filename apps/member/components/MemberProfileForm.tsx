@@ -12,14 +12,16 @@ export const profileGroups:{title:string;keys:string[]}[]=[
  {title:'About you',keys:['full_name','headline','location','bio']},
  {title:'Your work and goals',keys:['professional_area','current_job_title','organisation','experience_level','primary_goal']},
  {title:'Project interests and contribution',keys:matchingKeys},
- {title:'Professional links',keys:['linkedin_url','github_url','portfolio_url']}
+ {title:'Professional links',keys:['linkedin_url','portfolio_url']}
 ];
-type Props={returnTo?:string;profile:Record<string,unknown>;prefill:{state:string;draft?:Record<string,string>};group?:number;onSaved?:()=>void};
-export default function MemberProfileForm({profile,prefill,returnTo,group,onSaved}:Props){
+type Props={returnTo?:string;profile:Record<string,unknown>;prefill:{state:string;draft?:Record<string,string>};group?:number;onSaved?:()=>void;onDirtyChange?:(dirty:boolean)=>void};
+export default function MemberProfileForm({profile,prefill,returnTo,group,onSaved,onDirtyChange}:Props){
   const router=useRouter();
   const [values,setValues]=useState<Record<string,string>>(()=>Object.fromEntries(profileFields.map(field=>[field.key,String(profile[field.key]||'')])));
   const [usePrefill,setUsePrefill]=useState(false);
-  const dirty=profileFields.some(field=>values[field.key]!==String(profile[field.key]||''));
+  const [savedValues,setSavedValues]=useState(values);
+  const dirty=profileFields.some(field=>values[field.key]!==savedValues[field.key]);
+  useEffect(()=>{onDirtyChange?.(dirty);},[dirty,onDirtyChange]);
   useEffect(()=>{if(!dirty)return;const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[dirty]);
   const [status,setStatus]=useState<'idle'|'saving'|'error'|'stale'|'success'>('idle');
   const [message,setMessage]=useState('');
@@ -33,14 +35,14 @@ export default function MemberProfileForm({profile,prefill,returnTo,group,onSave
       const result=await response.json();
       if(!response.ok){setStatus(response.status===409?'stale':'error');setMessage(result.error||'Your profile could not be saved.');return;}
       setStatus('success');setMessage('Your private profile has been saved.');
-      if(result.profile)setValues(Object.fromEntries(profileFields.map(field=>[field.key,String(result.profile[field.key]||'')])));
+      if(result.profile){const saved=Object.fromEntries(profileFields.map(field=>[field.key,String(result.profile[field.key]||'')]));setValues(saved);setSavedValues(saved);}
       onSaved?.();if(returnTo)router.push(returnTo);router.refresh();
     }catch(error){setStatus('error');setMessage(error instanceof Error?error.message:'Your profile could not be saved. Your edits are still here.');}
   }
   const completion=profileCompletion({...values,avatar_path:profile.avatar_path});
   return <form className="formCard profileForm" onSubmit={save} aria-busy={status==='saving'}>
-    <section className="profileCompletion" hidden={group!==undefined} aria-labelledby="completion-title"><h2 id="completion-title">Your profile draft · {completion.percent}%</h2><progress value={completion.percent} max={100} aria-label="Profile completion draft"/><p>{completion.eligible?(dirty?'Your draft meets the 80% requirement. Save your profile before submitting project interest.':'Your saved profile meets the 80% requirement for project interest.'):'Complete any eight of ten items and save to submit project interest.'}</p><details><summary>See the ten profile items</summary><ul>{completion.items.map(item=><li key={String(item.key)}>{item.complete?'Complete':'Missing'}: {item.label} (10%)</li>)}</ul></details><p className="tinyNote">{dirty?'This preview includes unsaved edits. Only saved information counts towards project interest.':'Based on your saved profile. Changes appear here as you edit.'}</p></section><div className="profileIdentity" hidden={group!==undefined}><strong>@{String(profile.username||'')}</strong><span>Member ID: {String(profile.member_id||'')}</span></div>
-    <p className="profilePrivacyNote" hidden={group!==undefined}>Your details are private. Save with your name and complete the rest at your own pace. Fields marked Profile readiness count towards the 80% needed to submit project interest. Completing the eight core items is enough; photo and links remain optional.</p>
+    {onSaved&&<p className="profileEditorHint">Your details stay private. Save your changes when you’re ready.</p>}<section className="profileCompletion" hidden={group!==undefined||Boolean(onSaved)} aria-labelledby="completion-title"><h2 id="completion-title">Your profile draft · {completion.percent}%</h2><progress value={completion.percent} max={100} aria-label="Profile completion draft"/><p>{completion.eligible?(dirty?'Your draft meets the 80% requirement. Save your profile before submitting project interest.':'Your saved profile meets the 80% threshold. GitHub connection is a separate required project step.'):'Complete any eight of ten items and save to submit project interest.'}</p><details><summary>See the ten profile items</summary><ul>{completion.items.map(item=><li key={String(item.key)}>{item.complete?'Complete':'Missing'}: {item.label} (10%)</li>)}</ul></details><p className="tinyNote">{dirty?'This preview includes unsaved edits. Only saved information counts towards project interest.':'Based on your saved profile. Changes appear here as you edit.'}</p></section><div className="profileIdentity" hidden={group!==undefined||Boolean(onSaved)}><strong>@{String(profile.username||'')}</strong><span>Member ID: {String(profile.member_id||'')}</span></div>
+    <p className="profilePrivacyNote" hidden={group!==undefined||Boolean(onSaved)}>Your details are private. Save with your name and complete the rest at your own pace. Fields marked Profile readiness count towards the 80% needed to submit project interest. Complete eight core items and connect GitHub separately for project eligibility. A photo and other professional links remain optional.</p>
     {group===undefined&&prefill.state==='available'&&!usePrefill&&<div className="prefillNotice"><h2>Review your community registration</h2><p>You can bring registration details into empty fields, then edit them before saving. Your existing details will stay in place.</p><button className="button ghost" type="button" onClick={()=>{setValues(current=>fillEmptyProfile(current,prefill.draft||{}));setUsePrefill(true);}}>Use registration details</button></div>}
     {usePrefill&&<p role="status">Registration details added to this draft. Review the fields before saving.</p>}
     {prefill.state==='review_required'&&<p className="prefillNotice">Your earlier registration needs review. You can complete your profile here while we resolve it.</p>}
@@ -53,6 +55,6 @@ export default function MemberProfileForm({profile,prefill,returnTo,group,onSave
     {profileHints[field.key]&&<p className="profileFieldHint" id={`${field.key}-hint`}>{profileHints[field.key]}</p>}</div>)}</div></fieldset>)}
     <div role="status" aria-live="polite" className={`formStatus ${status==='error'||status==='stale'?'error':''}`}>{message}</div>
     {status==='stale'&&<p>Copy any edits you want to keep before reloading. <button type="button" className="button ghost" onClick={()=>window.location.reload()}>Reload profile</button></p>}
-    <div className="profileSaveBar"><div className="actions"><button className="button dark" disabled={status==='saving'||status==='stale'}>{status==='saving'?'Saving…':'Save private profile'}</button>{!onSaved&&<a className="button ghost" href="/member">Back to My Mettelo</a>}</div><p className="tinyNote">{dirty?'You have unsaved changes.':'Your profile matches the last loaded version.'} Select Save private profile to save your details.</p></div>
+    <div className="profileSaveBar"><div className="actions"><button className="button dark" disabled={status==='saving'||status==='stale'}>{status==='saving'?'Saving…':'Save private profile'}</button>{!onSaved&&<a className="button ghost" href="/member">Back to My Mettelo</a>}</div><p className="tinyNote" role="status">{status==='saving'?'Saving your changes…':status==='stale'?'Your profile was updated elsewhere. Reload to review the latest details.':status==='error'?'Your changes haven’t been saved. Review the message above and try again.':status==='success'&&!dirty?'All changes saved.':dirty?'You have unsaved changes. Select Save private profile when you’re ready.':'No unsaved changes.'}</p></div>
   </form>;
 }

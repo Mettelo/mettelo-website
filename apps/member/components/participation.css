@@ -15,7 +15,7 @@
 .pcSectionHeading h2{font-size:.88rem;font-weight:600;margin:0}
 .pcSectionHeading a{font-size:.8rem;text-underline-offset:4px}
 .pcGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch}
-.pcCard{display:flex;flex-direction:column;gap:20px;padding:24px;background:var(--white,#fff);border:1px solid var(--pc-line);border-radius:16px;min-width:0}
+.pcCard{display:flex;flex-direction:column;gap:20px;padding:24px;background:var(--white,#fff);border:1px solid var(--pc-line);border-radius:var(--radius-card);min-width:0}
 .pcCardHeader{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .pcProjectIcon{width:40px;height:40px;display:grid;place-items:center;background:var(--pc-soft);color:var(--pc-ink);border-radius:11px;flex:none}
 .pcStatus{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:6px;color:#5d6066;background:#f2f2ef;font-size:.7rem;font-weight:600;line-height:1.4}
@@ -31,7 +31,7 @@
 .pcCollection .pcCardNote{font-size:.82rem;line-height:1.65;color:var(--pc-muted);margin:0}
 .pcCollection .pcDetail{font-size:.75rem;color:var(--pc-muted);margin:-10px 0 0;line-height:1.6}
 .pcCardFooter{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:4px}
-.pcButton{display:inline-flex;justify-content:center;align-items:center;gap:18px;min-height:44px;padding:10px 16px;border:1px solid var(--pc-line);border-radius:9px;background:var(--white,#fff);color:var(--pc-ink);font:inherit;font-size:.8rem;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none;text-align:center}
+.pcButton{display:inline-flex;justify-content:center;align-items:center;gap:18px;min-height:var(--control-height);padding:10px 16px;border:1px solid var(--pc-line);border-radius:var(--radius-control);background:var(--white,#fff);color:var(--pc-ink);font:inherit;font-size:.8rem;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none;text-align:center}
 .pcButton.primary{background:var(--pc-ink);color:white;border-color:var(--pc-ink)}
 .pcButton:hover:not(:disabled){border-color:#979ba3;background:#f5f4f0}
 .pcButton.primary:hover:not(:disabled){background:#2c3140;border-color:#2c3140}
@@ -64,7 +64,7 @@
 .pcPreviewLink{font-size:.75rem;margin:12px 0}
 .pcHelp{font-size:.8rem;margin:28px 0 0;color:var(--pc-muted)}
 .pcHelp a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
-.pcEmpty{padding:36px;background:white;border:1px solid var(--pc-line);border-radius:16px}
+.pcEmpty{padding:36px;background:white;border:1px solid var(--pc-line);border-radius:var(--radius-card)}
 .pcEmpty h2{font-size:1.4rem;letter-spacing:-.025em;margin:10px 0}
 .pcEmpty p{color:var(--pc-muted);font-size:.9rem;max-width:60ch;margin:10px 0 20px}
 .pcCollection :is(button,a,summary,input):focus-visible{outline:3px solid var(--gold-text,#8b5a17);outline-offset:3px}
@@ -81,3 +81,14 @@
  .pcOfferPanel{padding:16px}
 }
 @media(prefers-reduced-motion:reduce){.pcCollection *{scroll-behavior:auto!important;transition:none!important}}
+
+/* Preparation actions stay visible and distinct from background team checks. */
+.pcNextStep{display:flex;align-items:flex-start;gap:14px;padding:20px;background:#141824;color:#fff;border-radius:12px;border-top:4px solid #C6892A}
+.pcNextStepIcon{display:grid;place-items:center;flex:none;width:36px;height:36px;background:#F7EFDD;color:#141824;border-radius:50%}
+.pcNextStep strong{font-size:1rem;line-height:1.4}
+.pcCollection .pcNextStep p{color:#fff;font-size:.85rem;line-height:1.6;margin:6px 0 0;max-width:65ch}
+.pcRequiredAction{padding:20px;border:1px solid #d8c59f;border-left:5px solid #C6892A;border-radius:10px;background:#F7EFDD}
+.pcRequiredAction h3{color:#2A2F52;font-size:1rem;margin:0 0 8px}
+.pcCollection .pcRequiredAction p{font-size:.85rem;color:#3e4654;line-height:1.65;margin:0 0 16px;max-width:68ch}
+.pcRequiredAction .pcButton{min-height:48px;gap:10px;padding:12px 20px}
+@media(max-width:600px){.pcRequiredAction,.pcNextStep{padding:16px}.pcRequiredAction .pcButton{width:100%}.pcNextStep{gap:10px}.pcNextStepIcon{width:30px;height:30px}}
