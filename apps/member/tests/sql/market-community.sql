@@ -22,6 +22,15 @@ begin
  if jsonb_array_length(result->'rows')<>1 or result->'rows'->0->>'likes'<>'1' or result->'rows'->0->>'comments'<>'2' or result->'rows'->0->>'bookmarked'<>'true' then raise exception 'Feed interactions or search incorrect: %',result;end if;
  result:=public.website_lab_community('post',jsonb_build_object('post_id',pid));if jsonb_array_length(result->'comments')<>2 or result->'post'?'client_nonce' then raise exception 'Post projection incorrect';end if;
  if not exists(select 1 from private_website_lab.notifications where recipient_id=a and event_key like 'market-comment:%') then raise exception 'Comment notification missing';end if;
+ -- A post author's own reply is valid content, but must not notify themselves.
+ select count(*) into mark from private_website_lab.notifications where recipient_id=a and event_key like 'market-comment:%';
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ nonce:=gen_random_uuid();
+ perform public.website_lab_community('comment',jsonb_build_object('post_id',pid,'body','Post author adds context without notifying themselves.','client_nonce',nonce));
+ perform public.website_lab_community('comment',jsonb_build_object('post_id',pid,'body','Post author adds context without notifying themselves.','client_nonce',nonce));
+ if (select count(*) from private_website_lab.notifications where recipient_id=a and event_key like 'market-comment:%')<>mark then raise exception 'Post author received own comment notification';end if;
+ if (select count(*) from private_website_lab.market_comments where author_id=a and client_nonce=nonce)<>1 then raise exception 'Author comment retry duplicated content';end if;
+ perform set_config('request.jwt.claim.sub',b::text,true);
  insert into community_results values('posts and comments are idempotent, nesting bounded, search/follow/bookmark/reaction views and notifications work',true);
  denied:=false;begin perform public.website_lab_community('publish',jsonb_build_object('kind','collaborators','body','Try recruiting without an approved active Lab.','client_nonce',gen_random_uuid()));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Ungoverned recruitment post accepted';end if;
  if exists(select 1 from public.website_project_teams where coordinator_id in(a,b,outsider)) then raise exception 'Community created a Lab';end if;

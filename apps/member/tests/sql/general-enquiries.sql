@@ -44,6 +44,20 @@ begin
  if (select status from private_website_lab.support_cases where id=cid)<>'in_review' then raise exception 'Member follow-up did not return to staff attention';end if;
  denied:=false;begin perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Forged internal note','internal','true'));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Member wrote internal note';end if;
  insert into general_enquiry_results values('staff replies notify reporter; internal notes stay private; follow-up restores review status',true);
+ -- Resolution is reversible when the reporter still needs help, but staff notes
+ -- and replies must not silently reopen a resolved enquiry.
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ perform public.website_lab('support_update',jsonb_build_object('case_id',cid,'status','resolved'));
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic note after resolution','internal','true'));
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic final staff explanation'));
+ if (select status from private_website_lab.support_cases where id=cid)<>'resolved' then raise exception 'Staff message reopened resolved enquiry';end if;
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ perform public.website_lab('support_reply',jsonb_build_object('case_id',cid,'body','Synthetic request for further help after resolution'));
+ if (select status from private_website_lab.support_cases where id=cid)<>'in_review' then raise exception 'Resolved member follow-up remained outside staff attention';end if;
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ doc:=public.website_lab('support_list');
+ if not exists(select 1 from jsonb_array_elements(doc->'cases') x where x->>'id'=cid::text and x->>'status'='in_review') then raise exception 'Reopened enquiry missing from staff review list';end if;
+ insert into general_enquiry_results values('resolved reporter follow-up returns to staff review; staff replies and internal notes preserve resolution',true);
  perform set_config('request.jwt.claim.sub',staff::text,true);
  perform public.website_lab('support_update',jsonb_build_object('case_id',cid,'status','closed'));
  perform set_config('request.jwt.claim.sub',a::text,true);
