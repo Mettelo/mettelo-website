@@ -17,5 +17,9 @@ for(const path of ['/','/signin','/api/navigation','/mettelo-logo.svg'])await ch
 for(const path of ['/','/our-story','/projects','/privacy','/terms','/contact','/signin','/opportunities','/industry-news'])await check('page '+path,async()=>{const r=await request(path);assert.equal(r.status,200);assert.match(r.headers.get('x-robots-tag')||'',/noindex/);});
 for(const path of ['/member','/admin/members'])await check('member sign-in boundary '+path,async()=>{const r=await request(path);assert.equal(r.status,307);assert.ok(r.headers.get('location').startsWith(origin+'/signin?next='));});
 await check('homepage account links',async()=>{const html=await(await request('/')).text();assert.match(html,/href="\/signup" data-member-route="\/signup"/);assert.ok(!html.includes('href="http://127.0.0.1'));});
+// A 200 response alone can hide a rewrite that renders the homepage everywhere.
+await check('project catalogue content',async()=>{const html=await(await request('/projects')).text();assert.match(html,/id="project-count"/);assert.match(html,/class="project-grid"/);assert.ok(!html.includes('class="home-hero-layout"'));});
+for(const path of ['/projects/mtl-ai-010','/projects/mtl-ai-010/','/projects/mtl-ai-010/index.html'])await check('project brief content '+path,async()=>{const html=await(await request(path)).text();assert.match(html,/<h1[^>]*>NHS Operational Guidance Knowledge Assistant<\/h1>/);assert.match(html,/class="project-brief-hero"/);assert.ok(!html.includes('Private draft preview'));});
+await check('about page content',async()=>{const html=await(await request('/our-story')).text();assert.match(html,/class="abFounderPortrait"/);assert.ok(!html.includes('class="home-hero-layout"'));});
 await check('robots',async()=>assert.match(await(await request('/robots.txt')).text(),/Disallow: \//));
 console.log(JSON.stringify({origin,passed,failed:failures.length,failures,accountsCreated:0,emailsSent:0},null,2));if(failures.length)process.exitCode=1;
