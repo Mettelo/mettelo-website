@@ -1,8 +1,8 @@
 -- V2 staging only. Synthetic evidence and temporary access changes all roll back.
 begin;
 do $$ declare tid uuid; actor uuid; reviewer uuid; first_evidence uuid; begin
- select t.id,t.coordinator_id into tid,reviewer from public.website_project_teams t where t.status='active' and t.lab_enabled and exists(select 1 from public.website_project_team_members m where m.team_id=t.id and m.user_id<>t.coordinator_id and m.status='confirmed' and m.admitted_at is not null) limit 1;
- select user_id into actor from public.website_project_team_members where team_id=tid and user_id<>reviewer and status='confirmed' and admitted_at is not null limit 1;
+ select t.id,t.coordinator_id into tid,reviewer from public.website_project_teams t where t.status='active' and t.lab_enabled and exists(select 1 from public.website_project_team_members m where m.team_id=t.id and m.user_id<>t.coordinator_id and m.admission_route='core' and m.status='confirmed' and m.admitted_at is not null) limit 1;
+ select user_id into actor from public.website_project_team_members where team_id=tid and user_id<>reviewer and admission_route='core' and status='confirmed' and admitted_at is not null limit 1;
  assert actor is not null,'An isolated staging pilot with admitted coordinator/member is required';
  perform set_config('test.portfolio.team',tid::text,true);perform set_config('test.portfolio.actor',actor::text,true);perform set_config('test.portfolio.reviewer',reviewer::text,true);
  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values('10000000-0000-4000-8000-000000000971','portfolio-outsider@example.test',now(),'{}'),('10000000-0000-4000-8000-000000000972','portfolio-unverified@example.test',null,'{}');

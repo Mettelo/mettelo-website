@@ -1,8 +1,8 @@
 -- Synthetic evidence and share/feed records roll back, including temporary pilot access changes.
 begin;
 do $$declare tid uuid; actor uuid; reviewer uuid; evidence uuid; other_evidence uuid; milestone uuid; result jsonb; payload jsonb; outsider uuid:=gen_random_uuid(); denied boolean; n integer; begin
- select t.id,t.coordinator_id into tid,reviewer from public.website_project_teams t where t.status='active' and t.lab_enabled and exists(select 1 from public.website_project_team_members m where m.team_id=t.id and m.user_id<>t.coordinator_id and m.status='confirmed' and m.admitted_at is not null) limit 1;
- select user_id into actor from public.website_project_team_members where team_id=tid and user_id<>reviewer and status='confirmed' and admitted_at is not null limit 1;
+ select t.id,t.coordinator_id into tid,reviewer from public.website_project_teams t where t.status='active' and t.lab_enabled and exists(select 1 from public.website_project_team_members m where m.team_id=t.id and m.user_id<>t.coordinator_id and m.admission_route='core' and m.status='confirmed' and m.admitted_at is not null) limit 1;
+ select user_id into actor from public.website_project_team_members where team_id=tid and user_id<>reviewer and admission_route='core' and status='confirmed' and admitted_at is not null limit 1;
  assert actor is not null,'An admitted isolated pilot member is required';
  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(outsider,'proof-share-qa-'||outsider||'@example.test',now(),'{}');
  insert into private_website_lab.items(team_id,kind,title,body,url,author_id,owner_id) values(tid,'contribution','[SHARE-QA] Confidential source','PRIVATE SOURCE TEXT MUST NEVER AUTOMATICALLY APPEAR PUBLICLY','https://github.com/example/private-qa',actor,actor) returning id into evidence;
