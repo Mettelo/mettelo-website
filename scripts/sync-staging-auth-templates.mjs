@@ -8,7 +8,8 @@ const definitions=[['confirmation','confirmation.html','Verify your email addres
 const payload={};
 for(const [kind,file,subject] of definitions){
   const html=await fs.readFile(path.join(root,'supabase/templates/auth',file),'utf8');
-  if(!html.includes('href="{{ .ConfirmationURL }}"')||html.includes('http://127.0.0.1')||html.includes('aconptuqupsgznyrxhrh')||html.includes('{{ .SiteURL }}/mettelo-logo'))throw new Error(`Unsafe or incomplete template: ${file}`);
+  const expected=kind==='recovery'?'href="{{ .SiteURL }}/auth/recover#token_hash={{ .TokenHash }}"':'href="{{ .ConfirmationURL }}"';
+  if(!html.includes(expected)||html.includes('http://127.0.0.1')||html.includes('aconptuqupsgznyrxhrh')||html.includes('{{ .SiteURL }}/mettelo-logo'))throw new Error(`Unsafe or incomplete template: ${file}`);
   payload[`mailer_subjects_${kind}`]=subject;
   payload[`mailer_templates_${kind}_content`]=html;
 }
