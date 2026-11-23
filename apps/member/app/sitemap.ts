@@ -1,9 +1,13 @@
 import type {MetadataRoute} from 'next';
 import staticUrls from '@/lib/public-sitemap.snapshot.json';
 import {publicNews,type PublishedArticle} from '@/lib/news-server';
+import {createServerSupabaseClient} from '@/lib/supabase/server';
+import {publicContent} from '@/lib/site-content';
 export const dynamic='force-dynamic';
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
- const entries:MetadataRoute.Sitemap=[...staticUrls,'https://mettelo.com/industry-news','https://mettelo.com/opportunities'].map(url=>({url}));
+ const projects=await publicContent(await createServerSupabaseClient(),'projects');
+ const archived=new Set(projects.filter(row=>row.data.archived).map(row=>row.key.slice(8).toUpperCase()));
+ const entries:MetadataRoute.Sitemap=[...staticUrls,'https://mettelo.com/industry-news','https://mettelo.com/opportunities'].filter(url=>!archived.has(new URL(url).pathname.split('/').filter(Boolean).at(-1)?.toUpperCase()||'')).map(url=>({url}));
  // Anonymous API exposes only published documents. Fail rather than silently omit articles.
  for(let page=1;;page++){
   const data=await publicNews(null,{page:String(page)}) as {items:PublishedArticle[];total:number};

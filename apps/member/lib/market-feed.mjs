@@ -8,3 +8,10 @@ export function feedReadQuery(query){
  return {action:'feed',payload:{...(category!=='all'?{category}:{}),q:(query.get('q')||'').trim().slice(0,150),view,...(before_at?{before_at,before_id}:{})}};
 }
 export function appendFeedPage(current,next){const ids=new Set(current.map(post=>post.id));return [...current,...next.filter(post=>{if(ids.has(post.id))return false;ids.add(post.id);return true;})];}
+export function feedSnapshotSeed(posts){return JSON.stringify(posts);}
+export function refreshFeedPage(current,fresh){
+ if(fresh.length<25)return fresh;
+ const boundary=fresh.at(-1);
+ const older=current.filter(post=>post.created_at<boundary.created_at||(post.created_at===boundary.created_at&&post.id<boundary.id));
+ return appendFeedPage(fresh,older);
+}

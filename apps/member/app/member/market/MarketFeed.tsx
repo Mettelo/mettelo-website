@@ -5,20 +5,21 @@ import MarketPostComposer,{type MarketComposerHandle} from './MarketPostComposer
 import MarketDetailDrawer,{type MarketDetailSelection} from './MarketDetailDrawer';
 import MarketOpportunityPost from './MarketOpportunityPost';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState,type FormEvent} from 'react';
 import type {CommunityPost,CommunityComment} from '@/lib/market-community';
 import type {MarketLab} from '@/lib/lab-market';
-import {appendFeedPage} from '@/lib/market-feed.mjs';
+import {appendFeedPage,feedSnapshotSeed,refreshFeedPage} from '@/lib/market-feed.mjs';
 import FeedIcon from './FeedIcon';
 type Cursor={id:string;created_at:string}|null;
 type FeedProps={initialPosts:CommunityPost[];userId:string;name:string;labs:MarketLab[];view:string;category:string;query:string;failed:boolean;compose:boolean;composerNonce:string};
-type CachedFeed={posts:CommunityPost[];cursor:Cursor;more:boolean;scroll:number;at:number;restore:boolean};
+type CachedFeed={posts:CommunityPost[];more:boolean;scroll:number;at:number;restore:boolean;seed:string};
 const snapshots=new Map<string,CachedFeed>();
 const initials=(name:string)=>name.trim().split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase()||'M';
 const labels:Record<string,string>={update:'Update',question:'Question',showcase:'Showcase',idea:'Project idea',project:'Project update',collaborators:'Lab recruitment announcement',collaboration:'Looking to collaborate'};
 const icons={update:'write',question:'question',showcase:'showcase',idea:'question',project:'showcase',collaborators:'people'} as const;
 async function readPost(id:string){const response=await fetch('/api/market-feed?post_id='+encodeURIComponent(id),{cache:'no-store'});const data=await response.json();if(!response.ok)throw Error(data.error||'This discussion could not load.');return data as {post:CommunityPost;comments:CommunityComment[]};}
-async function mutate(action:string,fields:Record<string,string>){const response=await fetch('/api/market-community',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action,...fields})});const data=await response.json();if(!response.ok)throw Error(data.error||'The update could not be saved.');return data.result;}
+async function mutate(action:string,fields:Record<string,string>){const response=await fetch('/api/market-community',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action,...fields})});const data=await response.json();if(!response.ok)throw Error(data.error||'The update could not be saved.');window.dispatchEvent(new Event('mettelo:community-saved'));return data.result;}
 function FeedPost({post,priority=false,userId,update,remove,remember,returnHref='/member/market',inspect}:{post:CommunityPost;priority?:boolean;userId:string;update:(patch:Partial<CommunityPost>)=>void;remove:(author?:boolean)=>void;remember:()=>void;returnHref?:string;inspect:(selection:MarketDetailSelection)=>void}){
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[expanded,setExpanded]=useState(false),[showComments,setShowComments]=useState(false),[comments,setComments]=useState<CommunityComment[]|null>(null),[allComments,setAllComments]=useState(false),[fullBody,setFullBody]=useState<string|null>(null),[comment,setComment]=useState(''),[safety,setSafety]=useState(''),[reason,setReason]=useState(''),[replyTo,setReplyTo]=useState<CommunityComment|null>(null);
  const commentNonce=useRef(''),bodyElement=useRef<HTMLParagraphElement>(null),[clipped,setClipped]=useState(post.body.length>=150||post.body.split('\n').length>4);
@@ -42,11 +43,15 @@ function FeedPost({post,priority=false,userId,update,remove,remember,returnHref=
 }
 export default function MarketFeed({initialPosts,userId,name,labs,view,category,query,failed,compose,composerNonce}:FeedProps){
  const [selection,setSelection]=useState<MarketDetailSelection|null>(null);
- const key=userId+':'+view+':'+category+':'+query,[posts,setPosts]=useState(initialPosts),[cursor,setCursor]=useState<Cursor>(initialPosts.at(-1)||null),[more,setMore]=useState(initialPosts.length===25),[loading,setLoading]=useState(false),[error,setError]=useState(''),[announcement,setAnnouncement]=useState('');
+ const router=useRouter(),seed=feedSnapshotSeed(initialPosts);
+ const key=userId+':'+view+':'+category+':'+query,[posts,setPosts]=useState(initialPosts),[more,setMore]=useState(initialPosts.length===25),[loading,setLoading]=useState(false),[error,setError]=useState(''),[announcement,setAnnouncement]=useState('');
+ const cursor:Cursor=posts.at(-1)||null;
  const composer=useRef<MarketComposerHandle>(null),sentinel=useRef<HTMLDivElement>(null),loadLock=useRef(false),autoPages=useRef(0);
- useEffect(()=>{const snapshot=snapshots.get(key);if(snapshot&&Date.now()-snapshot.at<300000){setPosts(snapshot.posts);setCursor(snapshot.cursor);setMore(snapshot.more);if(snapshot.restore){snapshot.restore=false;requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:snapshot.scroll,behavior:'instant'})));}}},[key]);
- const remember=()=>{snapshots.set(key,{posts,cursor,more,scroll:window.scrollY,at:Date.now(),restore:true});if(snapshots.size>5)snapshots.delete(snapshots.keys().next().value!);};
- async function loadMore(){if(loadLock.current||!more||!cursor)return;loadLock.current=true;setLoading(true);setError('');try{const params=new URLSearchParams({view,category,q:query,before_at:cursor.created_at,before_id:cursor.id});const response=await fetch('/api/market-feed?'+params,{cache:'no-store'});const result=await response.json();if(!response.ok)throw Error(result.error||'Older posts could not load.');const rows:CommunityPost[]=result.rows;setPosts(current=>appendFeedPage(current,rows));setCursor(rows.at(-1)||cursor);setMore(rows.length===25);setAnnouncement(rows.length?`${rows.length} older posts loaded.`:'You’ve reached the end of this feed.');}catch(e){setError((e as Error).message);}finally{loadLock.current=false;setLoading(false);}}
+ useEffect(()=>{const snapshot=snapshots.get(key);if(snapshot&&snapshot.seed===seed&&Date.now()-snapshot.at<300000){setPosts(snapshot.posts);setMore(snapshot.more);if(snapshot.restore){snapshot.restore=false;requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:snapshot.scroll,behavior:'instant'})));}}else{snapshots.delete(key);setPosts(initialPosts);setMore(initialPosts.length===25);}},[key]);
+ useEffect(()=>{setPosts(current=>refreshFeedPage(current,initialPosts));setMore(initialPosts.length===25);},[seed]);
+ useEffect(()=>{const refresh=()=>{snapshots.clear();router.refresh();};window.addEventListener('mettelo:community-saved',refresh);return()=>window.removeEventListener('mettelo:community-saved',refresh);},[router]);
+ const remember=()=>{snapshots.set(key,{posts,more,seed,scroll:window.scrollY,at:Date.now(),restore:true});if(snapshots.size>5)snapshots.delete(snapshots.keys().next().value!);};
+ async function loadMore(){if(loadLock.current||!more||!cursor)return;loadLock.current=true;setLoading(true);setError('');try{const params=new URLSearchParams({view,category,q:query,before_at:cursor.created_at,before_id:cursor.id});const response=await fetch('/api/market-feed?'+params,{cache:'no-store'});const result=await response.json();if(!response.ok)throw Error(result.error||'Older posts could not load.');const rows:CommunityPost[]=result.rows;setPosts(current=>appendFeedPage(current,rows));setMore(rows.length===25);setAnnouncement(rows.length?`${rows.length} older posts loaded.`:'You’ve reached the end of this feed.');}catch(e){setError((e as Error).message);}finally{loadLock.current=false;setLoading(false);}}
  useEffect(()=>{if(!more||error||failed||!sentinel.current||!globalThis.IntersectionObserver)return;const observer=new IntersectionObserver(entries=>{if(entries[0]?.isIntersecting&&autoPages.current<2){autoPages.current++;void loadMore();}},{rootMargin:'240px'});observer.observe(sentinel.current);return()=>observer.disconnect();},[cursor,more,error,failed]);
  async function publish(fields:Record<string,string>){const result=await mutate('publish',fields);const data=await readPost(result.post_id);const kind=fields.kind,matches=category==='all'||category==='updates'&&['update','question','showcase'].includes(kind)||category==='ideas'&&kind==='idea'||category==='projects'&&kind==='project'||category==='seeking'&&['collaborators','collaboration'].includes(kind);if(view==='all'&&!query&&matches)setPosts(current=>appendFeedPage([{...data.post,likes:0,comments:0,liked:false,bookmarked:false,following:false}],current));snapshots.clear();setAnnouncement('Your post has been published in the community. Filters may hide it from this view.');}
  function openComposer(nextKind:string){composer.current?.open(nextKind);}

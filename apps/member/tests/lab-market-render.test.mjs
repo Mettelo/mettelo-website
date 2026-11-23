@@ -10,7 +10,7 @@ const lab=data(`export async function labSession(){return {user:{id:'member'},db
 const market=data(`export async function marketRpc(db,action){const f=globalThis.marketFixture;if(f.fail===action)throw Error('unavailable');if(action==='my_labs')return f.labs||[];if(action==='preferences')return {discoverable:false,contactable:false};if(action==='manage')return f.management;return f.listing;}`);
 const social=data(`export const discoveryRpc=()=>Promise.resolve({rows:[]});export async function communityRpc(){return {rows:[]}}`);
 const nextLink=data(`import {createElement} from 'react';export default function Link({href,children,onClick,...props}){return createElement('a',{...props,href,onClick},children)}` .replace("from 'react'",'from '+JSON.stringify(import.meta.resolve('react'))));
-const navigation=data(`export function redirect(url){throw Error('REDIRECT:'+url)}`);
+const navigation=data(`export function useRouter(){return {refresh(){}}}export function redirect(url){throw Error('REDIRECT:'+url)}`);
 async function local(url){
  if(cache.has(url.href))return cache.get(url.href);
  let code=ts.transpileModule(await fs.readFile(url,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from\s+['"](?:@\/components\/|\.\/)AppIcon['"]/g,match=>resolveUiIcon(match)).replace(/import\s+['"][^'"]+\.css['"];?/g,'');
