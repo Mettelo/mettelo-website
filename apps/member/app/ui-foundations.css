@@ -43,7 +43,12 @@ body :is(.adminWorkspace,.lx,.marketWorkspace) :is(th,td){padding:12px 16px;bord
 body .mnIcon{width:20px;height:20px;stroke-width:var(--icon-stroke)}
 body .mnRowArrow .mnIcon{width:16px;height:16px}
 body .workspaceNavMark{border:0;background:transparent;width:28px;height:28px}
-body .workspaceBottom :is(a,summary)>span{display:grid;place-items:center;min-height:26px}
+body .workspaceBottom>a>span,body .workspaceMore>summary>span{display:grid;place-items:center;min-height:26px}
+body .workspaceMorePanel a{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:12px;text-align:left}
+body .workspaceMorePanel a>span:not(.workspaceNavMark){display:block;min-width:0}
+body .workspaceMorePanel a strong{display:block;line-height:1.4}
+body .workspaceMorePanel a small{margin-top:3px;line-height:1.5}
+body .workspaceMorePanel>a:last-child{display:flex;border-top:1px solid var(--line);border-radius:0;margin-top:8px;padding-top:16px}
 body :is(.workspaceBottom,.labMobileNav) .appIcon{width:22px;height:22px}
 body .profileSaveBar{padding-bottom:max(16px,env(safe-area-inset-bottom))}
 body .pvMissing{color:var(--muted)}
