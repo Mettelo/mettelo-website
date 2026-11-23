@@ -3,24 +3,24 @@ begin;
 create temp table directory_results(check_name text,passed boolean);
 do $test$
 #variable_conflict use_variable
-declare staff uuid;ordinary uuid:=gen_random_uuid();ref text;tid uuid;iid uuid;candidate_id uuid;candidate_interest uuid;role_name text;a jsonb;b jsonb;d jsonb;one jsonb;denied boolean;k integer;payload jsonb;started timestamptz;seen_ids uuid[];page_ids uuid[];page_no integer;section_name text;
+declare staff uuid;ordinary uuid:=gen_random_uuid();coordinator_only uuid:=gen_random_uuid();ref text;tid uuid;iid uuid;candidate_id uuid;candidate_interest uuid;role_name text;a jsonb;b jsonb;d jsonb;one jsonb;denied boolean;k integer;payload jsonb;started timestamptz;seen_ids uuid[];page_ids uuid[];page_no integer;section_name text;
 begin
  select user_id into staff from private_website_lab.member_roles where role='full_admin' limit 1;
  select project_ref,roles->>0 into ref,role_name from public.website_project_briefs order by project_ref limit 1;
  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(ordinary,'directory-'||ordinary||'@example.invalid',now(),'{"full_name":"Directory Search Member"}');
  insert into public.website_project_teams(project_ref,label,participation,minimum_members,maximum_members,created_at)
- select ref,'[ROLLBACK DIRECTORY] '||lpad(n::text,4,'0'),'team',3,4,now()-interval '1 day'*n from generate_series(1,1000) n;
- create temp table directory_scale_members as select t.id as team_id,gen_random_uuid() as user_id from public.website_project_teams t cross join generate_series(1,3) n where t.label like '[ROLLBACK DIRECTORY]%';
+ select ref,'[ROLLBACK DIRECTORY] '||lpad(n::text,4,'0'),'team',3,5,now()-interval '1 day'*n from generate_series(1,1000) n;
+ create temp table directory_scale_members as select t.id as team_id,gen_random_uuid() as user_id from public.website_project_teams t cross join generate_series(1,4) n where t.label like '[ROLLBACK DIRECTORY]%';
  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) select user_id,'directory-scale-'||user_id||'@example.invalid',now(),'{"full_name":"Directory Scale Member"}' from directory_scale_members;
  insert into public.website_project_interests(user_id,project_ref,participation,primary_role,motivation,contribution,answers,terms_version)
  select user_id,ref,'team',role_name,repeat('fixture ',5),repeat('fixture ',8),'{"commitment_response":"yes"}','2026-09-03-v1' from directory_scale_members;
  insert into public.website_project_team_members(team_id,interest_id,user_id,project_ref,role,responsibilities,status,offer_expires_at)
  select x.team_id,i.id,x.user_id,ref,role_name,array[role_name],'offered',now()+interval '7 days' from directory_scale_members x join public.website_project_interests i on i.user_id=x.user_id and i.project_ref=ref;
- if (select count(*) from directory_scale_members)<>3000 or
-    (select count(*) from public.website_project_team_members m join directory_scale_members x on x.team_id=m.team_id and x.user_id=m.user_id)<>3000 then
-  raise exception 'Expected 3000 isolated scale memberships';
+ if (select count(*) from directory_scale_members)<>4000 or
+    (select count(*) from public.website_project_team_members m join directory_scale_members x on x.team_id=m.team_id and x.user_id=m.user_id)<>4000 then
+  raise exception 'Expected 4000 isolated scale memberships';
  end if;
- insert into directory_results values('1000 populated teams contain exactly 3000 synthetic member records',true);
+ insert into directory_results values('1000 populated teams contain exactly 4000 synthetic member records',true);
  perform set_config('request.jwt.claim.sub',staff::text,true);
  started:=clock_timestamp();
  payload:=jsonb_build_object('section','teams','q','[ROLLBACK DIRECTORY]');
@@ -42,12 +42,20 @@ begin
  end loop;
  a:=public.website_project_admin_directory('list','{"section":"teams","q":"Directory Scale Member"}');
  if a->>'total'<>'1000' then raise exception 'Populated member-name search failed';end if;
- insert into directory_results values('all 40 team and attention pages cover 1000 unique teams; member-name search spans 3000 records',true);
+ insert into directory_results values('all 40 team and attention pages cover 1000 unique teams; member-name search spans 4000 records',true);
+ a:=public.website_project_admin_directory('list',jsonb_build_object('section','teams','project',ref,'q',(select title from public.website_project_briefs where project_ref=ref)));
+ if (a->>'total')::integer<1000 or jsonb_array_length(a->'rows')<>25 or exists(select 1 from jsonb_array_elements(a->'rows') x where x->>'project_ref'<>ref) then raise exception 'Project-title search did not return bounded matching teams';end if;
  a:=public.website_project_admin_directory('list',payload||'{"page":999999}'::jsonb);
  if a->>'page'<>'40' or jsonb_array_length(a->'rows')<>25 then raise exception 'Out-of-range page not clamped';end if;
  a:=public.website_project_admin_directory('list',payload||'{"q":"[ROLLBACK DIRECTORY] 0999"}'::jsonb);
  if a->>'total'<>'1' then raise exception 'Team reference search failed';end if;
  tid:=(a->'rows'->0->>'id')::uuid;
+ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(coordinator_only,'directory-coordinator-'||coordinator_only||'@example.invalid',now(),'{"full_name":"Directory Coordinator Only"}');
+ update public.website_project_teams set coordinator_id=coordinator_only where id=tid;
+ a:=public.website_project_admin_directory('list','{"section":"teams","q":"Directory Coordinator Only"}');
+ if a->>'total'<>'1' or a->'rows'->0->>'id'<>tid::text or exists(select 1 from public.website_project_team_members where user_id=coordinator_only) then raise exception 'Coordinator-only search failed or depended on member search';end if;
+ update public.website_project_teams set coordinator_id=null where id=tid;
+ insert into directory_results values('Project-title and coordinator-only search return bounded authorised teams',true);
  insert into public.website_project_interests(user_id,project_ref,participation,primary_role,motivation,contribution,answers,terms_version) values(ordinary,ref,'team',role_name,repeat('fixture ',5),repeat('fixture ',8),'{"commitment_response":"yes"}','2026-09-03-v1') returning id into iid;
  perform public.website_lab('review_interest',jsonb_build_object('interest_id',iid,'review_status','shortlisted'));
  a:=public.website_project_admin_directory('candidates',jsonb_build_object('project',ref,'arrangement','team','q','Directory Search Member'));
@@ -58,7 +66,7 @@ begin
  a:=public.website_project_admin_directory('candidates',jsonb_build_object('project',ref,'arrangement','team','q','Directory Search Member'));
  if a->>'total'<>'0' then raise exception 'Allocated applicant still offered as candidate';end if;
  a:=public.website_project_admin_directory('team',jsonb_build_object('team_id',tid));
- if a->'team'->>'id'<>tid::text or jsonb_array_length(a->'team'->'members')<>4 or not(a->'team'?'readiness') then raise exception 'Scoped detail incomplete';end if;
+ if a->'team'->>'id'<>tid::text or jsonb_array_length(a->'team'->'members')<>5 or not(a->'team'?'readiness') then raise exception 'Scoped detail incomplete';end if;
  insert into directory_results values('team/member search, scoped readiness and candidate allocation checks remain correct',true);
  a:=public.website_project_admin_directory('list',jsonb_build_object('section','applications','q','Directory Search Member'));
  if a->>'total'<>'1' or a->'rows'->0?'answers' then raise exception 'Application summary did not stay minimal';end if;
@@ -95,6 +103,7 @@ begin
  denied:=false;begin perform public.website_project_admin_directory('list');exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Anonymous directory access allowed';end if;
  if has_table_privilege('authenticated','private_website_lab.admin_team_directory','SELECT') or has_table_privilege('anon','private_website_lab.admin_application_directory','SELECT') then raise exception 'Private read model directly exposed';end if;
  insert into directory_results values('ordinary and anonymous users denied; private read models have no client grants',true);
+ insert into directory_results values('Read assertions and allocation checks completed in '||round(extract(epoch from clock_timestamp()-started)*1000)||' ms; timing recorded without an agreed performance threshold',true);
  raise notice 'Directory scale assertions including fixture writes completed in % ms',extract(epoch from clock_timestamp()-started)*1000;
 end $test$;
 select * from directory_results;
