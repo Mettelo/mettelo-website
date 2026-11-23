@@ -1,0 +1,33 @@
+begin;
+create temp table discovery_access_results(check_name text,passed boolean);
+create temp table discovery_access_ids as select key,gen_random_uuid() id from unnest(array['actor','normal','expired','banned','deleted','suspended'])key;
+insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) select id,'growth-policy-'||id||'@example.invalid',now(),jsonb_build_object('full_name','[ROLLBACK GROWTH POLICY] '||key) from discovery_access_ids;
+insert into private_website_lab.market_preferences(user_id,discoverable) select id,true from discovery_access_ids where key<>'actor';
+update auth.users set banned_until=case when id=(select id from discovery_access_ids where key='banned') then now()+interval '1 day' else now()-interval '1 day' end where id in(select id from discovery_access_ids where key in('banned','expired'));
+update auth.users set deleted_at=now() where id=(select id from discovery_access_ids where key='deleted');
+insert into private_website_lab.member_access(user_id,suspended,reason,changed_by) select id,true,'Synthetic discovery suspension fixture',(select user_id from private_website_lab.member_roles where role='full_admin' limit 1) from discovery_access_ids where key='suspended';
+insert into private_website_lab.market_follows(follower_id,followed_id) select (select id from discovery_access_ids where key='actor'),id from discovery_access_ids where key<>'actor';
+do $test$
+declare actor uuid;normal uuid;expired uuid;r jsonb;
+begin
+ select id into actor from discovery_access_ids where key='actor';select id into normal from discovery_access_ids where key='normal';select id into expired from discovery_access_ids where key='expired';
+ perform set_config('request.jwt.claim.sub',actor::text,true);
+ r:=public.website_lab_market('people','{"q":"[ROLLBACK GROWTH POLICY]"}');
+ assert r->>'total'='2' and not exists(select 1 from jsonb_array_elements(r->'rows')x where (x->>'id')::uuid not in(normal,expired)),'Directory exposes a deleted, banned or suspended member';
+ r:=public.website_market_discovery('connections',jsonb_build_object('member_id',actor,'direction','following'));assert r->>'following'='2' and jsonb_array_length(r->'rows')=2,'Connection visibility disagrees with account status';
+ assert not private_website_lab.account_allowed(null) and not private_website_lab.account_allowed(gen_random_uuid()),'Missing account accepted';
+ insert into discovery_access_results values('Directory and connections preserve active/expired-ban access while excluding deleted, banned, suspended and missing accounts',true);
+ insert into private_website_lab.market_blocks(blocker_id,blocked_id) values(actor,normal);
+ r:=public.website_lab_market('people','{"q":"[ROLLBACK GROWTH POLICY]"}');assert r->>'total'='1' and r->'rows'->0->>'id'=expired::text,'Actor block did not revoke discovery immediately';
+ delete from private_website_lab.market_blocks where blocker_id=actor and blocked_id=normal;
+ insert into private_website_lab.market_blocks(blocker_id,blocked_id) values(expired,actor);
+ r:=public.website_lab_market('people','{"q":"[ROLLBACK GROWTH POLICY]"}');assert r->>'total'='1' and r->'rows'->0->>'id'=normal::text,'Reciprocal block did not revoke discovery';
+ r:=public.website_market_discovery('connections',jsonb_build_object('member_id',actor,'direction','following'));assert r->>'following'='1','Blocked account remains in connections';
+ insert into discovery_access_results values('Both block directions revoke directory and connection visibility immediately without an eligibility cache',true);
+ assert not has_table_privilege('authenticated','private_website_lab.allowed_accounts','SELECT') and not has_table_privilege('anon','private_website_lab.allowed_accounts','SELECT') and not has_table_privilege('authenticated','private_website_lab.market_block_pairs','SELECT'),'Private access-rule view exposed';
+ perform set_config('request.jwt.claim.sub','',true);
+ begin perform public.website_lab_market('people');raise exception 'Anonymous directory was allowed';exception when insufficient_privilege then null;end;
+ insert into discovery_access_results values('New access-rule views stay private and anonymous discovery remains denied',true);
+end $test$;
+select * from discovery_access_results;
+rollback;

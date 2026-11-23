@@ -85,6 +85,17 @@ test('public member profiles omit absent private fields and offer invitations on
  const leader=await render('profile',{profile,labs:[{team_id:'lab',title:'Example Lab',roles:['Analyst']}]});assert.match(leader,/Invite to a project/);assert.match(leader,/name="lab_role"/);
  assert.match(await render('profile',{fail:'profile'}),/Member profile unavailable/);
 });
+
+test('parent and reply identities link to their own shared profiles with privacy-checked photos; follow stays inline',async()=>{
+ const parentId='11111111-1111-4111-8111-111111111111',replyId='22222222-2222-4222-8222-222222222222';
+ const parent={id:'parent',author_id:parentId,author:'Parent author',parent_id:null,body:'Parent comment',created_at:post.created_at};
+ const reply={...parent,id:'reply',author_id:replyId,author:'Reply author',parent_id:'parent',body:'Reply comment'};
+ const html=await render('community',{post:{post,comments:[parent,reply]}},{post:'post'});
+ for(const id of [parentId,replyId]){assert.match(html,new RegExp('href="/member/market/people/'+id+'"'));assert.match(html,new RegExp('/api/market-avatar\\?member_id='+id));}
+ assert.match(html,/Parent author&#x27;s shared profile|Parent author&#39;s shared profile/);
+ const profile=await render('profile',{profile:{id:parentId,full_name:'Parent author',skills:[],contactable:false,following:true}});
+ assert.match(profile,/aria-label="Unfollow Parent author"/);assert.doesNotMatch(profile,/name="action" value="follow"/);
+});
 test('public project details show approved recruitment and explicit highlights while preserving external access wording',async()=>{
  const project={team_id:'lab',project_ref:'MTL-TEST',title:'Example Lab',origin:'Mettelo project',available:1,description:'Public summary',skills:['SQL'],roles:['Analyst'],commitment:'Two hours weekly',following:false,leader:{id:'leader',name:'Leader',contactable:true},highlights:[]};
  const html=await render('project',{project});assert.match(html,/Request to collaborate/);assert.match(html,/Message leader/);assert.match(html,/Follow public project updates/);assert.match(html,/Private Lab activity is not shown/);assert.match(html,/external repository provisioning/);

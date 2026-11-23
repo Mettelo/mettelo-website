@@ -54,9 +54,12 @@ begin
  insert into availability_results values('Archive hides public/Connect discovery; stale writes are rejected, repeated state does not duplicate audit and reopening restores visibility',true);
  select id,project_ref,to_jsonb(t) into tid,existing_ref,team_before from public.website_project_teams t where coordinator_id=staff and status='active' order by id limit 1;
  assert tid is not null,'An existing administrator-owned staging Lab is required';
+ insert into private_website_lab.market_recruitment(team_id,collaborator_capacity,open,description,roles,commitment) values(tid,private_website_lab.market_occupied(tid)+1,true,'Isolated recruitment visibility fixture',array[roles->>0],'Synthetic test only') on conflict(team_id) do update set collaborator_capacity=excluded.collaborator_capacity,open=true;
+ r:=public.website_lab_market('projects',jsonb_build_object('q',existing_ref));assert exists(select 1 from jsonb_array_elements(r->'rows')x where x->>'team_id'=tid::text),'Active fixture is absent from legacy recruitment discovery before archive';
  select jsonb_agg(to_jsonb(m) order by user_id) into members_before from public.website_project_team_members m where team_id=tid;
  select publication_version into existing_version from public.website_project_briefs where project_ref=existing_ref;
  perform public.website_content_admin('project_status',jsonb_build_object('key','project:'||existing_ref,'state','archived','expected_publication_version',existing_version,'confirmed',true,'note','Synthetic existing-Lab preservation test'));
+ r:=public.website_lab_market('projects',jsonb_build_object('q',existing_ref));assert not exists(select 1 from jsonb_array_elements(r->'rows')x where x->>'team_id'=tid::text),'Archived recruiting Lab remains in legacy discovery';
  perform public.website_lab('workspace',jsonb_build_object('team_id',tid));
  assert (select to_jsonb(t)=team_before from public.website_project_teams t where id=tid),'Archiving changed existing Lab state';
  assert (select jsonb_agg(to_jsonb(m) order by user_id)=members_before from public.website_project_team_members m where team_id=tid),'Archiving changed membership or access';

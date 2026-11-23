@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import sharp from 'sharp';
 import {createServerSupabaseClient} from '@/lib/supabase/server';
 import {profileRequestOriginAllowed} from '@/lib/request-origin.mjs';
+import {profilePhotoStorageFailure} from '@/lib/profile-photo.mjs';
 export const runtime='nodejs';
 const bucket='website-profile-photos';
 const reply=(body:unknown,status=200)=>NextResponse.json(body,{status,headers:{'Cache-Control':'private, no-store'}});
@@ -30,7 +31,7 @@ async function change(request:Request,remove:boolean){
   }catch{return reply({error:'This image could not be read. Choose a different JPG, PNG or WebP photo.'},400);}
   path=`${user.id}/${randomUUID()}.webp`;
   const upload=await db.storage.from(bucket).upload(path,bytes,{contentType:'image/webp',upsert:false,cacheControl:'60'});
-  if(upload.error)return reply({error:'Your photo could not be uploaded. Please try again.'},503);
+  if(upload.error){const failure=profilePhotoStorageFailure(upload.error);console.error('Profile photo storage upload failed',{status:failure.status,code:upload.error.name});return reply({error:failure.message},failure.status);}
  }
  let update=db.from('profiles').update({avatar_path:path}).eq('id',user.id);
  update=profile.avatar_path?update.eq('avatar_path',profile.avatar_path):update.is('avatar_path',null);
