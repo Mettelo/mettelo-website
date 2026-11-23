@@ -102,3 +102,10 @@ test('preparation shows required commitments and coordinator consent outside col
  assert.ok(result.indexOf('Confirm commitment')<result.indexOf('pcFacts'));
  assert.doesNotMatch(result,/<details[^>]*><summary>Coordinator invitation/);
 });
+test('GitHub setup is a counted personal action only when its authoritative policy is required',()=>{
+ const fixture={...card,membership_status:'confirmed',commitment_confirmed:true,is_nominee:false,two_person_proposed:false,github_connected:false,github_org_status:'not_connected',readiness:{checks:[{label:'GitHub organisation membership',ready:false}]}};
+ const optional=html(createElement(Placement,{card:{...fixture,github_required:false}}));
+ assert.doesNotMatch(optional,/Complete GitHub setup|Connect GitHub and accept/);assert.match(optional,/no outstanding personal actions/);
+ const mandatory=html(createElement(Placement,{card:{...fixture,github_required:true}}));
+ assert.match(mandatory,/One step needs your attention/);assert.match(mandatory,/Complete GitHub setup/);
+});

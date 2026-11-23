@@ -1,5 +1,5 @@
 import {contactReasons} from './contact-contract.mjs';
-export type EnquirySummary={ownership?:{assigned_to:string|null;owner_name:string;owner_available:boolean};id:string;source?:'public';team_id:string|null;team_label:string;project_ref:string;category:string;subject:string;status:string;reporter_name?:string;created_at:string;updated_at?:string};
+export type EnquirySummary={ownership?:{assigned_to:string|null;owner_name:string;owner_available:boolean};id:string;source?:'public'|'member';team_id:string|null;team_label:string;project_ref:string;category:string;subject:string;status:string;reporter_name?:string;created_at:string;updated_at?:string};
 export type EnquiryReply={id:string;body:string;internal:boolean;author:string;created_at:string};
 export const generalSupportReasons=[['account','My account or profile'],['application','A project application'],['platform','Using the website'],['other','Something else']];
 export const supportReasons=[['scope','Project scope or source data'],['access','Lab or repository access'],['add_member','Add or replace a teammate'],['remove_member','Request a member removal'],['coordinator','Coordinator support or change'],['inactive_member','An unavailable teammate'],['conduct','Communication or conduct concern'],['delivery','Workload, milestone or deadline'],['meeting','A meeting question'],['other','Something else']];

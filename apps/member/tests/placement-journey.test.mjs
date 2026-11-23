@@ -25,3 +25,10 @@ test('Chat distinguishes preparation, pause, completed work and staff previews',
  assert.match(labReadOnlyMessage({status:'completed'}),/completed/);
  assert.match(labReadOnlyMessage({status:'active',isMember:false}),/Staff preview/);
 });
+test('disabled GitHub policy never creates a personal setup blocker and collaboration copy preserves formation',()=>{
+ const checks=[{label:'GitHub organisation membership',ready:false}];
+ assert.deepEqual(placementJourney({...base,github_required:false,readiness:{checks}}).pending,[]);
+ assert.match(placementJourney({...base,github_required:true,readiness:{checks}}).pending[0],/Connect GitHub/);
+ const journey=placementJourney({...base,admission_route:'market',membership_status:'confirmed',team_status:'active',lab_enabled:true,can_enter:true});
+ assert.equal(journey.arrangement,'Solo');assert.match(journey.note,/collaboration Lab/);assert.doesNotMatch(journey.note,/Your Solo Lab/);
+});

@@ -1,6 +1,7 @@
 import {readdir,readFile,writeFile,mkdir,copyFile,rm} from 'node:fs/promises';
 import {resolve,relative,sep,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {resolveHostedReferences} from './hosted-static-html.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const source=resolve(root,'dist'),target=resolve(root,'apps/member/public/_site');
 // Generated, private staging build tree only. Never modify the static release package.
@@ -16,6 +17,7 @@ async function walk(dir){for(const entry of await readdir(dir,{withFileTypes:tru
  const dest=resolve(target,path);await mkdir(dirname(dest),{recursive:true});
  if(path.endsWith('.html')){
   let html=await readFile(file,'utf8');
+  html=resolveHostedReferences(html,path);
   html=html.replace(/href="[^"]*" data-member-route="(\/[^"<>]*)"/g,(_,route)=>`href="${route}" data-member-route="${route}"`);
   html=html.replace(/(href|src|action)="https:\/\/(?:www\.)?mettelo\.com(?=[/"#?])/g,'$1="https://staging.mettelo.com');
   html=html.replace(/<meta name="robots"[^>]*>/gi,'').replace('</head>','<meta name="robots" content="noindex,nofollow"></head>');

@@ -3,6 +3,12 @@ import assert from 'node:assert/strict';
 import {memberHome} from '../lib/member-home.mjs';
 const now=Date.parse('2026-11-04T12:00:00Z');
 const active={team_id:'team-a',project_ref:'MTL-AI-010',title:'A real project',role:'AI Engineer',membership_status:'confirmed',team_status:'active',can_enter:true,lab_enabled:true,commitment_confirmed:true};
+test('Connect collaborators in originally Solo Labs receive team-working guidance',()=>{
+ const card={...active,participation:'solo',admission_route:'market'};
+ assert.match(memberHome({cards:[card]}).primary.description,/connect with your team/);
+ assert.doesNotMatch(memberHome({cards:[card]}).primary.description,/independently/);
+ assert.equal(memberHome({cards:[card]}).primary.href,'/member/lab/team-a');
+});
 test('new members get profile guidance or project discovery without zero counters',()=>{
  assert.equal(memberHome({profilePercent:60}).primary.kind,'profile');
  const ready=memberHome({profilePercent:80});assert.equal(ready.primary.kind,'explore');assert.deepEqual(ready.facts,[]);
