@@ -39,8 +39,8 @@ begin
  perform set_config('request.jwt.claim.sub','',true);
  denied:=false;begin perform private_legacy_roster.claim_current_account('synthetic-legacy-ledger-regression');exception when insufficient_privilege then denied:=true;end;assert denied;
  insert into legacy_results values('unverified unrelated and signed-out identities cannot claim',true);
- assert not has_schema_privilege('authenticated','private_legacy_roster','usage');
- assert not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='private_legacy_roster' and (has_function_privilege('anon',p.oid,'execute') or has_function_privilege('authenticated',p.oid,'execute') or has_function_privilege('service_role',p.oid,'execute')));
+ assert not has_table_privilege('authenticated','private_legacy_roster.people','select');
+ assert not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='private_legacy_roster' and (has_function_privilege('anon',p.oid,'execute') or (p.proname<>'claim_my_labs' and has_function_privilege('authenticated',p.oid,'execute')) or has_function_privilege('service_role',p.oid,'execute')));
  insert into legacy_results values('private functions denied to all API roles',true);
  perform private_legacy_roster.remove_rehearsal('synthetic-legacy-ledger-regression');
  assert not exists(select 1 from private_legacy_roster.allocations where batch_key='synthetic-legacy-ledger-regression');

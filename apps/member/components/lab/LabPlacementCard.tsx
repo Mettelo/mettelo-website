@@ -5,7 +5,9 @@ import {placementJourney} from '@/lib/placement-journey.mjs';
 import ParticipationCard from '../ParticipationCard';
 import type {ProjectApplication} from '../ProjectApplicationCard';
 import {ProjectJourney,ProjectApplicationHistory} from '../ProjectJourney';
+import ExistingLabCard from './ExistingLabCard';
 export default function LabPlacementCard({card,application,preview=false}:{card:LabCard;application?:ProjectApplication;preview?:boolean}){
+ if(card.admission_route==='legacy')return <ExistingLabCard card={card}/>;
  const offered=card.membership_status==='offered',confirmed=card.membership_status==='confirmed';
  const {solo,arrangement,canEnter,status,note,pending,arrangementNote,preferenceNote}=placementJourney(card);
  const needsCommitment=confirmed&&card.commitment_confirmed===false;

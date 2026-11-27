@@ -1,0 +1,140 @@
+-- Operator-run isolated staging regression. Synthetic accounts and all work roll back.
+begin;
+set local statement_timeout='60s';
+create temp table existing_lab_results(test text primary key,passed boolean);
+do $test$
+declare actor uuid:=gen_random_uuid();pending_user uuid:=gen_random_uuid();unverified uuid:=gen_random_uuid();stranger uuid:=gen_random_uuid();held uuid:=gen_random_uuid();suspended uuid:=gen_random_uuid();ids uuid[];
+ email text;ref text;refs text[];person jsonb;people jsonb:='[]';groups jsonb:='[]';allocations jsonb:='[]';payload jsonb;delta jsonb;result jsonb;workspace jsonb;profile_before jsonb;tid uuid;solo uuid;ordinary uuid;fourth uuid;denied boolean;k integer;used integer;source_row integer:=0;member_count integer;settings_before jsonb;
+begin
+ select array_agg(project_ref order by project_ref) into refs from(select project_ref from public.website_project_briefs order by project_ref limit 4)x;
+ ids:=array[actor,pending_user,unverified,stranger,held,suspended];
+ select jsonb_agg(to_jsonb(s) order by project_ref) into settings_before from public.website_project_pilot_settings s;
+ for k in 1..cardinality(ids) loop
+  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(ids[k],'legacy-claim-'||ids[k]||'@example.invalid',case when ids[k]<>unverified then now() end,'{"full_name":"Synthetic existing account"}');
+  people:=people||jsonb_build_array(jsonb_build_object('personKey','person-'||k,'email','legacy-claim-'||ids[k]||'@example.invalid','held',ids[k]=held));
+ end loop;
+ people:=people||jsonb_build_array(jsonb_build_object('personKey','unclaimed-teammate','email','unclaimed-'||actor||'@example.invalid','held',false));
+ perform set_config('request.jwt.claim.sub',actor::text,true);
+ perform public.claim_member_username('legacy_'||left(replace(actor::text,'-',''),12));
+ select to_jsonb(p) into profile_before from public.profiles p where id=actor;
+ for k in 1..3 loop
+  groups:=groups||jsonb_build_array(jsonb_build_object('teamRef','LEGACY-'||left(actor::text,8)||'-'||k,'projectCode',refs[k],'arrangement',case when k=2 then 'Solo' else 'Team' end,'readinessSubset',true,'recordedTeamStatus','Confirmed'));
+  source_row:=source_row+1;
+  allocations:=allocations||jsonb_build_array(jsonb_build_object('sourceRow',source_row,'teamRef','LEGACY-'||left(actor::text,8)||'-'||k,'projectCode',refs[k],'personKey','person-1','recordedAssignmentStatus','Confirmed','sourceRole',case when k=1 then 'Lead / Coordinator' when k=2 then 'Solo' else 'Member' end,'contactHold',false,'activeWorkspaceAccessAfterVerifiedClaim',true));
+ end loop;
+ for k in 2..7 loop
+  if k=4 then continue;end if; -- a preference-only identity has no allocation
+  source_row:=source_row+1;
+  allocations:=allocations||jsonb_build_array(jsonb_build_object('sourceRow',source_row,'teamRef','LEGACY-'||left(actor::text,8)||'-1','projectCode',refs[1],'personKey',case when k=7 then 'unclaimed-teammate' else 'person-'||k end,'recordedAssignmentStatus',case when k=2 then 'Awaiting acknowledgement' else 'Confirmed' end,'sourceRole','Member','contactHold',k=5,'activeWorkspaceAccessAfterVerifiedClaim',k not in (2,5)));
+ end loop;
+ allocations:=allocations||jsonb_build_array(jsonb_build_object('sourceRow',99,'teamRef','LEGACY-'||left(actor::text,8)||'-3','projectCode',refs[3],'personKey','unclaimed-teammate','recordedAssignmentStatus','Confirmed','sourceRole','Lead / Coordinator','contactHold',false,'activeWorkspaceAccessAfterVerifiedClaim',true));
+ payload:=jsonb_build_object('version',1,'outbound','suppressed','manifest',jsonb_build_object('fixture',true),'people',people,'groups',groups,'allocations',allocations,'history',jsonb_build_array(jsonb_build_object('sourceRow',100,'recordedAssignmentStatus','Withdrawn','activeAccess',false)));
+ perform private_legacy_roster.import_batch('legacy-claims-regression',payload);
+ perform private_legacy_roster.prepare_workspaces('legacy-claims-regression','Synthetic reviewed existing teams, isolated regression');
+ select team_id into tid from private_legacy_roster.groups where batch_key='legacy-claims-regression' and group_key='LEGACY-'||left(actor::text,8)||'-1';
+ select team_id into solo from private_legacy_roster.groups where batch_key='legacy-claims-regression' and group_key='LEGACY-'||left(actor::text,8)||'-2';
+ select team_id into ordinary from private_legacy_roster.groups where batch_key='legacy-claims-regression' and group_key='LEGACY-'||left(actor::text,8)||'-3';
+ perform set_config('request.jwt.claim.sub',actor::text,true);
+ set local role authenticated;
+ result:=public.website_claim_existing_labs();
+ reset role;
+ assert result->>'review' is null,'Eligible claim unexpectedly needs review';
+ assert jsonb_array_length(result->'assignments')=3 and not exists(select 1 from jsonb_array_elements(result->'assignments') x where x->>'can_enter'<>'true'),'Not all owned Labs attached';
+ assert (select count(*)=3 from public.website_project_team_members where user_id=actor);
+ assert (select to_jsonb(p) from public.profiles p where id=actor)=profile_before,'Profile/username overwritten';
+ workspace:=public.website_lab('workspace',jsonb_build_object('team_id',tid));
+ assert workspace->>'can_lead'='true' and jsonb_array_length(workspace->'members')=1,'First existing member entry requires fake teammates';
+ assert (workspace->'team'->>'id')::uuid=tid;
+ workspace:=public.website_lab('workspace',jsonb_build_object('team_id',solo));assert workspace->'team'->>'participation'='solo';
+ insert into existing_lab_results values('verified existing account reaches Team and Solo overview with teammates unclaimed; profile preserved',true);
+ result:=public.website_lab('mine','{}');assert jsonb_array_length(result)=3;
+ result:=public.website_claim_existing_labs();assert result->>'review' is null;
+ assert (select count(*)=3 from private_legacy_roster.memberships where user_id=actor);
+ assert not exists(select 1 from public.website_project_interests where user_id=actor),'Fake application created';
+ assert not exists(select 1 from public.website_project_team_members where user_id=actor and (acknowledged_at is not null or commitment_confirmed_at is not null or two_person_agreed_at is not null or interest_id is not null or access_verified_at is not null)),'Fake consent/access evidence';
+ assert not exists(select 1 from private_website_github.connections where user_id=actor),'GitHub identity fabricated';
+ insert into existing_lab_results values('retry does not duplicate places, fabricate applications/agreements or GitHub verification',true);
+ workspace:=public.website_lab('workspace',jsonb_build_object('team_id',ordinary));assert workspace->>'can_lead'='false';
+ assert private_website_lab.market_leader(tid,actor) and private_website_lab.market_leader(solo,actor) and not private_website_lab.market_leader(ordinary,actor),'Existing recruitment governance incorrect';
+ denied:=false;begin perform public.website_lab('add_item',jsonb_build_object('team_id',ordinary,'kind','task','title','Unauthorized task'));exception when insufficient_privilege then denied:=true;end;assert denied,'Legacy ordinary member gained coordinator powers';
+ insert into existing_lab_results values('source coordinator and member governance boundaries preserved',true);
+ perform set_config('request.jwt.claim.sub',pending_user::text,true);
+ result:=public.website_claim_existing_labs();assert jsonb_array_length(result->'assignments')=1 and result->'assignments'->0->>'source_status'='Awaiting acknowledgement';
+ result:=public.website_lab('mine','{}');assert jsonb_array_length(result)=1 and result->0->>'membership_status'='pending' and result->0->>'legacy_source_status'='Awaiting acknowledgement','Pending assignment absent from member page';
+ assert not exists(select 1 from public.website_project_team_members where user_id=pending_user);
+ denied:=false;begin perform public.website_lab('workspace',jsonb_build_object('team_id',tid));exception when insufficient_privilege then denied:=true;end;assert denied;
+ assert (private_website_lab.participation_usage(pending_user)->>'used')::integer=0;
+ perform set_config('request.jwt.claim.sub',held::text,true);result:=public.website_claim_existing_labs();assert result->'assignments'='[]';
+ perform set_config('request.jwt.claim.sub',stranger::text,true);
+ -- A community/preference record is not a placement or project application.
+ result:=public.website_claim_existing_labs();assert result->'assignments'='[]';
+ denied:=false;begin perform public.website_lab('workspace',jsonb_build_object('team_id',tid));exception when insufficient_privilege then denied:=true;end;assert denied;
+ perform set_config('request.jwt.claim.sub',unverified::text,true);
+ denied:=false;begin perform public.website_claim_existing_labs();exception when insufficient_privilege then denied:=true;end;assert denied;
+ perform set_config('request.jwt.claim.sub','',true);
+ denied:=false;begin perform public.website_claim_existing_labs();exception when insufficient_privilege then denied:=true;end;assert denied;
+ insert into private_website_lab.member_access(user_id,suspended,reason,changed_by) values(suspended,true,'Synthetic suspension regression',actor) on conflict(user_id) do update set suspended=true;
+ perform set_config('request.jwt.claim.sub',suspended::text,true);
+ denied:=false;begin perform public.website_claim_existing_labs();exception when insufficient_privilege then denied:=true;end;assert denied;
+ insert into existing_lab_results values('pending/held/unverified/unrelated/suspended/signed-out identities never gain workspace access',true);
+ perform set_config('request.jwt.claim.sub',actor::text,true);
+ assert (private_website_lab.participation_usage(actor)->>'used')::integer=3;
+ delta:=jsonb_build_object('version',1,'outbound','suppressed','manifest',jsonb_build_object('fixtureDelta',true),'people',jsonb_build_array(people->0),'groups',jsonb_build_array(jsonb_build_object('teamRef','LEGACY-FOURTH-'||left(actor::text,8),'projectCode',refs[4],'arrangement','Team','readinessSubset',true)),'allocations',jsonb_build_array(jsonb_build_object('sourceRow',1,'teamRef','LEGACY-FOURTH-'||left(actor::text,8),'projectCode',refs[4],'personKey','person-1','sourceRole','Member','recordedAssignmentStatus','Confirmed','contactHold',false,'activeWorkspaceAccessAfterVerifiedClaim',true)),'history','[]'::jsonb);
+ delta:=jsonb_set(delta,'{people}',(delta->'people')||jsonb_build_array(people->6));
+ delta:=jsonb_set(delta,'{allocations}',(delta->'allocations')||jsonb_build_array(jsonb_build_object('sourceRow',2,'teamRef','LEGACY-FOURTH-'||left(actor::text,8),'projectCode',refs[4],'personKey','unclaimed-teammate','sourceRole','Lead / Coordinator','recordedAssignmentStatus','Confirmed','contactHold',false,'activeWorkspaceAccessAfterVerifiedClaim',true)));
+ perform private_legacy_roster.import_batch('legacy-fourth-regression',delta);
+ result:=private_legacy_roster.import_batch('legacy-fourth-regression',delta);assert result->>'repeated'='true','Reviewed delta duplicated a source record';
+ perform private_legacy_roster.prepare_workspaces('legacy-fourth-regression','Synthetic fourth slot must require entitlement');
+ result:=public.website_claim_existing_labs();assert result->>'review'='participation_review','Fourth Lab admitted';
+ assert (select count(*)=3 from public.website_project_team_members where user_id=actor),'Atomic claim changed original memberships';
+ assert not exists(select 1 from private_legacy_roster.claims where batch_key='legacy-fourth-regression'),'Failed multi-batch claim partly persisted';
+ insert into existing_lab_results values('fourth Lab blocked atomically by shared configurable participation policy',true);
+ insert into private_website_lab.participation_entitlements(user_id,lab_allowance,reason) values(actor,4,'Synthetic future entitlement regression');
+ result:=public.website_claim_existing_labs();assert result->>'review' is null;
+ assert (private_website_lab.participation_usage(actor)->>'used')::integer=4;
+ select team_id into fourth from private_legacy_roster.groups where batch_key='legacy-fourth-regression';
+ workspace:=public.website_lab('workspace',jsonb_build_object('team_id',fourth));assert workspace->>'can_lead'='false';
+ perform private_legacy_roster.remove_rehearsal('legacy-fourth-regression');
+ delete from private_website_lab.participation_entitlements where user_id=actor;
+ assert (private_website_lab.participation_usage(actor)->>'used')::integer=3;
+ insert into existing_lab_results values('future entitlement changes allowance without changing role authorization',true);
+ -- Each deliberate lifecycle change runs in a subtransaction and is undone.
+ begin
+  update public.website_project_teams set status='paused' where id=ordinary;
+  assert (private_website_lab.participation_usage(actor)->>'used')::integer=3 and (private_website_lab.participation_usage(actor)->>'paused')::integer=1;
+  result:=public.website_claim_existing_labs();assert not (result->'assignments' @>jsonb_build_array(jsonb_build_object('team_id',ordinary,'can_enter',true)));
+  update public.website_project_teams set status='completed' where id=ordinary;
+  assert (private_website_lab.participation_usage(actor)->>'used')::integer=2;
+  raise exception 'end lifecycle fixture' using errcode='Z9001';
+ exception when sqlstate 'Z9001' then null;end;
+ insert into existing_lab_results values('paused Lab holds a slot; completed Lab releases its slot',true);
+ begin
+  update public.website_project_team_members set status='left' where team_id=ordinary and user_id=actor;
+  assert (private_website_lab.participation_usage(actor)->>'used')::integer=3,'Leaving released access before revocation';
+  result:=public.website_claim_existing_labs();assert not exists(select 1 from public.website_project_team_members where team_id=ordinary and user_id=actor and status='confirmed'),'Claim silently readmitted departing member';
+  update public.website_project_team_members set admitted_at=null,external_access_revoked_at=now() where team_id=ordinary and user_id=actor;
+  assert (private_website_lab.participation_usage(actor)->>'used')::integer=2;
+  denied:=false;begin perform public.website_lab('workspace',jsonb_build_object('team_id',ordinary));exception when insufficient_privilege then denied:=true;end;assert denied;
+  raise exception 'end exit fixture' using errcode='Z9001';
+ exception when sqlstate 'Z9001' then null;end;
+ insert into existing_lab_results values('exit holds slot until revocation; retries never restore revoked access',true);
+ begin
+  perform public.website_lab('add_item',jsonb_build_object('team_id',tid,'kind','task','title','Synthetic work must survive unsafe rollback'));
+  denied:=false;begin perform private_legacy_roster.remove_rehearsal('legacy-claims-regression');exception when raise_exception then denied:=true;end;assert denied,'Rollback deleted post-import work';
+  result:=public.website_claim_existing_labs();
+  denied:=false;begin perform private_legacy_roster.remove_rehearsal('legacy-claims-regression');exception when raise_exception then denied:=true;end;assert denied,'Claim blessed unrelated work for deletion';
+  raise exception 'end work fixture' using errcode='Z9001';
+ exception when sqlstate 'Z9001' then null;end;
+ insert into existing_lab_results values('rollback refuses post-import work and claim retries cannot bless it',true);
+ perform private_legacy_roster.remove_rehearsal('legacy-claims-regression');
+ assert not exists(select 1 from public.website_project_team_members where user_id=actor);
+ assert (select to_jsonb(p) from public.profiles p where id=actor)=profile_before;
+ assert (select jsonb_agg(to_jsonb(s) order by project_ref) from public.website_project_pilot_settings s)=settings_before,'Project activity baseline changed';
+ assert not exists(select 1 from private_website_lab.project_email_previews where recipient_id=any(ids) and team_id is not null),'Import produced email preview';
+ -- Authentication fixture email changes can produce a security notification;
+ -- legacy placement operations themselves must not create placement notices.
+ assert not exists(select 1 from private_website_lab.notifications where recipient_id=actor and href='/member/lab'),'Import produced placement notification';
+ insert into existing_lab_results values('batch-only canonical rollback preserves profiles and unrelated work; no placement mail',true);
+end $test$;
+select * from existing_lab_results order by test;
+rollback;
