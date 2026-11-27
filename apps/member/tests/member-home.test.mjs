@@ -35,6 +35,11 @@ test('forming, paused and unadmitted placements cannot open a workspace',()=>{
 test('submitted interest does not invent review progress or a team place',()=>{
  const result=memberHome({applications:[{project_ref:'MTL-DA-001'}],applicationCount:4,profilePercent:20});assert.equal(result.primary.kind,'applied');assert.equal(result.facts[0].label,'4 submitted applications');assert.equal(result.primary.project,null);
 });
+test('existing pending assignments lead home to recorded Lab status without an active slot or another application',()=>{
+ const card={...active,membership_status:'pending',admission_route:'legacy',legacy_source_status:'Awaiting acknowledgement',can_enter:false,lab_enabled:false};
+ const home=memberHome({cards:[card],profilePercent:100});assert.equal(home.primary.kind,'preparing');assert.equal(home.primary.href,'/member/lab');assert.equal(home.primary.label,'Review existing assignment');assert.match(home.primary.description,/new application is not needed/);assert.deepEqual(home.facts,[]);
+ const review=memberHome({cards:[{...card,legacy_source_status:'Confirmed',legacy_review:'placement_conflict'}],profilePercent:10});assert.equal(review.primary.badge,'Review needed');assert.equal(review.primary.href,'/member/lab');
+});
 test('completed projects remain accessible without counting as active',()=>{
  const result=memberHome({cards:[{...active,team_status:'completed'}],applications:[{project_ref:active.project_ref}]});assert.equal(result.primary.kind,'completed');assert.ok(!result.facts.some(f=>f.label.includes('active')));
 });
