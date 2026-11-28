@@ -12,7 +12,7 @@ export async function middleware(request:NextRequest){
     if(!access.allowed)return new NextResponse(access.configured?'Staging access required.':'Staging access is not configured.',{status:access.configured?401:503,headers:{'WWW-Authenticate':'Basic realm="Mettelo staging", charset="UTF-8"','Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'}});
   }
   const path=request.nextUrl.pathname;
-  if(!(path==='/member'||path.startsWith('/member/')||path==='/admin'||path.startsWith('/admin/')||path==='/onboarding'))return NextResponse.next();
+  if(!(path==='/resources'||path==='/member'||path.startsWith('/member/')||path==='/admin'||path.startsWith('/admin/')||path==='/onboarding'))return NextResponse.next();
   const {url,key}=memberSupabaseConfiguration();
   let response=NextResponse.next({request});
   const db=createServerClient(url,key,{cookies:{

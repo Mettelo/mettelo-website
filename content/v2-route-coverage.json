@@ -77,10 +77,10 @@
     {
       "sourceRoute": "/community",
       "status": "mapped",
-      "destination": "/start/",
-      "evidenceFile": "start/index.html",
+      "destination": "/member/market",
+      "evidenceFile": "apps/member/app/member/market/page.tsx",
       "acceptance": "pending",
-      "note": "Unlisted onboarding and external community channels; no equivalent community application."
+      "note": "Mettelo Connect is the signed-in community. External community channels are available under Resources."
     },
     {
       "sourceRoute": "/community-guidelines",

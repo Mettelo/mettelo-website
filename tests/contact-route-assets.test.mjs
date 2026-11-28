@@ -12,8 +12,8 @@ test('contact assets resolve inside their directory with and without a trailing 
   assert.equal(new URL(css,'https://example.invalid'+route).pathname,'/contact/contact.css');
  }
 });
-test('hosted Start, About, guidelines and contact keep their assets at the correct directory URLs',()=>{
- for(const dir of ['start','our-story','community-guidelines','contact']){
+test('hosted About, guidelines and contact keep their assets at the correct directory URLs',()=>{
+ for(const dir of ['our-story','community-guidelines','contact']){
   const html=fs.readFileSync(new URL('../'+dir+'/index.html',import.meta.url),'utf8'),prepared=resolveHostedReferences(html,dir+'/index.html');
   for(const match of html.matchAll(/\b(?:src|href|poster)="([^"]+)"/gi)){
    const original=match[1];if(/^[\/#?]|^[a-z][a-z0-9+.-]*:/i.test(original))continue;
@@ -22,5 +22,5 @@ test('hosted Start, About, guidelines and contact keep their assets at the corre
   }
  }
  const html='<a href="#step">Step</a><a href="https://example.test/x">External</a><img src="../assets/photo.png"><script src="page.js?x=1"></script>';
- assert.equal(resolveHostedReferences(html,'start/index.html'),'<a href="#step">Step</a><a href="https://example.test/x">External</a><img src="/assets/photo.png"><script src="/start/page.js?x=1"></script>');
+ assert.equal(resolveHostedReferences(html,'example/index.html'),'<a href="#step">Step</a><a href="https://example.test/x">External</a><img src="/assets/photo.png"><script src="/example/page.js?x=1"></script>');
 });

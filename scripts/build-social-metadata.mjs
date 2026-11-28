@@ -3,7 +3,7 @@ import {resolve} from 'node:path';
 const root=resolve(import.meta.dirname,'..');
 const image='https://mettelo.com/assets/community-collaboration-1200.webp';
 function visit(dir){for(const entry of readdirSync(dir,{withFileTypes:true})){
- if(entry.isDirectory()&&(dir!==root||['start','community-guidelines','our-story','terms','privacy','contact','projects'].includes(entry.name)))visit(resolve(dir,entry.name));
+ if(entry.isDirectory()&&(dir!==root||['resources','community-guidelines','our-story','terms','privacy','contact','projects'].includes(entry.name)))visit(resolve(dir,entry.name));
  else if(entry.isFile()&&entry.name.endsWith('.html')){
  const path=resolve(dir,entry.name);let html=readFileSync(path,'utf8').replaceAll('\r\n','\n');if(!/<head[\s>]/i.test(html))continue;
  const title=html.match(/<title>(.*?)<\/title>/s)?.[1]||'Mettelo';

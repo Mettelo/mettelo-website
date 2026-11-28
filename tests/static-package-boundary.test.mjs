@@ -20,7 +20,7 @@ test('public packaging preserves approved files while excluding member source an
   try{
     const fixture=join(temporary,'source');
     const output=join(temporary,'published');
-    for(const path of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','.htaccess','assets/logo.svg','start/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html','privacy/index.html','contact/index.html','waitlist/form.js','shared/public.css','shared/ui-foundations.css','shared/lucide-license.txt','shared/footer.css','shared/navigation.css','shared/v2-pages.css','shared/trust.css','shared/design.css','shared/interactions.js','shared/home.css','shared/home.js','shared/home-experience.css','shared/home-experience.js'])put(fixture,path,undefined);
+    for(const path of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','.htaccess','assets/logo.svg','resources/index.html','community-guidelines/index.html','our-story/index.html','terms/index.html','privacy/index.html','contact/index.html','waitlist/form.js','shared/public.css','shared/ui-foundations.css','shared/lucide-license.txt','shared/footer.css','shared/navigation.css','shared/v2-pages.css','shared/trust.css','shared/design.css','shared/interactions.js','shared/home.css','shared/home.js','shared/home-experience.css','shared/home-experience.js'])put(fixture,path,undefined);
     mkdirSync(join(fixture,'scripts'),{recursive:true});
     put(fixture,'projects/index.html');
     put(fixture,'industry-news/index.html');
@@ -29,11 +29,12 @@ test('public packaging preserves approved files while excluding member source an
     execFileSync(process.execPath,[join(fixture,'scripts/package-hostinger.mjs'),output],{stdio:'pipe'});
     const published=list(output);
     assert(published.includes('assets/logo.svg'));
-    assert(published.includes('start/index.html'));
+    assert(!published.some(path=>path.startsWith('start/')));
     assert(published.includes('shared/v2-pages.css'));
     assert(published.includes('shared/ui-foundations.css'));
     assert(published.includes('shared/lucide-license.txt'));
     assert(published.includes('industry-news/index.html'));
+    assert(published.includes('resources/index.html'));
     assert(published.includes('.htaccess'));
     assert(!published.some(path=>path.startsWith('waitlist/')));
     assert(!readFileSync(join(output,'index.html'),'utf8').includes('src="waitlist/form.js"'));

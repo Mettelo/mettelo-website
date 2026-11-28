@@ -10,11 +10,31 @@ let passed=0;const failures=[];
 async function check(name,fn){try{await fn();passed++;}catch(error){failures.push({name,error:error.message});}}
 async function request(origin,path,options={}){const r=await fetch(origin+path,{redirect:'manual',signal:AbortSignal.timeout(60000),...options});if(r.status===308&&r.headers.get('location')?.startsWith('/'))return fetch(origin+r.headers.get('location'),{redirect:'manual',signal:AbortSignal.timeout(60000),...options});return r;}
 async function pages(dir){const paths=[];for(const entry of await readdir(dir,{withFileTypes:true})){const file=join(dir,entry.name);if(entry.isDirectory())paths.push(...await pages(file));else if(entry.name==='index.html')paths.push('/'+relative(root,dir).split(sep).filter(Boolean).join('/')+(dir===root?'':'/'));}return paths;}
-for(const path of await pages(root))await check('public '+path,async()=>{const r=await request(publicOrigin,path);assert.equal(r.status,200);const html=await r.text();assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1);assert.match(r.headers.get('x-robots-tag')||'',/noindex/);});
+for(const path of (await pages(root)).filter(path=>path!=='/resources/'))await check('public '+path,async()=>{const r=await request(publicOrigin,path);assert.equal(r.status,200);const html=await r.text();assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1);assert.match(r.headers.get('x-robots-tag')||'',/noindex/);});
 for(const path of ['/signin','/opportunities','/industry-news'])await check('runtime '+path,async()=>{assert.equal((await request(runtime,path)).status,200);});
 await check('signup entry',async()=>{const r=await request(runtime,'/signup');assert.equal(r.status,307);assert.match(r.headers.get('location')||'',/\/signin\?mode=signup/);});
-for(const path of ['/member','/member/profile','/member/applications','/member/lab','/member/enquiries','/member/account','/member/resources','/admin','/admin/news','/admin/projects','/admin/support','/admin/opportunities'])await check('signed out '+path,async()=>{const r=await request(runtime,path);assert.equal(r.status,307);assert.match(r.headers.get('location')||'',/\/signin\?next=/);});
-await check('career resources connection',async()=>{const html=await(await request(publicOrigin,'/')).text();assert.ok(html.includes('href="'+runtime+'/member/resources"'));assert.ok(!html.includes('1drv.ms/f/'));});
+for(const path of ['/member','/member/profile','/member/applications','/member/lab','/member/enquiries','/member/account','/member/resources','/resources','/admin','/admin/news','/admin/projects','/admin/support','/admin/opportunities'])await check('signed out '+path,async()=>{const r=await request(runtime,path);assert.equal(r.status,307);assert.match(r.headers.get('location')||'',/\/signin\?next=/);});
+for(const origin of [runtime,publicOrigin])for(const path of ['/start','/start/','/start/index.html'])await check('legacy resources redirect '+origin+path,async()=>{
+ let response=await fetch(origin+path,{redirect:'manual'});
+ assert.equal(response.status,308);
+ let destination=new URL(response.headers.get('location'),origin);
+ // Next normalizes the trailing slash before applying the route redirect.
+ if(path==='/start/'&&destination.href===origin+'/start'){
+  response=await fetch(destination,{redirect:'manual'});
+  assert.equal(response.status,308);
+  destination=new URL(response.headers.get('location'),origin);
+ }
+ assert.equal(destination.href,origin+'/resources');
+});
+await check('resource sign-in preserves filters',async()=>{
+ const path='/resources?category=career&q=CV';
+ const bridge=await request(publicOrigin,path);assert.equal(bridge.status,302);assert.equal(bridge.headers.get('location'),runtime+path);
+ const r=await request(runtime,path);assert.equal(r.status,307);
+ assert.equal(new URL(r.headers.get('location'),runtime).searchParams.get('next'),path);
+ assert.match(r.headers.get('cache-control')||'',/private.*no-store/);
+ assert.doesNotMatch(await r.text(),/1drv\.ms/);
+});
+await check('career resources connection',async()=>{const html=await(await request(publicOrigin,'/')).text();assert.ok(html.includes('href="'+runtime+'/resources"'));assert.ok(!html.includes('1drv.ms/f/'));});
 await check('signup return destination',async()=>{const r=await request(runtime,'/signup?next=%2Fmember%2Fresources');assert.equal(r.status,307);assert.equal(r.headers.get('location'),'/signin?mode=signup&next=%2Fmember%2Fresources');});
 await check('signup unsafe return destination',async()=>{const r=await request(runtime,'/signup?next=https%3A%2F%2Funrelated.invalid');assert.equal(r.status,307);assert.equal(r.headers.get('location'),'/signin?mode=signup&next=%2Fmember');});
 for(const path of ['/api/navigation','/api/project-activity'])await check('public bridge '+path,async()=>{const r=await request(publicOrigin,path);assert.equal(r.status,200);assert.match(r.headers.get('content-type')||'',/json/);assert.match(r.headers.get('cache-control')||'',/no-store/);});

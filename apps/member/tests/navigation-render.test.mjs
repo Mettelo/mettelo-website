@@ -51,7 +51,7 @@ test('public, member and Lab account menus keep the same gateway and account des
 });
 test('member navigation retains project, community and support destinations',()=>{
  const html=render(Member,{});
- for(const path of ['/member','/member/lab','/member/portfolio','/member/market','/member/resources','/member/enquiries'])assert.ok(html.includes('href="'+path+'"'));
+ for(const path of ['/member','/member/lab','/member/portfolio','/member/market','/resources','/member/enquiries'])assert.ok(html.includes('href="'+path+'"'));
  assert.match(html,/href="\/member\/lab" aria-current="page"/);
 });
 test('admin navigation still gates each area by capability',()=>{

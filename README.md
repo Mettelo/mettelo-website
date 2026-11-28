@@ -32,10 +32,9 @@ Run `node --check script.js` and `node scripts/check.mjs`. Manual review should 
 
 Use a branch and pull request. Homepage changes await explicit user approval before merge or development of the next page. Do not modify the live domain, DNS, existing hosting or external services as part of preview work.
 
-## Start Here
-The onboarding route uses start/index.html so ordinary static hosts can resolve /start to /start/. start/start.css and start/checklist.js add only page-specific styles and local checklist behaviour. Run node scripts/check-start.mjs for navigation and persistence checks. The local-storage key is mettelo:onboarding:v1; only completed step IDs are stored. A failed storage operation degrades to an in-memory checklist. No network requests are made by checklist code.
+## Member Resources
 
-The Start Here PR is stacked on homepage-final-review until that foundation is merged. Do not merge the homepage implicitly as part of onboarding review.
+The V2 runtime serves the signed-in library at `/resources`. It preserves the external learning, career, GitHub, volunteering and official community channels from Start Here, alongside the five free guides from the Mettelo Resource Hub. Existing `/start` and `/member/resources` links are redirected. The local split preview forwards the resource route to the member runtime. A static-only release serves an availability page without the member catalogue. Use `npm run test:integrated` to check redirects and anonymous access.
 
 ## Community Guidelines
 /community-guidelines resolves to community-guidelines/index.html on directory-based static hosting. Page-specific styles are in community-guidelines/guidelines.css. Run node scripts/check-guidelines.mjs to check all three pages and cross-page navigation. Membership agreements are displayed only; acceptance stays in Tally. POLICY-REVIEW.md identifies unapproved policy/operations items. The visible draft, privacy and reporting notices must remain until those decisions are resolved. This PR is stacked on start-onboarding.

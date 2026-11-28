@@ -6,6 +6,9 @@ const config:NextConfig={
   distDir:process.env.METTELO_STAGING_CHECK==='1'?'.next-staging-check':process.env.METTELO_BUILD_CHECK==='1'?'.next-check':process.env.METTELO_ISOLATED_PREVIEW==='1'?'.next-preview':'.next',
   outputFileTracingRoot:process.cwd(),
   output:process.env.NEXT_PUBLIC_SITE_ORIGIN==='https://staging.mettelo.com'?'standalone':undefined,
+  async redirects(){
+    return ['/start','/start/index.html'].map(source=>({source,destination:'/resources',permanent:true}));
+  },
   async rewrites(){return {beforeFiles:process.env.NEXT_PUBLIC_SITE_ORIGIN==='https://staging.mettelo.com'?JSON.parse(readFileSync('hosted-static-routes.json','utf8')):[],afterFiles:[],fallback:[]};},
   devIndicators:false,
   skipMiddlewareUrlNormalize:true,

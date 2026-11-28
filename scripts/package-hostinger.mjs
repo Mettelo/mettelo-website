@@ -6,7 +6,7 @@ const target=process.argv[2];
 if(!target||!isAbsolute(target))throw new Error('Provide a new absolute destination directory.');
 // Explicit public-file list keeps repository metadata, tests and review notes out of hosting.
 mkdirSync(target,{recursive:false});
-for(const file of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','assets','start','community-guidelines','our-story','terms','privacy','contact','projects','industry-news'])cpSync(resolve(root,file),resolve(target,file),{recursive:true});
+for(const file of ['index.html','tokens.css','styles.css','career.css','script.js','robots.txt','sitemap.xml','assets','resources','community-guidelines','our-story','terms','privacy','contact','projects','industry-news'])cpSync(resolve(root,file),resolve(target,file),{recursive:true});
 mkdirSync(resolve(target,'shared'));
 cpSync(resolve(root,'shared/public.css'),resolve(target,'shared/public.css'));
 cpSync(resolve(root,'shared/ui-foundations.css'),resolve(target,'shared/ui-foundations.css'));

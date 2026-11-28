@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const pages = ['index.html','start/index.html','community-guidelines/index.html'];
+const pages = ['index.html','community-guidelines/index.html'];
 const route = path => path === '/' ? 'index.html' : `${path.replace(/^\/|\/$/g,'')}/index.html`;
 for (const path of pages) {
   const html = readFileSync(resolve(root,path),'utf8');

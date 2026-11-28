@@ -11,7 +11,7 @@ await rm(target,{recursive:true,force:true});await mkdir(target,{recursive:true}
 const routes=[];
 async function walk(dir){for(const entry of await readdir(dir,{withFileTypes:true})){
  const file=resolve(dir,entry.name),path=relative(source,file).split(sep).join('/');
- if(entry.isDirectory()){if(path==='industry-news')continue;await walk(file);continue;}
+ if(entry.isDirectory()){if(path==='industry-news'||path==='resources')continue;await walk(file);continue;}
  if(entry.name.startsWith('.')||['robots.txt','sitemap.xml'].includes(path))continue;
  if(!/\.(html|css|js|svg|png|webp|jpg|jpeg|ico|woff2?)$/.test(path)&&path!=='shared/lucide-license.txt')throw Error('Unapproved public staging asset: '+path);
  const dest=resolve(target,path);await mkdir(dirname(dest),{recursive:true});

@@ -3,7 +3,7 @@ import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-const pages=['index.html','start/index.html','our-story/index.html','community-guidelines/index.html','terms/index.html','privacy/index.html','contact/index.html'];
+const pages=['index.html','our-story/index.html','community-guidelines/index.html','terms/index.html','privacy/index.html','contact/index.html'];
 for(const page of pages){
  const html=readFileSync(resolve(root,page),'utf8');
  const text=html.replace(/<[^>]*>/g,' ');
