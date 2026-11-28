@@ -18,7 +18,6 @@ const groups=[
  ]},
  {id:'contribute',label:'Contribute',icon:'layers',items:[
   {title:'Mettelo on GitHub',source:'GitHub',detail:'Browse Mettelo’s GitHub organisation, public repositories and technical contributions.',action:'Explore GitHub',href:'https://github.com/Mettelo'},
-  {title:'Volunteer for a workshop',source:'OneDrive',detail:'Register your interest in helping with or leading a Mettelo workshop.',action:'Open volunteer sheet',href:'https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0'},
  ]},
  {id:'community',label:'Community',icon:'people',items:[
   {title:'Mettelo on LinkedIn',source:'LinkedIn',detail:'Follow Mettelo updates and share them with your professional network.',action:'Open LinkedIn',href:'https://linkedin.com/company/officialmettelohq'},

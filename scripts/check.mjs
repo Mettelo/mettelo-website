@@ -16,7 +16,7 @@ for (const [, path] of html.matchAll(/(?:src|href)="([^"#:]+\.(?:svg|css|js))"/g
 for (const tag of html.match(/<a\b[^>]*target="_blank"[^>]*>/g) || []) {
   assert(tag.includes('noopener') && tag.includes('noreferrer'), 'Unsafe external tab');
 }
-const required = [ '/projects/', 'https://github.com/Mettelo', 'https://www.youtube.com/@Officialmettelo', 'https://discord.gg/yy9qJZ7W', 'https://1drv.ms/x/c/da3aa7b1d9999396/IQCU0ZSkkkEVSLu58ZoZK-a1AYcq7zWpKRaK8VLILHjIRN0?e=kBfeT0', 'https://x.com/officialmettelo', 'https://linkedin.com/company/officialmettelohq', 'https://facebook.com/officialmettelo', 'https://instagram.com/officialmettelo'];
+const required = [ '/projects/', 'https://github.com/Mettelo', 'https://www.youtube.com/@Officialmettelo', 'https://discord.gg/yy9qJZ7W', '/contact/#projects', 'https://x.com/officialmettelo', 'https://linkedin.com/company/officialmettelohq', 'https://facebook.com/officialmettelo', 'https://instagram.com/officialmettelo'];
 for (const url of required) assert(html.includes(`href="${url}"`), `Missing integration: ${url}`);
 assert(!html.includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Public homepage must route career resources through community membership');
 assert(readFileSync(resolve(root, 'apps/member/app/resources/page.tsx'), 'utf8').includes('https://1drv.ms/f/c/da3aa7b1d9999396/IgDj9KMf7GDaSqBXqX6uwbNZATwEB_HxJ4g7Yg_2vC2dI_Q?e=HDZUPE'), 'Preserve onboarding resource access');
