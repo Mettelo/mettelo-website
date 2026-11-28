@@ -1,0 +1,4 @@
+'use client';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+export default function RevokePortfolioShare({id}:{id:string}){const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState('');return <div><button className="proofRevoke" disabled={busy} onClick={async()=>{setBusy(true);setError('');try{const response=await fetch('/api/portfolio-sharing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'revoke',id})});const data=await response.json();if(!response.ok)throw Error(data.error||'Revocation was not confirmed.');router.refresh();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}}>{busy?'Revoking…':'Revoke link & linked community post'}</button>{error&&<p role="alert">{error}</p>}</div>;}

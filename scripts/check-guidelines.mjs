@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const pages = ['index.html','start/index.html','community-guidelines/index.html'];
+const pages = ['index.html','community-guidelines/index.html'];
 const route = path => path === '/' ? 'index.html' : `${path.replace(/^\/|\/$/g,'')}/index.html`;
 for (const path of pages) {
   const html = readFileSync(resolve(root,path),'utf8');
@@ -26,5 +26,5 @@ const guide=readFileSync(resolve(root,'community-guidelines/index.html'),'utf8')
 assert.equal((guide.match(/class="standard-number"/g)||[]).length,10);
 assert(!/<(?:input|form)\b/.test(guide),'Guidelines must not accept membership agreements');
 assert(guide.includes('mailto:hello@mettelo.com'),'Business reporting route');
-for(const text of ['Mettelo Technologies Limited','adults aged 18 or over','How concerns are considered','/privacy/','/contact/#community','Participation does not automatically constitute paid employment.','I agree to follow the Community Guidelines.','https://tally.so/r/J9b5zd','https://tally.so/r/eq4Wjo']) assert(guide.includes(text),`Missing: ${text}`);
+for(const text of ['Mettelo Technologies Limited','adults aged 18 or over','How concerns are considered','/privacy/','/contact/#community','Participation does not automatically constitute paid employment.','I agree to follow the Community Guidelines.','/#member-access','/projects/']) assert(guide.includes(text),`Missing: ${text}`);
 console.log('Passed: local routes/assets/anchors, safe tabs, ten standards, adult eligibility, reporting/privacy links and no acceptance form.');

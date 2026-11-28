@@ -1,0 +1,7 @@
+import Link from 'next/link';
+import {adminCapabilities} from '@/lib/admin-capabilities';
+import {labSession} from '@/lib/lab';
+import {contentAdmin} from '@/lib/site-content';
+import '../content/content.css';
+export const dynamic='force-dynamic';
+export default async function Page(){const c=await adminCapabilities();if(!c?.roles)return <section className="section"><h1>Full administrator access required</h1></section>;const {db}=await labSession();let rows:any[];try{rows=await contentAdmin(db,'list_pages');}catch{return <section className="section"><h1>Website content could not load</h1><p>Reload to try again.</p></section>;}return <section className="section contentAdmin"><div className="shell"><header className="contentHeading"><div><span className="eyebrow">Website publishing</span><h1>Content &amp; SEO</h1><p>Update your words, images and sharing previews. Save privately, review, then publish.</p></div></header><div className="contentPageGrid">{rows.map(row=><article className="panel" key={row.key}><span className="contentStatus">{row.has_draft?'Unpublished changes':'Published'}</span><h2>{row.label}</h2><p>{row.key==='page:home'?'Main headline, buttons, ecosystem descriptions, FAQs and search previews.':row.key==='page:about'?'Your story, mission, founder information, photos and search previews.':'Organisation details, official social links and default sharing image.'}</p><Link className="button dark" href={'/admin/content?key='+encodeURIComponent(row.key)}>Edit {row.label.toLowerCase()}</Link></article>)}</div></div></section>;}

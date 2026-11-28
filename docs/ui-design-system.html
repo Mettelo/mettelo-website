@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mettelo UI foundations</title><style>body{font:16px/1.7 'Segoe UI',Arial,sans-serif;color:#141824;background:#fcfaf5;margin:0}main{max-width:920px;margin:auto;padding:48px 24px}h1,h2{line-height:1.2}h1{font-size:2.5rem}h2{margin-top:40px}table{border-collapse:collapse;width:100%;background:white}th,td{text-align:left;vertical-align:top;padding:12px 16px;border:1px solid #ded9cd}code{font-size:.875em;overflow-wrap:anywhere}a{color:#82571d}p,li{max-width:76ch}</style></head><body><main>
+<p>Mettelo · Engineering and design reference · 11 November 2026</p><h1>Shared UI foundations</h1>
+<p>The public website, member experience and administration share tokens and interaction conventions. Keep feature-specific layouts and the existing Mettelo identity. This is a refinement of the current platform, with no changes to admission, authentication, permissions or billing.</p>
+<h2>Source of truth</h2><table><thead><tr><th>Foundation</th><th>Source</th><th>How it reaches the app</th></tr></thead><tbody>
+<tr><td>Colour, typography, spacing and size tokens</td><td><code>tokens.css</code></td><td><code>scripts/sync-design-tokens.mjs</code> copies to the app.</td></tr>
+<tr><td>Shared controls and states</td><td><code>shared/ui-foundations.css</code></td><td>Imported by public CSS; copied and imported in the root app layout.</td></tr>
+<tr><td>Icons</td><td><code>shared/ui-icons.json</code></td><td><code>AppIcon.tsx</code>, the NavigationIcon/FeedIcon adapters, and generated public navigation use the same Lucide artwork.</td></tr>
+<tr><td>Navigation destinations</td><td><code>shared/navigation.json</code></td><td>The existing navigation synchroniser generates the public header and app snapshot.</td></tr>
+</tbody></table>
+<h2>Visual standards</h2><table><thead><tr><th>Area</th><th>Convention</th></tr></thead><tbody>
+<tr><td>Brand</td><td>Navy <code>#141824</code>, warm paper <code>#fcfaf5</code>, sand <code>#f7efdd</code>, gold accent <code>#c6892a</code>. Use the darker gold text token on light surfaces. Retain editorial artwork and official identity marks.</td></tr>
+<tr><td>Typography</td><td>Body and controls use the system Segoe UI/Arial family. Georgia is the editorial display variant; the mono token is for technical references. Body text uses 1.65 line height. Standard controls and secondary text use 14px; captions and helper text use 13px. Mobile form controls use 16px.</td></tr>
+<tr><td>Spacing</td><td>Use the shared 4, 8, 12, 16, 20, 24, 32, 48, 64 and 80px spacing scale. Preserve deliberate reading widths and dense operational layouts.</td></tr>
+<tr><td>Shape</td><td>Standard controls: 8px radius. Base cards: 16px. Dialog foundation: 20px. Badges: 6px. Fully round avatars and selection chips are deliberate exceptions, not defaults for every action.</td></tr>
+<tr><td>Controls</td><td>Standard action height: 44px minimum, with a 48px comfortable form variant. Use clear verbs and consistent padding. A text label normally needs no trailing arrow.</td></tr>
+<tr><td>States</td><td>Primary actions use navy/white; gold remains the intentional primary accent on the dark public hero. Secondary actions are outlined; tertiary actions use text. Destructive actions use the danger token and the existing confirmation/reason safeguards. Disabled actions stay visibly disabled.</td></tr>
+</tbody></table>
+<h2>Use the existing control conventions</h2>
+<p>Public controls use <code>.btn</code>. App controls use <code>.button</code>, with existing <code>.lxButton</code>, <code>.lwButton</code>, <code>.pcButton</code>, <code>.newsButton</code> and <code>.mpi3Button</code> adapters. The shared stylesheet aligns their base dimensions and variants. Do not introduce another button library to replace working controls.</p>
+<p>Keep fields labelled with real labels. Connect helper/error descriptions where relevant. Use native required-field validation and announce asynchronous results. Preserve inputs after errors and prevent duplicate submissions while saving.</p>
+<h2>Icon conventions</h2>
+<p>Lucide is the single general UI icon family. The subset is generated from the pinned <code>lucide-react</code> dependency by <code>node scripts/sync-ui-icons.mjs</code>. Commit both snapshots and retain the accompanying ISC licence. Public builds consume the committed subset and need no icon CDN or font request.</p>
+<table><thead><tr><th>Context</th><th>Use</th></tr></thead><tbody>
+<tr><td>Size and stroke</td><td>20px default/navigation; 18px in compact actions; 16px inline; 24px for larger status illustrations. Stroke 1.75, round caps and joins, current text colour.</td></tr>
+<tr><td>Action meaning</td><td>Pencil for Edit, Plus for Add, Trash for Delete, ChevronRight for destination rows, ExternalLink for resources opened externally, Send for messages, and explicit status icons for feedback.</td></tr>
+<tr><td>Labels</td><td><code>AppIcon</code> is decorative and excluded from the accessibility tree. Give the enclosing icon-only control an accessible name. Never replace a useful action label with an unexplained icon.</td></tr>
+<tr><td>Exceptions</td><td>Keep official Google/GitHub identities and Mettelo brand illustrations. Preserve meaningful notation and user content, including the CSF 1.1→2.0 crosswalk reference.</td></tr>
+</tbody></table>
+<h2>Interaction and accessibility</h2>
+<ul><li>Use a visible 3px focus indicator, with a contrasting light indicator on dark navigation.</li><li>Use native dialogs for modal focus containment and return focus on dismissal. Honour existing busy-state and unsaved-change safeguards.</li><li>Profile feedback distinguishes unchanged, unsaved, saving, saved, failed and stale records. Restoring the original value clears the unsaved warning.</li><li>Scrollable administrative tables have a named, keyboard-focusable region. Preserve filters and pagination when opening and closing details.</li><li>Allow long menu descriptions to wrap. Avoid page-level horizontal overflow; contained table or tab scrolling is intentional.</li><li>Respect reduced motion. Keep community and discovery available at the configured Lab participation limit.</li></ul>
+<h2>Verification</h2>
+<p>Run the existing app tests, typecheck, production build, public build and packaging checks. <code>scripts/check-ui-foundations.mjs</code> verifies public/app parity, safe icon markup and the base contrast pairs. <code>scripts/audit-ui.mjs --output=...</code> inventories routes, components, styles and symbol candidates. Record visual coverage separately from automated source coverage; a passing compilation is not a full accessibility or visual certification.</p>
+</main></body></html>

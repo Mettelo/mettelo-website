@@ -215,10 +215,10 @@
 .faq-list {
   border-top:1px solid var(--line)
 }
-details {
+main details {
   border-bottom:1px solid var(--line)
 }
-summary {
+main summary {
   cursor:pointer;
   padding:22px 30px 22px 0;
   position:relative;
@@ -226,10 +226,10 @@ summary {
   font-weight:600;
   list-style:none
 }
-summary::-webkit-details-marker {
+main summary::-webkit-details-marker {
   display:none
 }
-summary:after {
+main summary:after {
   content:'+';
   position:absolute;
   right:3px;
@@ -238,17 +238,17 @@ summary:after {
   color:var(--gold-text);
   font-weight:400
 }
-details[open] summary:after {
+main details[open] summary:after {
   content:'−'
 }
-details p {
+main details p {
   font-size:.88rem;
   color:var(--muted);
   max-width:580px;
   padding-right:20px;
   margin:0 0 24px
 }
-summary:focus-visible {
+main summary:focus-visible {
   outline:3px solid var(--gold);
   outline-offset:4px
 }

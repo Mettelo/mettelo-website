@@ -1,0 +1,3 @@
+import LabActionForm from './LabActionForm';
+import type {WorkspaceItem,WorkspaceMember} from '@/lib/lab-workspace';
+export default function WorkspaceAssignee({item,teamId,members}:{item:WorkspaceItem;teamId:string;members:WorkspaceMember[]}){return <LabActionForm action="assign_item" successMessage="Assignee updated."><input type="hidden" name="team_id" value={teamId}/><input type="hidden" name="item_id" value={item.id}/><label>Assign to<select name="owner_id" required defaultValue={item.owner_id||''}><option value="" disabled>Choose a team member</option>{members.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select></label><button className="lwButton" disabled={!members.length}>Save assignee</button></LabActionForm>;}

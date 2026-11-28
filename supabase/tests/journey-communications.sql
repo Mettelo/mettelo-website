@@ -1,0 +1,38 @@
+begin;
+update private_website_lab.journey_mail_settings set enabled_at=now()-interval '1 day';
+create temp table journey_checks(check_name text,passed boolean);
+do $$
+declare uid uuid; other_uid uuid; source public.website_project_interests; ref text; iid uuid; msg jsonb; prepared jsonb; qid uuid; lease uuid; n integer;
+begin
+ select a.user_id into uid from private_website_lab.admins a join auth.users u on u.id=a.user_id where u.email_confirmed_at is not null limit 1;
+ select * into source from public.website_project_interests where user_id=uid limit 1;
+ select b.project_ref into ref from public.website_project_briefs b where not exists(select 1 from public.website_project_interests i where i.user_id=uid and i.project_ref=b.project_ref) order by project_ref limit 1;
+ if source.id is null or ref is null then raise exception 'Existing verified administrator and unused project required';end if;
+ insert into public.website_project_interests(user_id,project_ref,participation,motivation,contribution,answers,terms_version) values(uid,ref,'solo',source.motivation,source.contribution,source.answers,source.terms_version) returning id into iid;
+ if (select count(*) from private_website_lab.journey_mail j join private_website_lab.project_email_previews p on p.id=j.project_event_id where p.interest_id=iid and j.kind='application_received')<>1 then raise exception 'Receipt not atomically queued';end if;
+ perform set_config('request.jwt.claim.sub',uid::text,true);perform set_config('request.jwt.claim.role','authenticated',true);
+ msg:=public.website_journey_mail_worker('claim');qid:=(msg->>'id')::uuid;lease:=(msg->>'lease_id')::uuid;
+ if qid is null then raise exception 'Admin queue claim failed';end if;
+ if public.website_journey_mail_worker('claim') is not null then raise exception 'Competing claim reused sending row';end if;
+ prepared:=public.website_journey_mail_worker('prepare',jsonb_build_object('job_id',qid,'lease_id',lease));
+ if prepared->>'recipient_id'<>uid::text or prepared->>'kind'<>'application_received' or prepared::text like '%motivation%' then raise exception 'Unsafe or missing email projection';end if;
+ begin perform public.website_journey_mail_worker('complete',jsonb_build_object('job_id',qid,'lease_id',gen_random_uuid(),'state','sent','provider_id','fixture'));raise exception 'Forged lease accepted';exception when raise_exception then if sqlerrm='Forged lease accepted' then raise;end if;end;
+ perform public.website_journey_mail_worker('complete',jsonb_build_object('job_id',qid,'lease_id',lease,'state','unknown','error','TEST_UNCERTAIN'));
+ if public.website_journey_mail_worker('claim') is not null then raise exception 'Uncertain outcome automatically retried';end if;
+ insert into journey_checks values('atomic receipt, exclusive lease, private projection and uncertain outcome held',true);
+ insert into private_website_lab.notifications(recipient_id,event_key,title,href) values(uid,'market-dm:'||gen_random_uuid(),'Routine chat','/member/market');
+ if exists(select 1 from private_website_lab.journey_mail j join private_website_lab.notifications n on n.id=j.notification_id where n.title='Routine chat') then raise exception 'Ordinary chat emailed';end if;
+ perform private_website_lab.notify_member(uid,'support:'||gen_random_uuid(),'No longer eligible reply','/member/enquiries');
+ msg:=public.website_journey_mail_worker('claim');if msg->>'skipped'<>'true' then raise exception 'Missing source was not suppressed';end if;
+ insert into journey_checks values('ordinary chat excluded and missing/stale source skipped',true);
+ update private_website_lab.journey_mail_settings set capture_enabled=false;
+ perform private_website_lab.notify_member(uid,'support:'||gen_random_uuid(),'Silent import fixture','/member/enquiries');
+ if exists(select 1 from private_website_lab.journey_mail j join private_website_lab.notifications n on n.id=j.notification_id where n.title='Silent import fixture') then raise exception 'Disabled capture queued mail';end if;
+ if has_function_privilege('anon','public.website_journey_mail_worker(text,jsonb)','EXECUTE') or has_table_privilege('authenticated','private_website_lab.journey_mail','SELECT') then raise exception 'Private mail exposed';end if;
+ select id into other_uid from auth.users where id<>uid and not private_website_lab.permitted(id,'operations') limit 1;
+ perform set_config('request.jwt.claim.sub',other_uid::text,true);
+ begin perform public.website_journey_mail_worker('status',jsonb_build_object('admin_id',uid));raise exception 'Non-admin worker access';exception when insufficient_privilege then null;end;
+ insert into journey_checks values('silent capture switch, private storage and non-admin denial',true);
+end $$;
+select * from journey_checks;
+rollback;

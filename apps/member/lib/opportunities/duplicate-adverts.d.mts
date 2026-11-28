@@ -1,0 +1,1 @@
+export function holdDuplicateAdverts<T extends {provider:string;externalId:string;title:string;organisation:string;location:string|null;countryCode:string|null;description:string;classification:{eligible:boolean;status:string;score:number;confidence:string;reasons:string[]}}>(jobs:T[]):T[];

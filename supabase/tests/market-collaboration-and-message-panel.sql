@@ -1,0 +1,26 @@
+begin;
+do $$declare a uuid:=gen_random_uuid();b uuid:=gen_random_uuid();c uuid:=gen_random_uuid();pid uuid;cid uuid;nonce uuid:=gen_random_uuid();r jsonb;denied boolean;begin
+ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) select x,'collaboration-panel-qa-'||x||'@example.test',now(),'{}' from unnest(array[a,b,c])x;
+ perform set_config('request.jwt.claim.sub',a::text,true);
+ r:=public.website_lab_community('publish',jsonb_build_object('kind','collaboration','body','[COLLABORATION-QA] I am available for a flexible SQL collaboration.','topics','["SQL"]'::jsonb,'client_nonce',nonce));pid:=(r->>'post_id')::uuid;
+ assert exists(select 1 from private_website_lab.market_posts where id=pid and team_id is null and project_ref is null),'Personal collaboration falsely claimed a Lab';
+ assert not exists(select 1 from public.website_project_team_members where user_id=a),'Personal collaboration created a Lab membership';
+ r:=public.website_lab_community('feed','{"category":"seeking","q":"[COLLABORATION-QA]"}');
+ assert exists(select 1 from jsonb_array_elements(r->'rows')x where x->>'kind'='collaboration'),'Personal collaboration missing from seeking filter';
+ denied:=false;begin perform public.website_lab_community('publish',jsonb_build_object('kind','collaborators','body','Try posting official Lab recruitment without authority.','client_nonce',gen_random_uuid()));exception when insufficient_privilege then denied:=true;end;assert denied,'Official recruitment authority weakened';
+ denied:=false;begin perform public.website_market_conversation_with(b);exception when insufficient_privilege then denied:=true;end;assert denied,'Opted-out member contact exposed';
+ perform set_config('request.jwt.claim.sub',b::text,true);perform public.website_lab_market('preferences','{"discoverable":true,"contactable":true}');
+ perform set_config('request.jwt.claim.sub',a::text,true);r:=public.website_market_conversation_with(b);assert r->>'member_id'=b::text and not(r?'email'),'Message target projection leaked fields';
+ r:=public.website_lab_community('message_request',jsonb_build_object('member_id',b,'body','[COLLABORATION-QA] A private message request.','client_nonce',gen_random_uuid()));cid:=(r->>'conversation_id')::uuid;
+ assert public.website_market_conversation_with(b)->>'conversation_id'=cid::text,'Existing conversation lookup failed';
+ denied:=false;begin perform public.website_lab_community('message',jsonb_build_object('conversation_id',cid,'body','A second message before acceptance','client_nonce',gen_random_uuid()));exception when raise_exception then denied:=true;end;assert denied,'A pending request permitted continued messaging';
+ perform set_config('request.jwt.claim.sub',c::text,true);denied:=false;begin perform public.website_lab_community('conversation',jsonb_build_object('conversation_id',cid));exception when insufficient_privilege then denied:=true;end;assert denied,'Outsider read private messages';
+ perform set_config('request.jwt.claim.sub',b::text,true);perform public.website_lab_community('message_decision',jsonb_build_object('conversation_id',cid,'enabled',true));
+ perform public.website_lab_community('message',jsonb_build_object('conversation_id',cid,'body','[COLLABORATION-QA] Accepted private response.','client_nonce',gen_random_uuid()));
+ perform set_config('request.jwt.claim.sub',a::text,true);r:=public.website_lab_community('conversation',jsonb_build_object('conversation_id',cid));assert jsonb_array_length(r->'messages')=2,'Accepted reply missing';
+ perform public.website_lab_community('block',jsonb_build_object('member_id',b,'enabled',true));denied:=false;begin perform public.website_market_conversation_with(b);exception when insufficient_privilege then denied:=true;end;assert denied,'Blocked contact lookup permitted';
+ assert not has_function_privilege('anon','public.website_market_conversation_with(uuid)','EXECUTE');
+ assert not exists(select 1 from public.website_project_team_members where user_id in(a,b,c)),'Messaging granted a Lab place';
+end $$;
+select 'Personal collaboration without a Lab, seeking filter, official recruitment authority, target privacy, pending acceptance, private replies, outsider denial and blocked messaging passed.' result;
+rollback;

@@ -1,0 +1,40 @@
+-- Anonymous intake and private staff handling; every fixture rolls back.
+begin;
+create temp table contact_results(check_name text,passed boolean);
+do $test$
+declare staff uuid; outsider uuid:=gen_random_uuid(); test_nonce uuid:=gen_random_uuid(); payload jsonb; response jsonb; repeated jsonb; cid uuid; denied boolean; n integer; before_notices bigint;
+begin
+ select user_id into staff from private_website_lab.member_roles where role='full_admin' limit 1;
+ payload:=jsonb_build_object('nonce',test_nonce,'name','[ROLLBACK CONTACT] Test organisation','email','contact-'||test_nonce||'@example.invalid','category','partnership','subject','[ROLLBACK CONTACT] Partnership acceptance','message',E'Organisation: Synthetic test organisation\nRole: Partnership lead\nWebsite: https://example.invalid\n\nThis is a rollback-only partnership enquiry.','consent',true);
+ perform set_config('request.jwt.claim.sub','',true);execute 'set local role anon';
+ response:=public.website_contact_submit(payload);repeated:=public.website_contact_submit(payload);
+ assert response=repeated and response->>'reference' like 'WEB-%','Anonymous retry was not idempotent';
+ assert (select count(*)=1 from jsonb_object_keys(response)),'Anonymous response exposed contact content';
+ denied:=false;begin perform public.website_contact_submit(payload||'{"subject":"Changed retry content"}');exception when invalid_parameter_value then denied:=true;end;assert denied,'Changed nonce replay accepted';
+ denied:=false;begin perform public.website_contact_submit(payload||jsonb_build_object('nonce',gen_random_uuid(),'consent',false));exception when invalid_parameter_value then denied:=true;end;assert denied,'Missing consent accepted';
+ execute 'reset role';
+ select id into cid from private_website_lab.public_contacts where public_contacts.nonce=test_nonce;
+ assert cid is not null and (select count(*)=1 from private_website_lab.public_contacts where public_contacts.nonce=test_nonce),'Contact did not persist exactly once';
+ insert into contact_results values('Anonymous partnership intake returns only a reference; identical retry is idempotent and changed replay/missing consent are denied',true);
+ execute 'set local role anon';
+ for n in 1..2 loop perform public.website_contact_submit(payload||jsonb_build_object('nonce',gen_random_uuid(),'subject','[ROLLBACK CONTACT] Rate fixture '||n));end loop;
+ denied:=false;begin perform public.website_contact_submit(payload||jsonb_build_object('nonce',gen_random_uuid()));exception when raise_exception then assert sqlerrm='Contact rate limit reached';denied:=true;end;assert denied,'Fourth enquiry bypassed per-address limit';
+ execute 'reset role';
+ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(outsider,'contact-outsider-'||outsider||'@example.invalid',now(),'{"full_name":"Contact rollback outsider"}');
+ perform set_config('request.jwt.claim.sub',outsider::text,true);
+ denied:=false;begin perform public.website_contact_admin('case',jsonb_build_object('id',cid));exception when insufficient_privilege then denied:=true;end;assert denied,'Ordinary member read private contact';
+ assert not has_table_privilege('anon','private_website_lab.public_contacts','SELECT') and not has_table_privilege('authenticated','private_website_lab.public_contact_notes','SELECT'),'Private contact table grant exposed';
+ insert into contact_results values('Intake rate limit and private contact/notes access restrictions remain authoritative',true);
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ select count(*) into before_notices from private_website_lab.notifications;
+ response:=public.website_contact_admin('case',jsonb_build_object('id',cid));
+ assert response->'case'->>'category'='partnership' and response->'case'->>'message' like 'Organisation: Synthetic test organisation%' and not (response->'case'?'nonce'),'Staff case lost organisation context or exposed submission nonce';
+ perform public.website_contact_admin('note',jsonb_build_object('id',cid,'body','[ROLLBACK CONTACT] Private staff outcome; no automatic email.'));
+ perform public.website_contact_admin('update',jsonb_build_object('id',cid,'status','resolved'));
+ response:=public.website_contact_admin('case',jsonb_build_object('id',cid));
+ assert response->'case'->>'status'='resolved' and jsonb_array_length(response->'notes')=1,'Staff handling did not persist';
+ assert (select count(*)=before_notices from private_website_lab.notifications),'Internal contact note produced a member notification';
+ insert into contact_results values('Staff receives private partnership context and can note/resolve without a member notification or automatic email',true);
+end $test$;
+select * from contact_results;
+rollback;

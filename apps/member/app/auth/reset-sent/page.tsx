@@ -1,0 +1,6 @@
+import AccountJourneyCard from '@/components/AccountJourneyCard';
+import type {Metadata} from 'next';
+
+export const metadata:Metadata={title:'Password reset email sent',description:'Check your email for a Mettelo password reset link.'};
+function maskEmail(value:string){const [local,domain='']=value.split('@');if(!local||!domain)return value||'your email';return `${local.slice(0,1)}${'*'.repeat(Math.max(3,Math.min(8,local.length-1)))}@${domain}`}
+export default async function ResetSentPage({searchParams}:{searchParams?:Promise<{email?:string|string[]}>}){const raw=(await searchParams||{}).email;const email=Array.isArray(raw)?raw[0]:raw||'';return <AccountJourneyCard eyebrow="Password recovery" title="Check your inbox."><p className="lead">If an eligible account is associated with <strong>{maskEmail(email)}</strong>, we have sent a password reset link.</p><ol className="journeySteps"><li>Open the latest reset email from Mettelo.</li><li>Follow the link to choose a new password.</li><li>Return to My Mettelo.</li></ol><p className="journeyHint">Check spam or junk if it has not arrived. For your privacy, this page does not confirm whether an account exists.</p><div className="actions"><a className="button dark" href="/signin">Back to sign in</a><a className="button ghost" href="/signin?mode=reset">Request another link</a></div></AccountJourneyCard>}

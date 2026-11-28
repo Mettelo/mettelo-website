@@ -1,0 +1,44 @@
+name: V2 website foundation checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-boundary:
+    name: Static website and package boundary (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run test:packaging
+      - run: npm run build
+      - run: npm run check:static-output
+  member-staging:
+    name: Isolated member app (Node 22)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/member
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://jxijdjmjuzslmjxolhjl.supabase.co
+      # Build-only placeholder: this job never signs in or contacts real members.
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-build-placeholder
+      NEXT_PUBLIC_AUTH_CALLBACK_ORIGIN: http://127.0.0.1:3001
+      NEXT_PUBLIC_AUTH_GOOGLE_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build

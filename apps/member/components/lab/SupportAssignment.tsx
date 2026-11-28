@@ -1,0 +1,10 @@
+'use client';
+import {useRef,useState} from 'react';
+import {useRouter} from 'next/navigation';
+export type AssignmentData={assignment:{assigned_to:string|null;version:number};owners:{id:string;name:string}[]};
+export default function SupportAssignment({source,id,initial}:{source:'member'|'public';id:string;initial:AssignmentData}){
+ const [owner,setOwner]=useState(initial.assignment.assigned_to||''),[saved,setSaved]=useState(initial.assignment),[busy,setBusy]=useState(false),[message,setMessage]=useState('');const lock=useRef(false),router=useRouter();
+ async function save(e:React.FormEvent){e.preventDefault();if(lock.current)return;lock.current=true;setBusy(true);setMessage('');try{const r=await fetch('/api/admin/support',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({source,id,assigned_to:owner,version:saved.version})});const data=await r.json();if(!r.ok)throw Error(data.error||'Assignment could not be saved.');setSaved({assigned_to:data.assigned_to,version:data.version});setMessage('Assignment saved. No email sent.');router.refresh();}catch(e){setMessage(e instanceof Error?e.message:'Assignment could not be confirmed. Refresh before retrying.');}finally{lock.current=false;setBusy(false);}}
+ const unavailable=!!owner&&!initial.owners.some(o=>o.id===owner);
+ return <section className="panel supportOwner" aria-label="Staff ownership"><form onSubmit={save} className="lxToolbar"><label>Assigned staff member<select value={owner} onChange={e=>setOwner(e.target.value)} disabled={busy}><option value="">Unassigned</option>{unavailable&&<option value={owner} disabled>Previous owner · no longer available</option>}{initial.owners.map(o=><option value={o.id} key={o.id}>{o.name}</option>)}</select></label><button className="button dark" disabled={busy||unavailable||owner===(saved.assigned_to||'')}>{busy?'Saving…':'Save assignment'}</button></form><p className="lxMeta">Staff-only ownership. Reassign an enquiry when its owner is unavailable.</p>{message&&<p role="status" aria-live="polite">{message}</p>}</section>;
+}

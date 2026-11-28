@@ -1,0 +1,24 @@
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import type { CookieOptions } from '@supabase/ssr';
+import {memberSupabaseConfiguration} from './config';
+
+type CookieToSet={name:string;value:string;options?:CookieOptions};
+
+export async function createServerSupabaseClient(){
+  const {url,key:anonKey}=memberSupabaseConfiguration();
+  if(!url||!anonKey) throw new Error('Supabase environment variables are not configured.');
+
+  const cookieStore=await cookies();
+  return createServerClient(url,anonKey,{
+    cookies:{
+      getAll(){return cookieStore.getAll();},
+      setAll(items:CookieToSet[]){
+        try{items.forEach(({name,value,options})=>cookieStore.set(name,value,options));}
+        catch{
+          // Server Components cannot always mutate cookies. Middleware refreshes sessions.
+        }
+      }
+    }
+  });
+}

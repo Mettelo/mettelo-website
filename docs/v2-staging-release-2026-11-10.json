@@ -1,0 +1,30 @@
+{
+  "phase": "Team testing, not production release",
+  "staging_url": "https://staging.mettelo.com",
+  "hosted_deployment": {
+    "id": "01a1b795-7492-7097-8a0f-f068f0c8a9ab",
+    "source": "mettelo-v2-staging-20261107.zip",
+    "deployed_at": "2026-11-07T19:58:00Z",
+    "observed_result": "Build, publication and runtime restart completed; runtime log showed zero errors"
+  },
+  "verification_repeated_2026_11_10": {
+    "app_tests_passed": 248,
+    "typecheck": "passed",
+    "new_user_signup": "Enabled in the isolated staging Auth project",
+    "email_confirmation": "Required",
+    "email_provider": "Email authentication and custom Resend SMTP enabled; actual new-account inbox receipt remains a tester acceptance step",
+    "default_auth_site_url": "Corrected from localhost to https://staging.mettelo.com",
+    "allowed_callback_urls": ["https://staging.mettelo.com/auth/callback", "http://127.0.0.1:3001/auth/callback"]
+  },
+  "communications": {
+    "map": "v2-staging-journey-map.html",
+    "essential_events": ["application_received", "offer_ready", "clarification", "decision", "lab_ready", "coordinator_nomination", "support_reply", "collaboration_request", "collaboration_decision", "collaboration_removed", "proposal_decision", "lab_status", "placement_ended"],
+    "automatic_operational_delivery": false,
+    "scheduler_enabled": false,
+    "controlled_test": "Manual delivery to the signed-in verified operations administrator only",
+    "old_preview_backlog_replayed": false,
+    "emails_sent_during_agent_review": 0
+  },
+  "database": "Isolated staging project jxijdjmjuzslmjxolhjl only",
+  "test_boundaries": ["No production deployment or merge", "No new test accounts created by the agent", "Existing quarantined fixtures left unchanged", "Fresh hosted signup, verification inbox receipt, recovery and multi-account journeys remain for the testing team"]
+}

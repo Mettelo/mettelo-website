@@ -1,0 +1,3 @@
+import AppIcon from '@/components/AppIcon';
+import type {ReactNode} from 'react';
+export default function AccountJourneyCard({eyebrow,title,kind='mail',children}:{eyebrow:string;title:string;kind?:'mail'|'success';children:ReactNode}){return <section className="section softSection authJourney" aria-labelledby="account-journey-title"><div className="shell authJourneyShell"><div className="authJourneyCard"><span className={'authJourneyIcon '+kind} aria-hidden="true"><AppIcon name={kind==='mail'?'mail':'success'} size={24}/></span><span className="eyebrow">{eyebrow}</span><h1 id="account-journey-title">{title}</h1>{children}</div><p className="authJourneySupport">Need a hand? <a href="/contact">Contact Mettelo support</a></p></div></section>}

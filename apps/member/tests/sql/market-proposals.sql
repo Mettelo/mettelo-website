@@ -1,0 +1,38 @@
+begin;
+create temp table proposal_results(check_name text,passed boolean);
+do $test$
+declare uid uuid:=gen_random_uuid();other_uid uuid:=gen_random_uuid();staff uuid;pid uuid;ref text;result jsonb;v integer;denied boolean;before_teams integer;before_members integer;role_name text;
+begin
+ select user_id into staff from private_website_lab.member_roles where role='full_admin' limit 1;
+ insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) select x,'proposal-'||x||'@example.invalid',now(),jsonb_build_object('full_name','Synthetic proposal author') from unnest(array[uid,other_uid])x;
+ perform set_config('request.jwt.claim.sub',uid::text,true);
+ result:=public.website_market_proposals('save',jsonb_build_object('title','Synthetic member project','problem','A specific and reviewable project problem.','description','A detailed project description explaining the proposed approach and constraints.','outcome','A useful and reviewable project outcome.','category','Data analytics','skills',jsonb_build_array('SQL'),'participation','flexible','commitment','Two hours weekly','milestones','Discovery, prototype and evaluation.'));pid:=(result->>'proposal_id')::uuid;
+ result:=public.website_market_proposals('mine');if not exists(select 1 from jsonb_array_elements(result->'rows')r where r->>'id'=pid::text and r->>'state'='draft') then raise exception 'Draft list projection incorrect: %',result;end if;
+ result:=public.website_market_proposals('detail',jsonb_build_object('proposal_id',pid));v:=(result->'proposal'->>'version')::integer;
+ perform set_config('request.jwt.claim.sub',other_uid::text,true);denied:=false;begin perform public.website_market_proposals('detail',jsonb_build_object('proposal_id',pid));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Another member read private draft';end if;
+ perform set_config('request.jwt.claim.sub',uid::text,true);denied:=false;begin perform public.website_market_proposals('submit',jsonb_build_object('proposal_id',pid,'version',v-1));exception when raise_exception then denied:=true;end;if not denied then raise exception 'Stale proposal write accepted';end if;
+ perform public.website_market_proposals('submit',jsonb_build_object('proposal_id',pid,'version',v));
+ insert into proposal_results values('drafts are private, owner-scoped, version-checked and submit to the governed review queue',true);
+ denied:=false;begin perform public.website_market_proposals('review',jsonb_build_object('proposal_id',pid,'version',v+1,'state','approved','reason','Try to self-approve a member project','roles',jsonb_build_array('Analyst'),'member_capacity',4,'max_active_teams',5));exception when insufficient_privilege then denied:=true;end;if not denied then raise exception 'Member self-approved project';end if;
+ perform set_config('request.jwt.claim.sub',staff::text,true);result:=public.website_market_proposals('queue');if not exists(select 1 from jsonb_array_elements(result->'rows')r where r->>'id'=pid::text) then raise exception 'Review queue missing proposal';end if;
+ perform public.website_market_proposals('review',jsonb_build_object('proposal_id',pid,'version',v+1,'state','changes_requested','reason','Please clarify the success criteria and evidence.'));
+ if not exists(select 1 from private_website_lab.notifications where recipient_id=uid and event_key like 'market-proposal:%') then raise exception 'Review notification missing';end if;
+ perform set_config('request.jwt.claim.sub',uid::text,true);result:=public.website_market_proposals('detail',jsonb_build_object('proposal_id',pid));v:=(result->'proposal'->>'version')::integer;
+ perform public.website_market_proposals('submit',jsonb_build_object('proposal_id',pid,'version',v));
+ select count(*) into before_teams from public.website_project_teams;select count(*) into before_members from public.website_project_team_members;
+ perform set_config('request.jwt.claim.sub',staff::text,true);
+ result:=public.website_market_proposals('review',jsonb_build_object('proposal_id',pid,'version',v+1,'state','approved','reason','Synthetic project meets official scope and governance requirements.','roles',jsonb_build_array('Analyst','Engineer'),'member_capacity',4,'max_active_teams',5));ref:=result->>'project_ref';
+ if ref is null or not exists(select 1 from public.website_project_briefs where project_ref=ref and intake_open and roles ? 'Analyst') or not exists(select 1 from public.website_project_pilot_settings where project_ref=ref and member_capacity=4) then raise exception 'Approval did not register the governed project';end if;
+ if (select count(*) from public.website_project_teams)<>before_teams or (select count(*) from public.website_project_team_members)<>before_members then raise exception 'Approval automatically formed or activated a Lab';end if;
+ if exists(select 1 from private_website_lab.member_roles where user_id=uid) then raise exception 'Creator received admin role';end if;
+ insert into proposal_results values('only project administrators review, revisions notify the author and approval registers a brief without Lab formation or leadership',true);
+ perform set_config('request.jwt.claim.sub',other_uid::text,true);result:=public.website_market_proposals('detail',jsonb_build_object('project_ref',ref));
+ if result->'proposal'?'review_note' or result->'proposal'?'reviewed_by' or result->'proposal'?'owner_id' then raise exception 'Approved public details leaked private review information';end if;
+ insert into public.website_project_interests(user_id,project_ref,participation,primary_role,motivation,contribution,answers,terms_version) values(other_uid,ref,'team','Analyst',repeat('fixture ',5),repeat('fixture ',8),'{"commitment_response":"yes"}','2026-09-03-v1');
+ if exists(select 1 from public.website_project_team_members where user_id=other_uid) then raise exception 'Application granted membership';end if;
+ if not exists(select 1 from private_website_lab.audit where action='market_proposal_review' and payload->>'proposal_id'=pid::text) then raise exception 'Approval not audited';end if;
+ if has_table_privilege('authenticated','private_website_lab.market_proposals','SELECT') or has_function_privilege('anon','public.website_market_proposals(text,jsonb)','EXECUTE') then raise exception 'Proposal privileges exposed';end if;
+ insert into proposal_results values('approved member projects accept ordinary applications, preserve private review details and retain audit/access boundaries',true);
+end $test$;
+select * from proposal_results;
+rollback;

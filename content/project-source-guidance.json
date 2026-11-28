@@ -1,0 +1,352 @@
+[
+  {
+    "project_ref": "MTL-DA-001",
+    "data_guide": "https://github.com/Mettelo/MTL-DA-001-retail-banking-intelligence/blob/main/data/README.md",
+    "data_guide_sha": "76296d6cd3a077d19cd1147d75be2832881780d6",
+    "governance_guide": "https://github.com/Mettelo/MTL-DA-001-retail-banking-intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "21077323b8377802dc475fc3590d702590f999b9"
+  },
+  {
+    "project_ref": "MTL-DA-002",
+    "data_guide": "https://github.com/Mettelo/Mettelo-MTL-DA-002-student-engagement-intelligence/blob/main/data/README.md",
+    "data_guide_sha": "ab65d520fdf3a3c4f4520ae196d0f554cdbba265",
+    "governance_guide": "https://github.com/Mettelo/Mettelo-MTL-DA-002-student-engagement-intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "b0b80866c657493643300f51179464afee9b4fcc"
+  },
+  {
+    "project_ref": "MTL-DA-003",
+    "data_guide": "https://github.com/Mettelo/MTL-DA-003-Energy-Demand-Tariff-Customer-Consumption-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "e54a0d3d7a145b1d066d36d616b9fb0d9bc2ed3f",
+    "governance_guide": "https://github.com/Mettelo/MTL-DA-003-Energy-Demand-Tariff-Customer-Consumption-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "c9a671306393cfa89ef6cd1c31155fb78cf7ccfb"
+  },
+  {
+    "project_ref": "MTL-DA-004",
+    "data_guide": "https://github.com/Mettelo/MTL-DA-004-Road-Safety-Collision-Risk-Transport-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "a35cf2aa0cae6a3ae641010f192dbe16dab57716",
+    "governance_guide": "https://github.com/Mettelo/MTL-DA-004-Road-Safety-Collision-Risk-Transport-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "d122de7077651000c0b592a8fcfcbe7b7bd7b4b2"
+  },
+  {
+    "project_ref": "MTL-DA-005",
+    "data_guide": "https://github.com/Mettelo/MTL-DA-005-Food-Safety-Compliance-Inspection-Risk-Regulatory-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "7b900508170b53e116c8c2cb961021296421de3a",
+    "governance_guide": "https://github.com/Mettelo/MTL-DA-005-Food-Safety-Compliance-Inspection-Risk-Regulatory-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "584ebcf8a55a285effe32a0562b0845551fb94c2"
+  },
+  {
+    "project_ref": "MTL-DE-006",
+    "data_guide": "https://github.com/Mettelo/MTL-DE-006-UK-Road-Safety-Data-Platform/blob/main/data/README.md",
+    "data_guide_sha": "90b491476bc6cfc37c67f53c2062de548ef57d21",
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-DE-007",
+    "data_guide": "https://github.com/Mettelo/MTL-DE-007-UK-Companies-Registry-Data-Platform/blob/main/data/README.md",
+    "data_guide_sha": "bb1ab70acb22d3d3cd49d39cd185e022bd7685f8",
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-DS-008",
+    "data_guide": "https://github.com/Mettelo/MTL-DS-008-NHS-Waiting-List-Demand-Forecasting-Capacity-Planning/blob/main/data/README.md",
+    "data_guide_sha": "062482eb2b18f0d9e986ce124bd342cdd41355f0",
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-DS-009",
+    "data_guide": "https://github.com/Mettelo/MTL-DS-009-London-Fire-Incident-Response-Demand-Risk-Modelling/blob/main/data/README.md",
+    "data_guide_sha": "15d0734f348571024ed710be5a225dfe21ac3582",
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-AI-010",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-010-NHS-Operational-Guidance-Knowledge-Assistant/blob/main/data/README.md",
+    "data_guide_sha": "104ea7fa791d759b5ea3e815f85bb87f81ced6f3",
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-XF-011",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-011-Public-Procurement-Supplier-Contract-Risk-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "c8a2e659058e324cb0f1c42f42f47080e15f7c1f",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-011-Public-Procurement-Supplier-Contract-Risk-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "0dfb6510555b50b39ef002b4c285340dfd3b6ece"
+  },
+  {
+    "project_ref": "MTL-XF-012",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-012-NHS-Workforce-Capacity-Retention-Service-Sustainability/blob/main/data/README.md",
+    "data_guide_sha": "576057748bfdc9718d6b9dd60a498d2e4e974f1e",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-012-NHS-Workforce-Capacity-Retention-Service-Sustainability/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "700de622223a11af02bed0d9a86e17343a85ec77"
+  },
+  {
+    "project_ref": "MTL-XF-013",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-013-Financial-Complaints-Conduct-Risk-Customer-Harm-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "1673b2893b0ed73738d6897a647569f724c63701",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-013-Financial-Complaints-Conduct-Risk-Customer-Harm-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "4a3cb63eaf5c9fcf75ca570acf9db181daa4c77e"
+  },
+  {
+    "project_ref": "MTL-XF-014",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-014-Telecom-Customer-Experience-Provider-Performance-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "19c0c9bc164378e8834bb1a9e46518d2233714e5",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-014-Telecom-Customer-Experience-Provider-Performance-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "b2e63f4ae2a51ab319fdf59e213e0689ce17c942"
+  },
+  {
+    "project_ref": "MTL-XF-015",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-015-Housing-Energy-Efficiency-Retrofit-Prioritisation-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "7bd48c13b0056dce8f86d6da755847c9f24d954a",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-015-Housing-Energy-Efficiency-Retrofit-Prioritisation-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "6111d902af110ce165bb7e20ef776cec858de3c5"
+  },
+  {
+    "project_ref": "MTL-XF-016",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-016-Community-Safety-Crime-Demand-Resource-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "6ccbdea622491b1e5fb43fa273df449f22f1f1de",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-016-Community-Safety-Crime-Demand-Resource-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "963007604af0489b869efa65f4e65bcc44439c45"
+  },
+  {
+    "project_ref": "MTL-XF-017",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-017-Flood-Defence-Investment-Risk-Prioritisation/blob/main/data/README.md",
+    "data_guide_sha": "3cdc891134b37078b775ff48369cb11529053f3b",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-017-Flood-Defence-Investment-Risk-Prioritisation/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "732a7f6a29088d42c785a466fd00b85e68b1c103"
+  },
+  {
+    "project_ref": "MTL-XF-018",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-018-Government-Grants-Funding-Impact-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "a915a67c25aa4535eb0b1285ede086884afd86da",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-018-Government-Grants-Funding-Impact-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "27967d397c410860ed2aedab7d6cdb135fdf0907"
+  },
+  {
+    "project_ref": "MTL-XF-019",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-019-Road-Network-Demand-Congestion-Investment-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "2f8c4d1f84a6bcb0c5d44c2042703fbc8ba2fe85",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-019-Road-Network-Demand-Congestion-Investment-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "c9e42b6544dfbc94a45c7abcac7a34821654f7c3"
+  },
+  {
+    "project_ref": "MTL-XF-020",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-020-Housing-Market-Affordability-Investment-Risk-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "d0ccfa272a964b4cb11cb2b6abc143a07768d530",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-020-Housing-Market-Affordability-Investment-Risk-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "5f08535bd6190da854786dec58c2910a12007bcc"
+  },
+  {
+    "project_ref": "MTL-XF-021",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-021-School-Attendance-Persistent-Absence-Early-Intervention-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "fdc908e6e3e2bb12600b820eddb52e5119477218",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-021-School-Attendance-Persistent-Absence-Early-Intervention-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "c7bda915d993f167458cdfc69fe53d3089ead94d"
+  },
+  {
+    "project_ref": "MTL-XF-022",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-022-Homelessness-Temporary-Accommodation-Prevention-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "9d6cc6c0c823c7e13b852f60839044f88b787a2e",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-022-Homelessness-Temporary-Accommodation-Prevention-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "5bf193750e301129fe88634b3f01b58883c558b3"
+  },
+  {
+    "project_ref": "MTL-XF-023",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-023-Local-Government-Financial-Resilience-Service-Pressure-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "69f2cbf645d25cac9dd3a8f5b97e4368616af3bc",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-023-Local-Government-Financial-Resilience-Service-Pressure-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "174f2c717f84a6e56a3d1b5d90c633666ab6bbb0"
+  },
+  {
+    "project_ref": "MTL-XF-024",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-024-Apprenticeship-Skills-Pipeline-Participation-Achievement-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "e2fe38e576d83935f6a328013dc06abd866026e8",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-024-Apprenticeship-Skills-Pipeline-Participation-Achievement-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "466ed195ec556b1f443fd7602538fd910587a0b3"
+  },
+  {
+    "project_ref": "MTL-XF-025",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-025-Business-Insolvency-Sector-Stress-Economic-Resilience-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "cdee3bcccd33f718fecae8a2342283438f08be55",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-025-Business-Insolvency-Sector-Stress-Economic-Resilience-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "9e7b263981272c5da40464f3785feb677ff30473"
+  },
+  {
+    "project_ref": "MTL-XF-026",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-026-Aviation-Punctuality-Delay-Operational-Resilience-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "3ea02d1e9a436634987f6c9b4389ac2be49adc17",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-026-Aviation-Punctuality-Delay-Operational-Resilience-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "63f8c92e63ae8b4a38efa9aac006411dc1a68fe1"
+  },
+  {
+    "project_ref": "MTL-XF-027",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-027-Regional-Trade-Exposure-Export-Concentration-Market-Diversification-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "fe854f64f74461c6de5f26726a27e3c6458960a3",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-027-Regional-Trade-Exposure-Export-Concentration-Market-Diversification-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "218cc9182240ad3d1b9229e3308ca9170b15a62b"
+  },
+  {
+    "project_ref": "MTL-XF-028",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-028-Local-Net-Zero-Emissions-Decarbonisation-Prioritisation-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "51ec56fd0028da3ec8a6f8cd41efddebd3af499e",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-028-Local-Net-Zero-Emissions-Decarbonisation-Prioritisation-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "ee17be47b8fda489f712817751e5439944c3fa33"
+  },
+  {
+    "project_ref": "MTL-XF-029",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-029-NHS-Hospital-Activity-Demand-Flow-Capacity-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "a07c1af18a679ac6f6f10fb0d857d145e8b80a62",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-029-NHS-Hospital-Activity-Demand-Flow-Capacity-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "5f140e2705ebeca46f582b197dc872cc715fec3f"
+  },
+  {
+    "project_ref": "MTL-XF-030",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-030-River-Water-Quality-Classification-Environmental-Intervention-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "cbb81b3dfc22109244082b7fa376216ba5621635",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-030-River-Water-Quality-Classification-Environmental-Intervention-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "1c8e504db834228188936acbd5216cbffba66aa6"
+  },
+  {
+    "project_ref": "MTL-XF-031",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-031-Ecommerce-Conversion-Customer-Journey-Optimisation-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "138afa791c95f89b8dc9c83a5207ea11e161e910",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-031-Ecommerce-Conversion-Customer-Journey-Optimisation-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "9e4212af6f525903fc200938456eefe0863a2bee"
+  },
+  {
+    "project_ref": "MTL-XF-032",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-032-Retail-Customer-Value-Returns-Product-Mix-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "aa950c0697b7c3fac582556498cf58cc7a9e2085",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-032-Retail-Customer-Value-Returns-Product-Mix-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "34a5a990cf45847d2eb6d960ccd54cf3af2b0e3e"
+  },
+  {
+    "project_ref": "MTL-XF-033",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-033-Bank-Marketing-Propensity-Campaign-Efficiency-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "f8d1ed251f51d118bc3ee698d3dfa2b286d5ac02",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-033-Bank-Marketing-Propensity-Campaign-Efficiency-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "8b9183c346b5c44f44f5fab8b6194b154f496508"
+  },
+  {
+    "project_ref": "MTL-XF-034",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-034-Credit-Risk-Underwriting-Portfolio-Quality-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "adc5fa1a401996cc4708c32c221e706a6a438be0",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-034-Credit-Risk-Underwriting-Portfolio-Quality-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "2eb62c02bfa91ceb16b3da94deceeb8276a78067"
+  },
+  {
+    "project_ref": "MTL-XF-035",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-035-Manufacturing-Predictive-Maintenance-Downtime-Risk-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "88f2dabf473b21e248148a072c748ae0ea1cafcc",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-035-Manufacturing-Predictive-Maintenance-Downtime-Risk-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "73e3895fad26d2641592708ad3a1a7b095c2b95b"
+  },
+  {
+    "project_ref": "MTL-XF-036",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-036-B2B-Wholesale-Customer-Segmentation-Account-Growth-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "4e7cf1cd6c1febab93bd4bae3842d7cfe9017084",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-036-B2B-Wholesale-Customer-Segmentation-Account-Growth-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "ff3ac50dfb937cf2036aa2d4a6099125f5197b93"
+  },
+  {
+    "project_ref": "MTL-XF-037",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-037-Commercial-Building-Energy-Demand-Efficiency-Optimisation-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "12bb9050ef434c34fa65b9583bf7841485cf2e96",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-037-Commercial-Building-Energy-Demand-Efficiency-Optimisation-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "b90a19121b8404f498cc28cff95947ead49f8fda"
+  },
+  {
+    "project_ref": "MTL-XF-038",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-038-Manufacturing-Quality-Defect-Detection-Process-Assurance-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "f5a17d0f7949a2d9077880b2296d323cdd53b0e4",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-038-Manufacturing-Quality-Defect-Detection-Process-Assurance-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "2738a83336d02a7e96e9722bc82837f59bbe7127"
+  },
+  {
+    "project_ref": "MTL-XF-039",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-039-Enterprise-Vulnerability-Exposure-Patch-Prioritisation-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "aadeb7ffa69f3234344aad9078e201c2a23dc775",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-039-Enterprise-Vulnerability-Exposure-Patch-Prioritisation-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "98332e98b6044f87817cb12c163ad7c368a0249e"
+  },
+  {
+    "project_ref": "MTL-XF-040",
+    "data_guide": "https://github.com/Mettelo/MTL-XF-040-Phishing-URL-Detection-Security-Triage-Intelligence/blob/main/data/README.md",
+    "data_guide_sha": "92e6a5705caba23b5634d83ae4c4f0b4ba4fabca",
+    "governance_guide": "https://github.com/Mettelo/MTL-XF-040-Phishing-URL-Detection-Security-Triage-Intelligence/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "ed4395250f1dd2a66dcdc88608d1ce48e31df808"
+  },
+  {
+    "project_ref": "MTL-BA-041",
+    "data_guide": null,
+    "data_guide_sha": null,
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-BA-042",
+    "data_guide": null,
+    "data_guide_sha": null,
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-BA-043",
+    "data_guide": null,
+    "data_guide_sha": null,
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-BA-044",
+    "data_guide": null,
+    "data_guide_sha": null,
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-BA-045",
+    "data_guide": null,
+    "data_guide_sha": null,
+    "governance_guide": null,
+    "governance_guide_sha": null
+  },
+  {
+    "project_ref": "MTL-AI-046",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-046-Data-Quality-Investigation-Copilot/blob/main/data/README.md",
+    "data_guide_sha": "32b278b096f2eb1b6f4ae41de025884160564291",
+    "governance_guide": "https://github.com/Mettelo/MTL-AI-046-Data-Quality-Investigation-Copilot/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "d93217713037bdf6ed76ef18c082f92b4432ea0b"
+  },
+  {
+    "project_ref": "MTL-AI-047",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-047-Mobility-Operations-Narrative-Copilot/blob/main/data/README.md",
+    "data_guide_sha": "07d59ded9debe04042c315d9777164371839e733",
+    "governance_guide": "https://github.com/Mettelo/MTL-AI-047-Mobility-Operations-Narrative-Copilot/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "62aed8d36331c21586422fb1fdc6e73e88785824"
+  },
+  {
+    "project_ref": "MTL-AI-048",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-048-Meeting-Decision-Action-Copilot/blob/main/data/README.md",
+    "data_guide_sha": "b6b0a48d6d5915d9dc13bb74f19a86af5bb08e28",
+    "governance_guide": "https://github.com/Mettelo/MTL-AI-048-Meeting-Decision-Action-Copilot/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "cc230eb46074982c868dc6784d0ca205508d101a"
+  },
+  {
+    "project_ref": "MTL-AI-049",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-049-SOC-Incident-Investigation-Copilot/blob/main/data/README.md",
+    "data_guide_sha": "41c9b6df9ace66df1df175577eab7466785490b5",
+    "governance_guide": "https://github.com/Mettelo/MTL-AI-049-SOC-Incident-Investigation-Copilot/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "d88ac10212f086e21c4f23da9ca17f01ad20be4f"
+  },
+  {
+    "project_ref": "MTL-AI-050",
+    "data_guide": "https://github.com/Mettelo/MTL-AI-050-Cybersecurity-Framework-Change-Intelligence-Assistant/blob/main/data/README.md",
+    "data_guide_sha": "34babc2c5f166f8def4e67276933e58777f0bc3c",
+    "governance_guide": "https://github.com/Mettelo/MTL-AI-050-Cybersecurity-Framework-Change-Intelligence-Assistant/blob/main/project/GOVERNANCE.md",
+    "governance_guide_sha": "f18eccf45481992a0e233d8c420de8cba8f44575"
+  }
+]

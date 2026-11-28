@@ -2,6 +2,7 @@ DirectoryIndex index.html
 Options -Indexes
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteRule ^start(?:/index\.html)?/?$ /resources [R=301,L]
 RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
 </IfModule>
 <FilesMatch "^(config|handler)\.php$">
